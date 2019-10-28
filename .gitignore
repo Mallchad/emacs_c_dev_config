@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+#Whitelsit
+!init.el
+icons-in-terminal.el
