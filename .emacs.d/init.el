@@ -280,9 +280,17 @@ There are two things you can do about this warning:
 	helm-mode-line-string nil
 	)
   :config
-
+  ;;Completley hide helm header
   (defadvice helm-display-mode-line (after undisplay-header activate)
-    (setq header-line-format nil))
+    (setq header-line-format nil)
+    )
+  ;;; Don't use helm's own displaying mode line function
+  (fset 'helm-display-mode-line #'ignore)
+  (add-hook 'helm-after-initialize-hook
+	    (defun hide-mode-line-in-helm-buffer ()
+	      "Hide mode line in `helm-buffer'."
+	      (with-helm-buffer
+		(setq-local mode-line-format nil))))
   (require 'helm-config)
   (helm-mode)
   ;;Helm minibuffer config
