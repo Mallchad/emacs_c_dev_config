@@ -3,4 +3,5 @@
 
 #Whitelsit
 !init.el
-icons-in-terminal.el
+!icons-in-terminal.el
+!font-lock+.el
