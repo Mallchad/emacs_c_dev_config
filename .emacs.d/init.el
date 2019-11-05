@@ -111,15 +111,14 @@ There are two things you can do about this warning:
   (setq inhibit-compacting-font-caches t) ;;Improve windows performance
   )
 (req-package avy
-  :require hydra
   :config
   (global-set-key (kbd "C-f") 'avy-goto-char)
   (setq avy-highlight-first t
 	avy-background t
 	)
-  (set-face-attribute 'avy-lead-face nil :background '"firebrick")
-  (set-face-attribute 'avy-lead-face-0 nil :background "navy")
-  (set-face-attribute 'avy-lead-face-1 nil :background "dark olive green")
+  (set-face-attribute 'avy-lead-face nil :background '"firebrick" :foreground "white")
+  (set-face-attribute 'avy-lead-face-0 nil :background "navy" :foreground "white")
+  (set-face-attribute 'avy-lead-face-1 nil :background "dark olive green" :foreground "white")
   )
 (req-package beacon
   :hook
@@ -482,7 +481,8 @@ There are two things you can do about this warning:
   )
 (req-package volatile-highlights
   :config
-  (volatile-highlights-mode))(req-package ws-butler
+  (volatile-highlights-mode))
+(req-package ws-butler
   :config
   (ws-butler-global-mode)
   )
