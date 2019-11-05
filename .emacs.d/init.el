@@ -1,13 +1,6 @@
 
-(add-to-list 'load-path '"~/.emacs.d/elpa/font-lock-plus/")
-(add-to-list 'load-path '"~/.emacs.d/icon-fonts/")
-
-(setenv "PATH" (concat (getenv "PATH") "S:/Program Files/msys64/mingw64/bin"))
-(add-to-list 'exec-path "C:/tools/msys64/usr/bin")
-(add-to-list 'exec-path "C:/tools/msys64/mingw64/bin")
-(add-to-list  'exec-path "S:/Program Files/msys64/mingw64/bin")
-(add-to-list 'exec-path "S:/Program Files/msys64/usr/bin")
-
+(add-to-list 'load-path '"~/.emacs.d//etc/font-lock-plus/")
+(add-to-list 'load-path '"~/.emacs.d/etc/icon-fonts/")
 ;;MELPA
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -141,22 +134,20 @@ There are two things you can do about this warning:
 (req-package centaur-tabs
   :hook
   (init-setup . centaur-tabs-mode)
-  (admin-init-setup . (lambda()
-			(centaur-tabs-set-icons t))
-		    )
   :bind
   ("<C-tab>" . centaur-tabs-forward)
   ("<C-S-tab>" . centaur-tabs-backward)
   :init
   ;;Misc Settings
-  (setq centaur-tabs-set-modified-marker t
-	centaur-tabs-set-close-button nil
-	centaur-tabs-cycle-scope 'tabs
-	centaur-tabs-style "bar"
-	centaur-tabs-set-bar t
+  (setq centaur-tabs-set-icons t
+  	centaur-tabs-set-modified-marker t
+  	centaur-tabs-set-close-button nil
+  	centaur-tabs-cycle-scope 'tabs
+  	centaur-tabs-style "bar"
+  	centaur-tabs-set-bar t
 	centaur-tabs-bar 'over
-	centaur-tabs-modified-marker "*"
-	)
+  	centaur-tabs-modified-marker "*"
+  	)
   :config
   ;;Create Uniform Tabbar Appearance
   (centaur-tabs-headline-match)
@@ -178,50 +169,50 @@ There are two things you can do about this warning:
   (push 'company-lsp company-backends)
   )
 (req-package company-box
+  :require icons-in-terminal
   :hook
   (company-mode . company-box-mode)
-
-  (admin-init-setup . (lambda()
-			(require 'icons-in-terminal)
-			(setq company-box-icons-alist 'company-box-icons-icons-in-terminal
-			      company-box-color-icon t)
-			;;Icons In Terminal Icons Setup
-			(setq company-box-icons-unknown 'fa_question_circle)
-			;;Emacs Lisp
-			(setq company-box-icons-elisp
-			      '((fa_tag :face font-lock-function-name-face) ;; Function
-				(fa_cog :face font-lock-variable-name-face) ;; Variable
-				(fa_cube :face font-lock-constant-face) ;; Feature
-				(md_color_lens :face font-lock-doc-face))) ;; Face
-			;;Language Server Protacol Mode
-			(setq company-box-icons-lsp
-			      '((1 . fa_text_height) ;; Text
-				(2 . (fa_tags :face font-lock-function-name-face)) ;; Method
-				(3 . (fa_tag :face font-lock-function-name-face)) ;; Function
-				(4 . (fa_tag :face font-lock-function-name-face)) ;; Constructor
-				(5 . (fa_cog :foreground "#FF9800")) ;; Field
-				(6 . (fa_cog :foreground "#FF9800")) ;; Variable
-				(7 . (fa_cube :foreground "#7C4DFF")) ;; Class
-				(8 . (fa_cube :foreground "#7C4DFF")) ;; Interface
-				(9 . (fa_cube :foreground "#7C4DFF")) ;; Module
-				(10 . (fa_cog :foreground "#FF9800")) ;; Property
-				(11 . md_settings_system_daydream) ;; Unit
-				(12 . (fa_cog :foreground "#FF9800")) ;; Value
-				(13 . (md_storage :face font-lock-type-face)) ;; Enum
-				(14 . (md_closed_caption :foreground "#009688")) ;; Keyword
-				(15 . md_closed_caption) ;; Snippet
-				(16 . (md_color_lens :face font-lock-doc-face)) ;; Color
-				(17 . fa_file_text_o) ;; File
-				(18 . md_refresh) ;; Reference
-				(19 . fa_folder_open) ;; Folder
-				(20 . (md_closed_caption :foreground "#009688")) ;; EnumMember
-				(21 . (fa_square :face font-lock-constant-face)) ;; Constant
-				(22 . (fa_cube :face font-lock-type-face)) ;; Struct
-				(23 . fa_calendar) ;; Event
-				(24 . fa_square_o) ;; Operator
-				(25 . fa_arrows)) ;; TypeParameter
-			      )
-			))
+  :config
+  (if (not (string= user-login-name "40120333"))
+      (setq company-box-icons-alist 'company-box-icons-icons-in-terminal
+	    company-box-color-icon t)
+    ;;Icons In Terminal Icons Setup
+    (setq company-box-icons-unknown 'fa_question_circle)
+    ;;Emacs Lisp
+    (setq company-box-icons-elisp
+	  '((fa_tag :face font-lock-function-name-face) ;; Function
+	    (fa_cog :face font-lock-variable-name-face) ;; Variable
+	    (fa_cube :face font-lock-constant-face) ;; Feature
+	    (md_color_lens :face font-lock-doc-face))) ;; Face
+    ;;Language Server Protacol Mode
+    (setq company-box-icons-lsp
+	  '((1 . fa_text_height) ;; Text
+	    (2 . (fa_tags :face font-lock-function-name-face)) ;; Method
+	    (3 . (fa_tag :face font-lock-function-name-face)) ;; Function
+	    (4 . (fa_tag :face font-lock-function-name-face)) ;; Constructor
+	    (5 . (fa_cog :foreground "#FF9800")) ;; Field
+	    (6 . (fa_cog :foreground "#FF9800")) ;; Variable
+	    (7 . (fa_cube :foreground "#7C4DFF")) ;; Class
+	    (8 . (fa_cube :foreground "#7C4DFF")) ;; Interface
+	    (9 . (fa_cube :foreground "#7C4DFF")) ;; Module
+	    (10 . (fa_cog :foreground "#FF9800")) ;; Property
+	    (11 . md_settings_system_daydream) ;; Unit
+	    (12 . (fa_cog :foreground "#FF9800")) ;; Value
+	    (13 . (md_storage :face font-lock-type-face)) ;; Enum
+	    (14 . (md_closed_caption :foreground "#009688")) ;; Keyword
+	    (15 . md_closed_caption) ;; Snippet
+	    (16 . (md_color_lens :face font-lock-doc-face)) ;; Color
+	    (17 . fa_file_text_o) ;; File
+	    (18 . md_refresh) ;; Reference
+	    (19 . fa_folder_open) ;; Folder
+	    (20 . (md_closed_caption :foreground "#009688")) ;; EnumMember
+	    (21 . (fa_square :face font-lock-constant-face)) ;; Constant
+	    (22 . (fa_cube :face font-lock-type-face)) ;; Struct
+	    (23 . fa_calendar) ;; Event
+	    (24 . fa_square_o) ;; Operator
+	    (25 . fa_arrows)) ;; TypeParameter
+	  )
+    )
   (add-hook 'admin-setup-hook 'company-box-admin-setup)
   )
 (req-package crux
@@ -270,34 +261,23 @@ There are two things you can do about this warning:
   )
 (req-package helm
   :after hydra
-  :init
+  :config
+  (require 'helm-config)
+  (helm-mode)
+  ;;Helm minibuffer config
   (setq helm-autoresize-mode t
 	helm-display-header-line nil
 	helm-header-line-space-before-prompt nil
 	helm-autoresize-max-height 40   ;Always takes up half the screen
 	helm-autoresize-min-height 40
 	helm-split-window-in-side-p t   ;Shows helm window in current buffer
-	helm-mode-line-string nil
 	)
-  :config
-  ;;Completley hide helm header
-  (defadvice helm-display-mode-line (after undisplay-header activate)
-    (setq header-line-format nil)
-    )
-  ;;; Don't use helm's own displaying mode line function
-  (fset 'helm-display-mode-line #'ignore)
-  (add-hook 'helm-after-initialize-hook
-	    (defun hide-mode-line-in-helm-buffer ()
-	      "Hide mode line in `helm-buffer'."
-	      (with-helm-buffer
-		(setq-local mode-line-format nil))))
-  (require 'helm-config)
-  (helm-mode)
-  ;;Helm minibuffer config
   (set-face-attribute 'helm-source-header nil
 		      :height 1.1
 		      :foreground "dark cyan"
 		      )
+  ;; (set-face-attribute 'helm-eob-line nil :height 0.1)
+  ;; (set-face-attribute 'helm-helper nil :height 0.1))
   ;; (defvar helm-source-header-default-box (face-attribute 'helm-source-header :box))
   ;; (defun helm-toggle-header-line ()
   ;;   (if (> (length helm-sources) 1)
@@ -353,14 +333,7 @@ There are two things you can do about this warning:
 				     "spring green"
 				     "sienna1"
 				     )
-	hl-paren-colors '("black"
-			  "black"
-			  "black"
-			  "black"
-			  "black"
-			  "black"
-			  "black"
-			  "black")
+	hl-paren-colors '("black")
 	hl-paren-highlight-adjacent t
 	)
   )
@@ -375,6 +348,9 @@ There are two things you can do about this warning:
 					;(defhydra hydra-grab (:color)
 					;  )
 					;(global-set-key (kbd "C-g") (hydra-grab/body))
+  )
+(req-package icons-in-terminal
+  :ensure nil
   )
 (req-package irony
   :config
@@ -504,17 +480,7 @@ There are two things you can do about this warning:
 ;; Order here doesn't matter
 (req-package-finish)
 ;;Automatic Custom Variables
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
- '(package-selected-packages
-   (quote
-    (company-box zoom ws-butler volatile-highlights undo-tree treemacs sublimity smooth-scrolling smartparens rtags restart-emacs req-package rainbow-mode rainbow-delimiters rainbow-blocks multiple-cursors lsp-ui hl-block-mode highlight-parentheses hide-mode-line helm-swoop helm-projectile flycheck-irony flycheck-inline flycheck-color-mode-line flycheck-clang-analyzer el-get dashboard crux company-lsp color-theme-sanityinc-tomorrow centaur-tabs beacon all-the-icons aggressive-indent))))
+(custom-set-variables)
 '(custom-enabled-themes)
 '(custom-safe-themes)
 
