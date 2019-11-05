@@ -161,11 +161,6 @@ There are two things you can do about this warning:
   :hook
   (init-setup . global-company-mode)
   )
-(req-package company-lsp
-  :require company
-  :config
-  (push 'company-lsp company-backends)
-  )
 (req-package company-box
   :require icons-in-terminal
   :hook
@@ -258,6 +253,9 @@ There are two things you can do about this warning:
   )
 (req-package helm
   :after hydra
+  :require
+  helm-projectile
+  helm-swoop
   :config
   (require 'helm-config)
   (helm-mode)
@@ -271,64 +269,56 @@ There are two things you can do about this warning:
 	helm-mode-line-string nil
 	)
   :config
-  ;;Completley hide helm header
+  (require 'helm-config)
+ ;;;Helm minibuffer config
+  ;; Completley hide helm header
   (defadvice helm-display-mode-line (after undisplay-header activate)
     (setq header-line-format nil)
     )
-  ;;; Don't use helm's own displaying mode line function
+  ;; Don't use helm's own displaying mode line function
   (fset 'helm-display-mode-line #'ignore)
   (add-hook 'helm-after-initialize-hook
 	    (defun hide-mode-line-in-helm-buffer ()
 	      "Hide mode line in `helm-buffer'."
 	      (with-helm-buffer
 		(setq-local mode-line-format nil))))
-  (require 'helm-config)
   (helm-mode)
-  ;;Helm minibuffer config
-	)
-  (set-face-attribute 'helm-source-header nil
-		      :height 1.1
-		      :foreground "dark cyan"
-		      )
-  ;; (set-face-attribute 'helm-eob-line nil :height 0.1)
-  ;; (set-face-attribute 'helm-helper nil :height 0.1))
-  ;; (defvar helm-source-header-default-box (face-attribute 'helm-source-header :box))
-  ;; (defun helm-toggle-header-line ()
-  ;;   (if (> (length helm-sources) 1)
-  ;; 	(set-face-attribute 'helm-source-header
-  ;; 			    nil
-  ;; 			    :foreground helm-source-header-default-foreground
-  ;; 			    :background helm-source-header-default-background
-  ;; 			    :box helm-source-header-default-box
-  ;; 			    :height 1.0)
-  ;;     (set-face-attribute 'helm-source-header
-  ;; 			  nil
-  ;; 			  :foreground (face-attribute 'helm-selection :background)
-  ;; 			  :background (face-attribute 'helm-selection :background)
-  ;; 			  :box nil
-  ;; 			  :height 0.1)))
-  ;; (add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
+  )
+(set-face-attribute 'helm-source-header nil
+		    :height 1.1
+		    :foreground "dark cyan"
+		    )
+;; (set-face-attribute 'helm-eob-line nil :height 0.1)
+;; (set-face-attribute 'helm-helper nil :height 0.1))
+;; (defvar helm-source-header-default-box (face-attribute 'helm-source-header :box))
+;; (defun helm-toggle-header-line ()
+;;   (if (> (length helm-sources) 1)
+;; 	(set-face-attribute 'helm-source-header
+;; 			    nil
+;; 			    :foreground helm-source-header-default-foreground
+;; 			    :background helm-source-header-default-background
+;; 			    :box helm-source-header-default-box
+;; 			    :height 1.0)
+;;     (set-face-attribute 'helm-source-header
+;; 			  nil
+;; 			  :foreground (face-attribute 'helm-selection :background)
+;; 			  :background (face-attribute 'helm-selection :background)
+;; 			  :box nil
+;; 			  :height 0.1)))
+;; (add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
 					;(add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
-  ;;Global Keys
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  ;;Query
-  (defhydra hydra-query (global-map "C-q" :color blue)
-    "query for"
-    ("s" helm-occur "string")
-    ("b" helm-bookmarks "bookmarks")
-    ("p" helm-projectile "project")
-    ("f" helm-flycheck "flycheck")
-    )
+;;Global Keys
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+;;Query
+(defhydra hydra-query (global-map "C-q" :color blue)
+  "query for"
+  ("s" helm-occur "string")
+  ("b" helm-bookmarks "bookmarks")
+  ("p" helm-projectile "project")
+  ("f" helm-flycheck "flycheck")
   )
-(req-package helm-projectile
-  :require helm
-  :config
-  )
-(req-package helm-swoop
-  :require helm
-  :config
-  )
+)
 (req-package hl-block-mode
   :hook
   (prog-mode . hl-block-mode)
@@ -352,28 +342,28 @@ There are two things you can do about this warning:
 	)
   )
 (req-package hydra
-  :config
-  (defhydra hydra-slayer (global-map "C-s" :color blue)
-    "kill shortcuts"
-    ("x" slay-function "function(x)")
-    ("l" kill-whole-line "whole line")
-    ("b" kill-whole-buffer "whole buffer")
-    )
+:config
+(defhydra hydra-slayer (global-map "C-s" :color blue)
+  "kill shortcuts"
+  ("x" slay-function "function(x)")
+  ("l" kill-whole-line "whole line")
+  ("b" kill-whole-buffer "whole buffer")
+  )
 					;(defhydra hydra-grab (:color)
 					;  )
 					;(global-set-key (kbd "C-g") (hydra-grab/body))
-  )
-(req-package irony
-  :config
-  )
+)
 (req-package lsp-mode
+  :after company
+  :require company-lsp
   :hook
   (c++-mode . lsp)
   :config
   (setq lsp-enable-snippet nil)
+  (push 'company-lsp company-backends)
   )
 (req-package lsp-ui
-  :require
+  :after
   lsp-mode
   flycheck
   :config
@@ -382,10 +372,6 @@ There are two things you can do about this warning:
   :require magit
   :config
   )
-;; (req-package powerline
-;;   :config
-;;   (add-hook 'after-init-hook 'powerline-default-theme)
-;;   )
 (req-package multiple-cursors
   :require hydra
   :config
@@ -430,8 +416,9 @@ There are two things you can do about this warning:
   (set-face-attribute 'rainbow-delimiters-depth-9-face nil :foreground "sienna1")
   )
 (req-package rainbow-mode
-  :hook
-  (prog-mode . rainbow-mode))
+:hook
+(prog-mode . rainbow-mode)
+)
 (req-package restart-emacs
   :config
   (global-set-key (kbd "C-x C-a") 'restart-emacs)
@@ -480,12 +467,13 @@ There are two things you can do about this warning:
   (global-set-key (kbd "C-S-z") 'undo-tree-redo)
   )
 (req-package volatile-highlights
-  :config
-  (volatile-highlights-mode))
+:config
+(volatile-highlights-mode)
+)
 (req-package ws-butler
-  :config
-  (ws-butler-global-mode)
-  )
+:config
+(ws-butler-global-mode)
+)
 (req-package zoom
   )
 ;;Solve Dependencies and Load in Correct Order
