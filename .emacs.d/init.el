@@ -1,5 +1,4 @@
-(add-to-list 'load-path '"~/.emacs.d/etc/font-lock-plus/")
-(add-to-list 'load-path '"~/.emacs.d/etc/icon-fonts/")
+(add-to-list 'load-path '"~/.emacs.d/etc/")
 ;;MELPA
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -162,10 +161,11 @@ There are two things you can do about this warning:
   (init-setup . global-company-mode)
   )
 (req-package company-box
-  :require icons-in-terminal
   :hook
   (company-mode . company-box-mode)
   :config
+  (require 'icons-in-terminal)
+  (require 'font-lock+)
   (if (not (string= user-login-name "40120333"))
       (setq company-box-icons-alist 'company-box-icons-icons-in-terminal
 	    company-box-color-icon t)
@@ -483,15 +483,7 @@ There are two things you can do about this warning:
 (req-package-finish)
 ;;Automatic Custom Variables
 (custom-set-variables)
-'(custom-enabled-themes)
-'(custom-safe-themes)
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(custom-set-faces)
 
 (init-setup)
 (provide 'init)
