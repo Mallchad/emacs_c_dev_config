@@ -3,7 +3,7 @@
 ;;MELPA
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-		    (not (gnutls-available-p))))
+                    (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
   (when no-ssl
     (warn "/
@@ -98,6 +98,10 @@ There are two things you can do about this warning:
 ;;Req Package Setup
 (require 'req-package)
 (setq use-package-always-ensure t)
+(req-package async
+  :config
+  (setq async-bytecomp-package-mode)
+  )
   (req-package color-theme-sanityinc-tomorrow
     :config
     (load-theme 'sanityinc-tomorrow-bright t)
