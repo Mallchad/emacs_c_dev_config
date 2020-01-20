@@ -338,7 +338,8 @@ There are two things you can do about this warning:
   :hook
   (c++-mode . lsp)
   :config
-  (setq lsp-enable-snippet nil)
+  (setq lsp-enable-snippet nil
+        lsp-prefer-flymake nil)
   (push 'company-lsp company-backends)
   )
 (req-package lsp-ui
