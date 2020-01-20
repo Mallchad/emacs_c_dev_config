@@ -323,6 +323,11 @@ There are two things you can do about this warning:
 	hl-paren-highlight-adjacent t
 	)
   )
+(req-package hl-todo
+  :config
+  (global-hl-todo-mode
+   )
+  )
 (req-package hydra
 :config
 (defhydra hydra-slayer (global-map "C-s" :color blue)
