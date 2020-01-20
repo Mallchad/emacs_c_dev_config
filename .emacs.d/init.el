@@ -176,11 +176,6 @@ There are two things you can do about this warning:
   ;;Group tabs by projects
   (centaur-tabs-group-by-projectile-project)
   )
-
-(req-package color-theme-sanityinc-tomorrow
-  :config
-  (load-theme 'sanityinc-tomorrow-bright t)
-  )
 (req-package company
   :hook
   (prog-mode . company-mode)
@@ -200,7 +195,8 @@ There are two things you can do about this warning:
   )
 (req-package dashboard
   :config
-  (dashboard-setup-startup-hook))
+  (dashboard-setup-startup-hook)
+  )
 (req-package flycheck
   :hook
   (init-setup . global-flycheck-mode)
@@ -238,6 +234,7 @@ There are two things you can do about this warning:
   :after hydra
   :require
   helm-projectile
+  helm-flycheck
   helm-swoop
   :init
   ;; Completley hide helm header
