@@ -243,55 +243,59 @@ There are two things you can do about this warning:
     (setq header-line-format nil)
     )
   (add-hook 'helm-after-initialize-hook
-	    (defun hide-mode-line-in-helm-buffer ()
-	      "Hide mode line in `helm-buffer'."
-	      (with-helm-buffer
-		(setq-local mode-line-format nil)
-		)
-	      )
-	    )
+            (defun hide-mode-line-in-helm-buffer ()
+              "Hide mode line in `helm-buffer'."
+              (with-helm-buffer
+                (setq-local mode-line-format nil)
+                )
+              )
+            )
   :config
   (require 'helm-config)
   (helm-mode)
   ;;Helm minibuffer config
   (setq helm-autoresize-mode t
-	helm-display-header-line nil
-	helm-header-line-space-before-prompt nil
-	helm-autoresize-max-height 40   ;Always takes up half the screen
-	helm-autoresize-min-height 40
-	helm-split-window-in-side-p t   ;Shows helm window in current buffer
-	helm-mode-line-string nil
-	)
+        helm-display-header-line nil
+        helm-header-line-space-before-prompt nil
+        helm-autoresize-max-height 40   ;Always takes up half the screen
+        helm-autoresize-min-height 40
+        helm-split-window-in-side-p t   ;Shows helm window in current buffer
+        helm-mode-line-string nil
+        )
   :config
   (require 'helm-config)
  ;;;Helm minibuffer config
   ;; Don't use helm's own displaying mode line function
   (set-face-attribute 'helm-source-header nil
-		      :height 1.1
-		      :foreground "dark cyan"
-		      )
+                      :height 1.1
+                      :foreground "dark cyan"
+                      )
   ;; (set-face-attribute 'helm-eob-line nil :height 0.1)
   ;; (set-face-attribute 'helm-helper nil :height 0.1))
   ;; (defvar helm-source-header-default-box (face-attribute 'helm-source-header :box))
   ;; (defun helm-toggle-header-line ()
   ;;   (if (> (length helm-sources) 1)
-  ;; 	(set-face-attribute 'helm-source-header
-  ;; 			    nil
-  ;; 			    :foreground helm-source-header-default-foreground
-  ;; 			    :background helm-source-header-default-background
-  ;; 			    :box helm-source-header-default-box
-  ;; 			    :height 1.0)
+  ;;    (set-face-attribute 'helm-source-header
+  ;;                        nil
+  ;;                        :foreground helm-source-header-default-foreground
+  ;;                        :background helm-source-header-default-background
+  ;;                        :box helm-source-header-default-box
+  ;;                        :height 1.0)
   ;;     (set-face-attribute 'helm-source-header
-  ;; 			  nil
-  ;; 			  :foreground (face-attribute 'helm-selection :background)
-  ;; 			  :background (face-attribute 'helm-selection :background)
-  ;; 			  :box nil
-  ;; 			  :height 0.1)))
+  ;;                      nil
+  ;;                      :foreground (face-attribute 'helm-selection :background)
+  ;;                      :background (face-attribute 'helm-selection :background)
+  ;;                      :box nil
+  ;;                      :height 0.1)))
   ;; (add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
-					;(add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
-  ;;Global Keys
+                                        ;(add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
+  ;;Keybinds
   (global-set-key (kbd "M-x") 'helm-M-x)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  ;;Swap Action and Completion Buttons
+  (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
+  (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
+  (define-key helm-map (kbd "C-z") #'helm-select-action)
   ;;Query
   (defhydra hydra-query (global-map "C-q" :color blue)
     "query for"
