@@ -363,7 +363,10 @@ There are two things you can do about this warning:
   ;;   ("r" mc/mark-all-in-region "mark in region")
   ;;   )
   )
-
+(req-package omnisharp
+  ;; :hook
+  ;; (csharp-mode . omnisharp-mode)
+  )
 (req-package projectile
   :hook
   (init-setup . projectile-mode)
