@@ -423,23 +423,23 @@ There are two things you can do about this warning:
   :hook
   (init-setup . smooth-scrolling-mode)
   :config
-  (setq scroll-conservatively 2)
+  (setq scroll-conservatively nil)
   )
 (req-package sublimity
   :hook
   (init-setup . sublimity-mode)
   :config
   (require 'sublimity-scroll)
-  (require 'sublimity-attractive)
+  ;; (require 'sublimity-attractive)
   ;;(require 'sublimity-map) ;; experimental
 
   (setq sublimity-scroll-weight 15
-	sublimity-scroll-drift-length 0
-	;;	sublimity-map-size 10
-	;;      sublimity-map-fraction 0.3
-	;;	sublimity-map-text-scale -7
-	;;	sublimity-map-set-delay 1
-	)
+        sublimity-scroll-drift-length 0
+        ;;      sublimity-map-size 10
+        ;;      sublimity-map-fraction 0.3
+        ;;      sublimity-map-text-scale -7
+        ;;      sublimity-map-set-delay 1
+        )
   )
 (req-package treemacs
   )
