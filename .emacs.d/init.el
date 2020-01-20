@@ -309,19 +309,11 @@ There are two things you can do about this warning:
   :hook
   (init-setup . global-highlight-parentheses-mode)
   :config
-  (setq hl-paren-background-colors '("white"
-				     "dark orange"
-				     "deep pink"
-				     "chartreuse"
-				     "deep sky blue"
-				     "yellow"
-				     "orchid"
-				     "spring green"
-				     "sienna1"
-				     )
-	hl-paren-colors '("black")
-	hl-paren-highlight-adjacent t
-	)
+  (setq hl-paren-background-colors '("gray"
+                                     )
+        hl-paren-colors '("black")
+        hl-paren-highlight-adjacent nil
+        )
   )
 (req-package hl-todo
   :config
