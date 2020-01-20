@@ -448,6 +448,7 @@ There are two things you can do about this warning:
   (global-undo-tree-mode)
   (global-set-key (kbd "C-z") 'undo-tree-undo)
   (global-set-key (kbd "C-S-z") 'undo-tree-redo)
+  (setq undo-tree-enable-undo-in-region nil)
   )
 (req-package volatile-highlights
 :config
