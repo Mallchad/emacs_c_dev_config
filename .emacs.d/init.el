@@ -91,6 +91,10 @@ There are two things you can do about this warning:
 ;;Req Package Setup
 (require 'req-package)
 (setq use-package-always-ensure t)
+  (req-package color-theme-sanityinc-tomorrow
+    :config
+    (load-theme 'sanityinc-tomorrow-bright t)
+    )
 (req-package ace-window
   :require ace-window
   :config
