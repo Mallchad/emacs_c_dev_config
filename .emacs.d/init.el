@@ -305,10 +305,6 @@ There are two things you can do about this warning:
     ("f" helm-flycheck "flycheck")
     )
   )
-(req-package hl-block-mode
-  :hook
-  (prog-mode . hl-block-mode)
-  )
 (req-package highlight-parentheses
   :hook
   (init-setup . global-highlight-parentheses-mode)
