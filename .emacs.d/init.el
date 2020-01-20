@@ -321,17 +321,17 @@ There are two things you can do about this warning:
    )
   )
 (req-package hydra
-:config
-(defhydra hydra-slayer (global-map "C-s" :color blue)
-  "kill shortcuts"
-  ("x" slay-function "function(x)")
-  ("l" kill-whole-line "whole line")
-  ("b" kill-whole-buffer "whole buffer")
+  :config
+  (defhydra hydra-slayer (global-map "C-s" :color blue)
+    "kill shortcuts"
+    ("x" slay-function "function(x)" :color red)
+    ("l" kill-whole-line "whole line" :color red)
+    ("b" kill-whole-buffer "whole buffer")
+    )
+                                        ;(defhydra hydra-grab (:color)
+                                        ;  )
+                                        ;(global-set-key (kbd "C-g") (hydra-grab/body))
   )
-					;(defhydra hydra-grab (:color)
-					;  )
-					;(global-set-key (kbd "C-g") (hydra-grab/body))
-)
 (req-package lsp-mode
   :after company
   :require company-lsp
