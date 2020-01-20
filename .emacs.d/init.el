@@ -1,8 +1,9 @@
+;;Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
 ;;MELPA
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
+		    (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
   (when no-ssl
     (warn "/
@@ -42,29 +43,22 @@ There are two things you can do about this warning:
   )
 (defun global-keys-setup()
   ;;Sets up personal keybinds after initilization
-  ;;Char Navigation
-  (global-set-key (kbd "C-i") 'previous-line)
-  (global-set-key (kbd "C-j") 'backward-char)
-  (global-set-key (kbd "C-k") 'next-line)
-  (global-set-key (kbd "C-l") 'forward-char)
-  ;;Line Navigation
-  (global-set-key (kbd "C-M-j") 'backward-word)
-  (global-set-key (kbd "C-M-l") 'forward-word)
-  (global-set-key (kbd "<M-up>") 'scroll-up-in-place)
-  (global-set-key (kbd "<M-down>") 'scroll-down-in-place)
+  ;;Emacs Control Bindings
+  (global-set-key (kbd "C-x r") 'revert-buffer)
+  (global-set-key (kbd "M-p") 'scroll-up-in-place)
+  (global-set-key (kbd "M-n") 'scroll-down-in-place)
   ;;sexp Navigation
-  (global-set-key (kbd "C-u") 'sp-backward-sexp)
-  (global-set-key (kbd "C-o") 'sp-forward-sexp)
-  (global-set-key (kbd "C-M-u") 'beginning-of-line)
-  (global-set-key (kbd "C-M-o") 'end-of-line)
   )
+(defun cpp-mode-hook()
+  )
+(add-hook 'c++-mode-hook 'cpp-mode-hook)
 (defun elisp-mode-hook()
   )
 (add-hook 'emacs-lisp-mode 'elisp-mode-hook)
 (defun programming-mode()
   ;;Sets up buffer for programming
   (display-line-numbers-mode)
-  )
+  (electric-indent-mode 0))
 (defvar init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
