@@ -82,6 +82,12 @@ There are two things you can do about this warning:
   (global-hl-line-mode)
   ;;Misc Setup
   (global-keys-setup)
+  (delete-other-windows)
+  (split-window-horizontally)
+  (setq inhibit-compacting-font-caches t   ;performance improvement
+	global-subword-mode t                     ;easier navigation for camelcasing
+	indent-tabs-mode nil               ;use spaces for indendation
+	)
   (add-hook 'prog-mode-hook 'programming-mode)
   (if (not (string= user-login-name "40120333"))
       (run-hooks 'admin-init-setup-hook)
