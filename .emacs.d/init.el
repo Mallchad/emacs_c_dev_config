@@ -76,18 +76,23 @@ There are two things you can do about this warning:
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
+  ;; Disable Window Decorations
+  (setq menu-bar-mode nil
+        tool-bar-mode nil
+        scroll-bar-mode nil
+        fring-mode nil
+        )
   (set-frame-parameter nil 'undecorated nil)
-  (fringe-mode 0)
-  ;;Enable built-in modes
-  (global-hl-line-mode)
   ;;Misc Setup
   (global-keys-setup)
   (delete-other-windows)
   (split-window-horizontally)
-  (transient-mark-mode)
   (setq inhibit-compacting-font-caches t   ;performance improvement
+        ;; Mode Setting
         global-subword-mode t              ;easier navigation for camelcasing
         indent-tabs-mode nil               ;use spaces for indendation
+        transient-mark-mode nil
+        global-hl-line-mode t
         )
   (add-hook 'prog-mode-hook 'programming-mode)
   (if (not (string= user-login-name "40120333"))
@@ -157,14 +162,14 @@ There are two things you can do about this warning:
   :init
   ;;Misc Settings
   (setq centaur-tabs-set-icons t
-  	centaur-tabs-set-modified-marker t
-  	centaur-tabs-set-close-button nil
-  	centaur-tabs-cycle-scope 'tabs
-  	centaur-tabs-style "bar"
-  	centaur-tabs-set-bar t
-	centaur-tabs-bar 'over
-  	centaur-tabs-modified-marker "*"
-  	)
+        centaur-tabs-set-modified-marker t
+        centaur-tabs-set-close-button nil
+        centaur-tabs-cycle-scope 'tabs
+        centaur-tabs-style "bar"
+        centaur-tabs-set-bar t
+        centaur-tabs-bar 'over
+        centaur-tabs-modified-marker "*"
+        )
   :config
   ;;Create Uniform Tabbar Appearance
   (centaur-tabs-headline-match)
@@ -178,11 +183,7 @@ There are two things you can do about this warning:
   )
 (req-package company
   :hook
-  (init-setup . global-company-mode)
-  )
-(req-package company-box
-  :hook
-  (company-mode . company-box-mode)
+  (prog-mode . company-mode)
   :config
   (require 'icons-in-terminal)
   (require 'font-lock+)
