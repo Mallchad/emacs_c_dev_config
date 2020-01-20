@@ -112,30 +112,41 @@ There are two things you can do about this warning:
   )
 (req-package aggressive-indent
   :hook
-  (prog-mode . aggressive-indent-mode)
+  (emacs-lisp-mode . aggressive-indent-mode)
+  :config
+  (add-to-list 'aggressive-indent-dont-indent-if
+               '(and (derived-mode-p 'c++-mode)
+                     (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
+                                         (thing-at-point 'line))))
+               )
+  (add-to-list 'aggressive-indent-dont-indent-if
+               '(and (derived-mode-p 'c++-mode)
+                     (string-match "^." (thing-at-point 'line))
+                     )
+               )
   )
-(req-package all-the-icons
-  :init
-  (setq inhibit-compacting-font-caches t) ;;Improve windows performance
-  )
+;; (req-package all-the-icons
+;;   :init
+;;   (setq inhibit-compacting-font-caches t) ;;Improve windows performance
+;;   )
 (req-package avy
   :config
-  (global-set-key (kbd "C-f") 'avy-goto-char)
+  (global-set-key (kbd "C-r") 'avy-goto-char)
   (setq avy-highlight-first t
-	avy-background t
-	)
+        avy-background t
+        )
   (set-face-attribute 'avy-lead-face nil :background '"firebrick" :foreground "white")
   (set-face-attribute 'avy-lead-face-0 nil :background "navy" :foreground "white")
-  (set-face-attribute 'avy-lead-face-1 nil :background "dark olive green" :foreground "white")
+  (set-face-attribute 'avy-lead-face-2 nil :background "dark olive green" :foreground "white")
   )
 (req-package beacon
   :hook
   (init-setup . beacon-mode)
   :config
   (setq beacon-color "gold"
-	beacon-blink-when-point-moves-vertically 1
-	beacon-blink-when-point-moves-horizontally 20
-	)
+        beacon-blink-when-point-moves-vertically 1
+        beacon-blink-when-point-moves-horizontally 20
+        )
   )
 (req-package centaur-tabs
   :hook
