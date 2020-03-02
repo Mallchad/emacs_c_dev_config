@@ -106,6 +106,7 @@ There are two things you can do about this warning:
         transient-mark-mode nil
         global-hl-line-mode t
         )
+  (server-start)
   (add-hook 'prog-mode-hook 'programming-mode)
   (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
