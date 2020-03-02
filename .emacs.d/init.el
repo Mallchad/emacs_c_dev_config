@@ -106,6 +106,8 @@ There are two things you can do about this warning:
         transient-mark-mode nil
         global-hl-line-mode t
         )
+  ;; TODO(mallchad) setup emacs-daemon for free-frame editing with
+  ;; non-existant startup
   (server-start)
   (add-hook 'prog-mode-hook 'programming-mode)
   (run-hooks 'admin-init-setup-hook)
@@ -128,7 +130,7 @@ There are two things you can do about this warning:
   )
 (req-package aggressive-indent
   :hook
-  (emacs-lisp-mode . aggressive-indent-mode)
+  (prog-mode . aggressive-indent-mode)
   :config
   (add-to-list 'aggressive-indent-dont-indent-if
                '(and (derived-mode-p 'c++-mode)
