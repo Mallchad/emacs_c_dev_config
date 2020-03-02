@@ -1,6 +1,12 @@
-;;Extra Load Paths
+;; Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
-;;MELPA
+;; Macros
+(defmacro WITH_SYSTEM(type &rest body)
+  "Evaluate BODY if `system-type' equals TYPE."
+  (declare (indent defun))
+  `(when (eq system-type ',type)
+     ,@body))
+;; MELPA
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
@@ -68,10 +74,16 @@ There are two things you can do about this warning:
 (defun init-setup()
   ;;Runs after-initilization setup
   ;;Set Fonts
-  (add-to-list 'default-frame-alist
-	       '(font . "Consolas-13:style=Regular"))
-					;(toggle-frame-fullscreen)
+  (WITH_SYSTEM gnu/linux
+    (add-to-list 'default-frame-alist
+		 '(font . "Source Code Pro-13:style=Regular")
+		 ))
+  (WITH_SYSTEM windows-nt
+    (add-to-list 'default-frame-alist
+		 '(font . "Consolas-13:style=Regular")
+		 ))
   (toggle-frame-maximized)
+					;(toggle-frame-fullscreen)
   ;;Disable window decorations
   (menu-bar-mode -1)
   (tool-bar-mode -1)
