@@ -101,6 +101,10 @@ There are two things you can do about this warning:
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
+  (set-frame-parameter nil 'undecorated nil)
+  (fringe-mode 0)
+  ;;Enable built-in modes
+  (global-hl-line-mode)
   ;; Disable Window Decorations
   (setq menu-bar-mode nil
         tool-bar-mode nil
@@ -120,7 +124,7 @@ There are two things you can do about this warning:
         global-hl-line-mode t
         )
   ;; TODO(mallchad) setup emacs-daemon for free-frame editing with
-  ;; non-existant startup
+  ;; non-existant startup times
   (server-start)
   (add-hook 'prog-mode-hook 'programming-mode)
   (run-hooks 'admin-init-setup-hook)
