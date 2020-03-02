@@ -55,12 +55,25 @@ There are two things you can do about this warning:
   (global-set-key (kbd "M-n") 'scroll-down-in-place)
   ;;sexp Navigation
   )
-(defun cpp-mode-hook()
+(defun cpp-mode-setup()
+  ;; c-indent-comment-alist, c-indent-comments-syntactically-p (see Indentation Commands);
+  ;; c-doc-comment-style (see Doc Comments);
+  ;; c-block-comment-prefix, c-comment-prefix-regexp (see Custom Filling and Breaking);
+  ;; c-hanging-braces-alist (see Hanging Braces);
+  ;; c-hanging-colons-alist (see Hanging Colons);
+  ;; c-hanging-semi&comma-criteria (see Hanging Semicolons and Commas);
+  ;; c-cleanup-list (see Clean-ups);
+  ;; c-basic-offset (see Customizing Indentation);
+  ;; c-offsets-alist (see c-offsets-alist);
+  ;; c-comment-only-line-offset (see Comment Line-Up);
+  ;; c-special-indent-hook, c-label-minimum-indentation (see Other Indentation);
+  ;; c-backslash-column, c-backslash-max-column (see Custom Macros).
+  (add-to-list ())
   )
-(add-hook 'c++-mode-hook 'cpp-mode-hook)
-(defun elisp-mode-hook()
+(add-hook 'c++-mode-hook 'cpp-mode-setup)
+(defun elisp-mode-setup()
   )
-(add-hook 'emacs-lisp-mode 'elisp-mode-hook)
+(add-hook 'emacs-lisp-mode 'elisp-mode-setup)
 (defun programming-mode()
   ;;Sets up buffer for programming
   (display-line-numbers-mode)
@@ -136,11 +149,6 @@ There are two things you can do about this warning:
                '(and (derived-mode-p 'c++-mode)
                      (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
                                          (thing-at-point 'line))))
-               )
-  (add-to-list 'aggressive-indent-dont-indent-if
-               '(and (derived-mode-p 'c++-mode)
-                     (string-match "^." (thing-at-point 'line))
-                     )
                )
   )
 ;; (req-package all-the-icons
