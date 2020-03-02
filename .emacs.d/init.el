@@ -107,9 +107,7 @@ There are two things you can do about this warning:
         global-hl-line-mode t
         )
   (add-hook 'prog-mode-hook 'programming-mode)
-  (if (not (string= user-login-name "40120333"))
-      (run-hooks 'admin-init-setup-hook)
-    )
+  (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
   )
 ;;Req Package Setup
