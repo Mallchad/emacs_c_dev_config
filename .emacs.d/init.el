@@ -92,8 +92,8 @@ There are two things you can do about this warning:
   (setq menu-bar-mode nil
         tool-bar-mode nil
         scroll-bar-mode nil
-        fring-mode nil
         )
+  (fringe-mode 0)
   (set-frame-parameter nil 'undecorated nil)
   ;;Misc Setup
   (global-keys-setup)
