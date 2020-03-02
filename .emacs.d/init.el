@@ -193,7 +193,7 @@ There are two things you can do about this warning:
   :hook
   (prog-mode . company-mode)
   :config
-  ;; (company-tng-configure-default)
+  (company-tng-configure-default)
   (setq company-require-match 'never
         company-idle-delay 0.1
         )
