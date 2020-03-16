@@ -98,11 +98,6 @@ There are two things you can do about this warning:
                  ))
   (toggle-frame-maximized)
                                         ;(toggle-frame-fullscreen)
-  ;;Disable window decorations
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (set-frame-parameter nil 'undecorated nil)
   (fringe-mode 0)
   ;;Enable built-in modes
   (global-hl-line-mode)
