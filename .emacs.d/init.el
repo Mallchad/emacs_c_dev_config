@@ -68,7 +68,7 @@ There are two things you can do about this warning:
   ;; c-comment-only-line-offset (see Comment Line-Up);
   ;; c-special-indent-hook, c-label-minimum-indentation (see Other Indentation);
   ;; c-backslash-column, c-backslash-max-column (see Custom Macros).
-  (add-to-list ())
+  ;; (add-to-list ())
   )
 (add-hook 'c++-mode-hook 'cpp-mode-setup)
 (defun elisp-mode-setup()
@@ -86,6 +86,7 @@ There are two things you can do about this warning:
   )
 (defun init-setup()
   ;;Runs after-initilization setup
+  (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
@@ -123,9 +124,6 @@ There are two things you can do about this warning:
         transient-mark-mode nil
         global-hl-line-mode t
         )
-  ;; TODO(mallchad) setup emacs-daemon for free-frame editing with
-  ;; non-existant startup times
-  (server-start)
   (add-hook 'prog-mode-hook 'programming-mode)
   (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
@@ -135,7 +133,7 @@ There are two things you can do about this warning:
 (setq use-package-always-ensure t)
 (req-package async
   :config
-  (setq async-bytecomp-package-mode)
+  (setq async-bytecomp-package-mode t)
   )
   (req-package color-theme-sanityinc-tomorrow
     :config
