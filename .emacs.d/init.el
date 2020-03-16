@@ -90,14 +90,14 @@ There are two things you can do about this warning:
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
-		 '(font . "Source Code Pro-13:style=Regular")
-		 ))
+                 '(font . "Source Code Pro-13:style=Regular")
+                 ))
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
-		 '(font . "Consolas-13:style=Regular")
-		 ))
+                 '(font . "Consolas-13:style=Regular")
+                 ))
   (toggle-frame-maximized)
-					;(toggle-frame-fullscreen)
+                                        ;(toggle-frame-fullscreen)
   ;;Disable window decorations
   (menu-bar-mode -1)
   (tool-bar-mode -1)
