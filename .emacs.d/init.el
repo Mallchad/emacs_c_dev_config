@@ -322,7 +322,8 @@ There are two things you can do about this warning:
   ;;Query
   (defhydra hydra-query (global-map "C-q" :color blue)
     "query for"
-    ("s" helm-occur "string")
+    ("s" helm-swoop-without-pre-input "string")
+    ("m" helm-mini "mini")
     ("b" helm-bookmarks "bookmarks")
     ("p" helm-projectile "project")
     ("f" helm-flycheck "flycheck")
@@ -378,6 +379,7 @@ There are two things you can do about this warning:
 (req-package multiple-cursors
   :require hydra
   :config
+  (global-set-key (kbd "M-m") mc/edit-lines-empty-lines)
   ;; (defhydra hydra-multicurses (global-map "C-m" :color red)
   ;;   "Multiple Cursors"
   ;;   ("q" hydra--body-exit "quit")
