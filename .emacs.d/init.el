@@ -81,11 +81,25 @@ There are two things you can do about this warning:
 (defvar init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
-(defvar admin-init-setup-hook nil
-  ;;A normal hook that runs admin setup hook prior to init-setup-hook
+(defun cemacs-configure-local-frame(frame)
+  "Set the frame paramaters for the current frame."
+  (toggle-frame-maximized)
+  (split-window-horizontally)
+  (set-frame-parameter frame 'menu-bar-lines nil)
+  (set-frame-parameter frame 'left-fringe nil)
+  (set-frame-parameter frame 'right-fringe nil)
+  (set-frame-parameter frame 'left-fringe nil)
+  (set-frame-parameter frame 'vertical-scroll-bars nil)
+  (set-frame-parameter frame 'horizontal-scroll-bars nil)
+  (set-frame-parameter frame 'left-fringe nil)
+  (set-frame-parameter frame 'tool-bar-lines nil)
   )
-(defun init-setup()
-  ;;Runs after-initilization setup
+(add-hook 'after-make-frame-functions 'cemacs-configure-local-frame)
+(defun cemacs-configure-session-decorations()
+  "Set the default frame paramaters and aethetics for the whole Emacs
+session.
+Note this assumes that a frame does not already exist, for frame
+configuration see cemacs-configure-local-frame"
   (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
@@ -96,17 +110,20 @@ There are two things you can do about this warning:
     (add-to-list 'default-frame-alist
                  '(font . "Consolas-13:style=Regular")
                  ))
-  (toggle-frame-maximized)
-                                        ;(toggle-frame-fullscreen)
-  (fringe-mode 0)
   ;;Enable built-in modes
   (global-hl-line-mode)
   ;; Disable Window Decorations
-  (setq menu-bar-mode nil
-        tool-bar-mode nil
-        scroll-bar-mode nil
-        )
-  (fringe-mode 0)
+  (if (display-graphic-p)  ; Resolve inital frame configuration
+      (cemacs-configure-local-frame (selected-frame))
+    )
+  (setq-default menu-bar-mode nil
+                tool-bar-mode nil
+                scroll-bar-mode nil
+                vertical-scroll-bar nil
+                horizontal-scroll-bar nil
+                fringe-mode nil
+                mode-line-format nil
+                )
   (set-frame-parameter nil 'undecorated nil)
   ;;Misc Setup
   (global-keys-setup)
@@ -120,6 +137,7 @@ There are two things you can do about this warning:
         global-hl-line-mode t
         )
   (add-hook 'prog-mode-hook 'programming-mode)
+  (cemacs-configure-session-decorations)
   (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
   )
