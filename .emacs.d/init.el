@@ -47,13 +47,32 @@ There are two things you can do about this warning:
   (forward-line 1)
   (View-scroll-line-forward)
   )
-(defun global-keys-setup()
-  ;;Sets up personal keybinds after initilization
+(defun cemacs-delete-word (mult)
+  "Delete characters forward until encountering the end of a word.
+With argument MULT, repeat this that many times, or perform deletion backwards
+if negative.
+This command does not push text to `kill-ring'."
+  (interactive "p")
+  (delete-region
+   (point)
+   (progn
+     (forward-word mult)
+     (point))))
+(defun cemacs-delete-word-backwards (mult)
+  "Delete characters backward until encountering the beginning of a word.
+With argument MULT, repeat this many times."
+  (interactive "p")
+  (cemacs-delete-word (- mult))
+  )
+(defun cemacs-global-keys-configure()
+  "Set up personal keybinds after initilization."
   ;;Emacs Control Bindings
   (global-set-key (kbd "C-x r") 'revert-buffer)
-  (global-set-key (kbd "M-p") 'scroll-up-in-place)
-  (global-set-key (kbd "M-n") 'scroll-down-in-place)
-  ;;sexp Navigation
+  (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
+  (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
+  (global-set-key (kbd "M-d") 'cemacs-delete-word)
+  (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
+  )
   )
 (defun cpp-mode-setup()
   ;; c-indent-comment-alist, c-indent-comments-syntactically-p (see Indentation Commands);
@@ -126,7 +145,7 @@ configuration see cemacs-configure-local-frame"
                 )
   (set-frame-parameter nil 'undecorated nil)
   ;;Misc Setup
-  (global-keys-setup)
+  (cemacs-global-keys-configure)
   (delete-other-windows)
   (split-window-horizontally)
   (setq inhibit-compacting-font-caches t   ;performance improvement
