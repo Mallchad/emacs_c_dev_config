@@ -156,6 +156,7 @@ configuration see cemacs-configure-local-frame"
         global-hl-line-mode t
         )
   (add-hook 'prog-mode-hook 'programming-mode)
+  (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   (cemacs-configure-session-decorations)
   (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
