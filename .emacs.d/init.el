@@ -357,11 +357,13 @@ configuration see cemacs-configure-local-frame"
   ;;Query
   (defhydra hydra-query (:color blue)
     "query for"
-    ("s" helm-swoop-without-pre-input "string")
-    ("m" helm-mini "mini")
-    ("b" helm-bookmarks "bookmarks")
-    ("p" helm-projectile "project")
-    ("f" helm-flycheck "flycheck")
+    ("s" helm-swoop-without-pre-input "String")
+    ("m" helm-mini "Mini")
+    ("b" helm-bookmarks "Bookmarks")
+    ("p" helm-projectile "Projectile")
+    ("f" helm-flycheck "Flycheck")
+    ("r" helm-rg "Ripgrep")
+    ("C-p" helm-projectile-rg "Projectile rg")
     )
   (global-set-key (kbd "C-q") 'hydra-query/body)
   )
