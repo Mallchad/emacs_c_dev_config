@@ -245,7 +245,11 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package crux
   :config
+  (global-set-key (kbd "C-a") 'crux-move-beginning-of-line)
   (global-set-key (kbd "C-x e") 'crux-find-user-init-file)
+  (global-set-key (kbd "C-j") 'crux-top-join-line)
+  (global-set-key (kbd "C-x C-o") 'crux-swap-windows)
+  (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
   )
 (req-package csharp-mode
   :require csharp-mode
