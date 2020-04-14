@@ -156,6 +156,8 @@ configuration see cemacs-configure-local-frame"
         global-hl-line-mode t
         )
   (add-hook 'prog-mode-hook 'programming-mode)
+  (setq custom-file (concat user-emacs-directory "/var/custom.el")
+        ) ; move location of custom file
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   (cemacs-configure-session-decorations)
   (run-hooks 'admin-init-setup-hook)
