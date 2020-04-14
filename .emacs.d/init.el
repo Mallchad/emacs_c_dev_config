@@ -47,13 +47,32 @@ There are two things you can do about this warning:
   (forward-line 1)
   (View-scroll-line-forward)
   )
-(defun global-keys-setup()
-  ;;Sets up personal keybinds after initilization
+(defun cemacs-delete-word (mult)
+  "Delete characters forward until encountering the end of a word.
+With argument MULT, repeat this that many times, or perform deletion backwards
+if negative.
+This command does not push text to `kill-ring'."
+  (interactive "p")
+  (delete-region
+   (point)
+   (progn
+     (forward-word mult)
+     (point))))
+(defun cemacs-delete-word-backwards (mult)
+  "Delete characters backward until encountering the beginning of a word.
+With argument MULT, repeat this many times."
+  (interactive "p")
+  (cemacs-delete-word (- mult))
+  )
+(defun cemacs-global-keys-configure()
+  "Set up personal keybinds after initilization."
   ;;Emacs Control Bindings
   (global-set-key (kbd "C-x r") 'revert-buffer)
-  (global-set-key (kbd "M-p") 'scroll-up-in-place)
-  (global-set-key (kbd "M-n") 'scroll-down-in-place)
-  ;;sexp Navigation
+  (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
+  (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
+  (global-set-key (kbd "M-d") 'cemacs-delete-word)
+  (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
+  )
   )
 (defun cpp-mode-setup()
   ;; c-indent-comment-alist, c-indent-comments-syntactically-p (see Indentation Commands);
@@ -81,11 +100,25 @@ There are two things you can do about this warning:
 (defvar init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
-(defvar admin-init-setup-hook nil
-  ;;A normal hook that runs admin setup hook prior to init-setup-hook
+(defun cemacs-configure-local-frame(frame)
+  "Set the frame paramaters for the current frame."
+  (toggle-frame-maximized)
+  (split-window-horizontally)
+  (set-frame-parameter frame 'menu-bar-lines nil)
+  (set-frame-parameter frame 'left-fringe nil)
+  (set-frame-parameter frame 'right-fringe nil)
+  (set-frame-parameter frame 'left-fringe nil)
+  (set-frame-parameter frame 'vertical-scroll-bars nil)
+  (set-frame-parameter frame 'horizontal-scroll-bars nil)
+  (set-frame-parameter frame 'left-fringe nil)
+  (set-frame-parameter frame 'tool-bar-lines nil)
   )
-(defun init-setup()
-  ;;Runs after-initilization setup
+(add-hook 'after-make-frame-functions 'cemacs-configure-local-frame)
+(defun cemacs-configure-session-decorations()
+  "Set the default frame paramaters and aethetics for the whole Emacs
+session.
+Note this assumes that a frame does not already exist, for frame
+configuration see cemacs-configure-local-frame"
   (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
@@ -96,20 +129,23 @@ There are two things you can do about this warning:
     (add-to-list 'default-frame-alist
                  '(font . "Consolas-13:style=Regular")
                  ))
-  (toggle-frame-maximized)
-                                        ;(toggle-frame-fullscreen)
-  (fringe-mode 0)
   ;;Enable built-in modes
   (global-hl-line-mode)
   ;; Disable Window Decorations
-  (setq menu-bar-mode nil
-        tool-bar-mode nil
-        scroll-bar-mode nil
-        )
-  (fringe-mode 0)
+  (if (display-graphic-p)  ; Resolve inital frame configuration
+      (cemacs-configure-local-frame (selected-frame))
+    )
+  (setq-default menu-bar-mode nil
+                tool-bar-mode nil
+                scroll-bar-mode nil
+                vertical-scroll-bar nil
+                horizontal-scroll-bar nil
+                fringe-mode nil
+                mode-line-format nil
+                )
   (set-frame-parameter nil 'undecorated nil)
   ;;Misc Setup
-  (global-keys-setup)
+  (cemacs-global-keys-configure)
   (delete-other-windows)
   (split-window-horizontally)
   (setq inhibit-compacting-font-caches t   ;performance improvement
@@ -120,6 +156,10 @@ There are two things you can do about this warning:
         global-hl-line-mode t
         )
   (add-hook 'prog-mode-hook 'programming-mode)
+  (setq custom-file (concat user-emacs-directory "/var/custom.el")
+        ) ; move location of custom file
+  (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
+  (cemacs-configure-session-decorations)
   (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
   )
@@ -205,7 +245,11 @@ There are two things you can do about this warning:
   )
 (req-package crux
   :config
+  (global-set-key (kbd "C-a") 'crux-move-beginning-of-line)
   (global-set-key (kbd "C-x e") 'crux-find-user-init-file)
+  (global-set-key (kbd "C-j") 'crux-top-join-line)
+  (global-set-key (kbd "C-x C-o") 'crux-swap-windows)
+  (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
   )
 (req-package csharp-mode
   :require csharp-mode
@@ -315,14 +359,17 @@ There are two things you can do about this warning:
   (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action)
   ;;Query
-  (defhydra hydra-query (global-map "C-q" :color blue)
+  (defhydra hydra-query (:color blue)
     "query for"
-    ("s" helm-swoop-without-pre-input "string")
-    ("m" helm-mini "mini")
-    ("b" helm-bookmarks "bookmarks")
-    ("p" helm-projectile "project")
-    ("f" helm-flycheck "flycheck")
+    ("s" helm-swoop-without-pre-input "String")
+    ("m" helm-mini "Mini")
+    ("b" helm-bookmarks "Bookmarks")
+    ("p" helm-projectile "Projectile")
+    ("f" helm-flycheck "Flycheck")
+    ("r" helm-rg "Ripgrep")
+    ("C-p" helm-projectile-rg "Projectile rg")
     )
+  (global-set-key (kbd "C-q") 'hydra-query/body)
   )
 (req-package highlight-parentheses
   :hook
