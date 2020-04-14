@@ -355,7 +355,7 @@ configuration see cemacs-configure-local-frame"
   (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action)
   ;;Query
-  (defhydra hydra-query (global-map "C-q" :color blue)
+  (defhydra hydra-query (:color blue)
     "query for"
     ("s" helm-swoop-without-pre-input "string")
     ("m" helm-mini "mini")
@@ -363,6 +363,7 @@ configuration see cemacs-configure-local-frame"
     ("p" helm-projectile "project")
     ("f" helm-flycheck "flycheck")
     )
+  (global-set-key (kbd "C-q") 'hydra-query/body)
   )
 (req-package highlight-parentheses
   :hook
