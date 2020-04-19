@@ -1,5 +1,6 @@
 ;; Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
+;;; Code:
 ;; Macros
 (defmacro WITH_SYSTEM(type &rest body)
   "Evaluate BODY if `system-type' equals TYPE."
@@ -19,38 +20,54 @@ There are two things you can do about this warning:
 1. Install an Emacs version that does support SSL and be safe.
 2. Remove this warning from your init file so you won't see it again."))
   ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
-  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (add-to-list 'package-archives
+               (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives
+               (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
   )
 (package-initialize)
+;; Custom Functions
 (defun slay-function()
+  "Kill the function surrounding the point.
+Emacs' built in 'mark-defun' is used so that is what determines what is
+aconsidered a function,
+This function is effectively a shorthand of 'mark-defun' 'kill-region'."
   (interactive)
   (mark-defun)
   (kill-region (region-beginning) (region-end))
   )
 (defun slay-whole-buffer()
-  ;;Kills the whole buffer
+  "Kill the buffer in it's entirety."
   (interactive)
-  (mark-whole-buffer)
+  (kill-region (point-min) (point-max))
   (kill-region (region-beginning) (region-end))
   )
-(defun scroll-up-in-place()
+(defun cemacs-scroll-up-in-place()
+  "Scroll buffer up 1 line without moving cursor position vertically."
+  ;; TODO(mallchad) this could accept an arg quite easilly
+  ;; TODO(mallchad) function feels like it skips 1 line up or down
+  ;; occasionally
   (interactive)
   (forward-line -1)
-  (View-scroll-line-backward)
+  (scroll-down-command 1)
   )
-(defun scroll-down-in-place()
+(defun cemacs-scroll-down-in-place()
+  "Scroll buffer down 1 line without moving cursor position vertically.
+
+This is a reverse version of 'cemacs-scroll-up-in-place"
+  ;; TODO(mallchad) this could easilly be made mirror it's counterpart
   (interactive)
   (forward-line 1)
-  (View-scroll-line-forward)
+  (scroll-down-command -1)
   )
-(defun cemacs-delete-word (mult)
+(defun cemacs-delete-word(mult)
   "Delete characters forward until encountering the end of a word.
 With argument MULT, repeat this that many times, or perform deletion backwards
 if negative.
+
 This command does not push text to `kill-ring'."
   (interactive "p")
   (delete-region
@@ -58,21 +75,31 @@ This command does not push text to `kill-ring'."
    (progn
      (forward-word mult)
      (point))))
-(defun cemacs-delete-word-backwards (mult)
+(defun cemacs-delete-word-backwards(mult)
   "Delete characters backward until encountering the beginning of a word.
-With argument MULT, repeat this many times."
+With argument MULT, repeat this many times.
+
+This command is a reverse of cemacs-delete-word"
   (interactive "p")
   (cemacs-delete-word (- mult))
   )
-(defun cemacs-global-keys-configure()
-  "Set up personal keybinds after initilization."
-  ;;Emacs Control Bindings
-  (global-set-key (kbd "C-x r") 'revert-buffer)
-  (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
-  (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
-  (global-set-key (kbd "M-d") 'cemacs-delete-word)
-  (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
+(defvar cemacs-kill-volatile-buffer-pre-hook nil)
+(defvar cemacs-kill-volatile-buffer-post-hook nil)
+(defun cemacs-kill-volatile-buffer()
+  "Kill the current buffer unconditionally."
+  (interactive)
+  (run-hooks 'cemacs-kill-volatile-buffer-pre-hook)
+  (set-buffer-modified-p nil)
+  (kill-buffer (current-buffer))
+  (run-hooks 'cemacs-kill-volatile-buffer-post-hook)
   )
+;; Configuration
+(defun cemacs-c-mode-common-setup()
+  "A function which will set up a c-style language buffer."
+  ;; (c-add-style "cemacs-c-derivative"
+  ;;              (c-offsets-alist
+  ;;               '(topmost-intro-cont . 0))
+  ;;              )
   )
 (defun cpp-mode-setup()
   ;; c-indent-comment-alist, c-indent-comments-syntactically-p (see Indentation Commands);
@@ -90,13 +117,21 @@ With argument MULT, repeat this many times."
   ;; (add-to-list ())
   )
 (add-hook 'c++-mode-hook 'cpp-mode-setup)
+(defun cemacs-csharp-setup()
+  "Setup for csharp-modethat is hooked onto csharp-mode."
+  ;; (c-set-style "cemacs-c-derivative")
+  )
 (defun elisp-mode-setup()
   )
 (add-hook 'emacs-lisp-mode 'elisp-mode-setup)
 (defun programming-mode()
   ;;Sets up buffer for programming
+  (setq
+   electric-indent-mode nil)
   (display-line-numbers-mode)
-  (electric-indent-mode 0))
+  )
+(defvar cemacs-custom-variables-dir "var/custom.el")
+(add-hook 'prog-mode-hook 'programming-mode)
 (defvar init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
@@ -105,12 +140,8 @@ With argument MULT, repeat this many times."
   (toggle-frame-maximized)
   (split-window-horizontally)
   (set-frame-parameter frame 'menu-bar-lines nil)
-  (set-frame-parameter frame 'left-fringe nil)
-  (set-frame-parameter frame 'right-fringe nil)
-  (set-frame-parameter frame 'left-fringe nil)
   (set-frame-parameter frame 'vertical-scroll-bars nil)
   (set-frame-parameter frame 'horizontal-scroll-bars nil)
-  (set-frame-parameter frame 'left-fringe nil)
   (set-frame-parameter frame 'tool-bar-lines nil)
   )
 (add-hook 'after-make-frame-functions 'cemacs-configure-local-frame)
@@ -135,19 +166,20 @@ configuration see cemacs-configure-local-frame"
   (if (display-graphic-p)  ; Resolve inital frame configuration
       (cemacs-configure-local-frame (selected-frame))
     )
-  (setq-default menu-bar-mode nil
-                tool-bar-mode nil
-                scroll-bar-mode nil
+  (setq-default mode-line-format nil
                 vertical-scroll-bar nil
                 horizontal-scroll-bar nil
-                fringe-mode nil
-                mode-line-format nil
+                tool-bar-mode nil
+                menu-bar-mode nil
                 )
-  (set-frame-parameter nil 'undecorated nil)
+  (fringe-mode (cons 0 0))
+  )
+(defun init-setup()
+  "Run after-initilization setup.
+This "
+  (interactive)
   ;;Misc Setup
-  (cemacs-global-keys-configure)
   (delete-other-windows)
-  (split-window-horizontally)
   (setq inhibit-compacting-font-caches t   ;performance improvement
         ;; Mode Setting
         global-subword-mode t              ;easier navigation for camelcasing
@@ -155,10 +187,16 @@ configuration see cemacs-configure-local-frame"
         transient-mark-mode nil
         global-hl-line-mode t
         )
-  (add-hook 'prog-mode-hook 'programming-mode)
-  (setq custom-file (concat user-emacs-directory "/var/custom.el")
+  ;; Backup
+  (setq make-backup-files nil
+        backup-by-copying t)
+  ;; Niggles
+  (setq custom-file (concat user-emacs-directory cemacs-custom-variables-dir)
+        ;; TODO(mallchad) this should really be a function
         ) ; move location of custom file
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
+  (setq save-interprogram-paste-before-kill t)
+  ;; Run Functions
   (cemacs-configure-session-decorations)
   (run-hooks 'admin-init-setup-hook)
   (run-hooks 'init-setup-hook)
@@ -170,13 +208,9 @@ configuration see cemacs-configure-local-frame"
   :config
   (setq async-bytecomp-package-mode t)
   )
-  (req-package color-theme-sanityinc-tomorrow
-    :config
-    (load-theme 'sanityinc-tomorrow-bright t)
-    )
-(req-package ace-window
-  :require ace-window
+(req-package color-theme-sanityinc-tomorrow
   :config
+  (load-theme 'sanityinc-tomorrow-bright t)
   )
 (req-package aggressive-indent
   :hook
@@ -188,13 +222,13 @@ configuration see cemacs-configure-local-frame"
                                          (thing-at-point 'line))))
                )
   )
-;; (req-package all-the-icons
-;;   :init
-;;   (setq inhibit-compacting-font-caches t) ;;Improve windows performance
-;;   )
+(req-package all-the-icons
+  :config
+  )
 (req-package avy
   :config
   (global-set-key (kbd "C-r") 'avy-goto-char)
+  (global-set-key (kbd "M-r") 'avy-pop-mark)
   (setq avy-highlight-first t
         avy-background t
         )
@@ -202,12 +236,21 @@ configuration see cemacs-configure-local-frame"
   (set-face-attribute 'avy-lead-face-0 nil :background "navy" :foreground "white")
   (set-face-attribute 'avy-lead-face-2 nil :background "dark olive green" :foreground "white")
   )
+(req-package backup-each-save
+  :hook
+  (after-save . backup-each-save)
+  (cemacs-kill-volatile-buffer-pre . (lambda ()
+                                       (if (buffer-file-name)
+                                           (backup-each-save)
+                                         )))
+  :config
+  )
 (req-package beacon
   :hook
   (init-setup . beacon-mode)
   :config
   (setq beacon-color "gold"
-        beacon-blink-when-point-moves-vertically 1
+        beacon-blink-when-point-moves-vertically 1    ;; blink if the line changes
         beacon-blink-when-point-moves-horizontally 20
         )
   )
@@ -217,6 +260,7 @@ configuration see cemacs-configure-local-frame"
   :bind
   ("<C-tab>" . centaur-tabs-forward)
   ("<C-S-tab>" . centaur-tabs-backward)
+  ("<C-iso-lefttab>" . centaur-tabs-backward)
   :init
   ;;Misc Settings
   (setq centaur-tabs-set-icons t
@@ -227,6 +271,7 @@ configuration see cemacs-configure-local-frame"
         centaur-tabs-set-bar t
         centaur-tabs-bar 'over
         centaur-tabs-modified-marker "*"
+        centaur-tabs-mode t
         )
   :config
   ;;Create Uniform Tabbar Appearance
@@ -238,6 +283,8 @@ configuration see cemacs-configure-local-frame"
   :hook
   (prog-mode . company-mode)
   :config
+  ;; Apply company-tng patch
+  (require 'company-tng-patch)
   (company-tng-configure-default)
   (setq company-require-match 'never
         company-idle-delay 0.1
@@ -252,7 +299,8 @@ configuration see cemacs-configure-local-frame"
   (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
   )
 (req-package csharp-mode
-  :require csharp-mode
+  ;; :hook
+  ;; (csharp-mode . cemacs-csharp-setup)
   :config
   )
 (req-package dashboard
@@ -260,43 +308,27 @@ configuration see cemacs-configure-local-frame"
   (dashboard-setup-startup-hook)
   )
 (req-package flycheck
+  :require flycheck-inline
   :hook
-  (init-setup . global-flycheck-mode)
+  (prog-mode . flycheck-mode)
+  (flycheck-mode . flycheck-inline-mode)
+  (global-flycheck-mode . global-flycheck-inline-mode)
   :config
   )
 (req-package flycheck-clang-analyzer
-  :require flycheck
+  :after flycheck
   :config
   (flycheck-clang-analyzer-setup)
   )
-(req-package flycheck-color-mode-line
-  :require flycheck
-  :hook
-  (flycheck-mode . flycheck-color-mode-line-mode)
-  (global-flycheck-mode . flycheck-color-mode-line-mode)
-  )
-(req-package flycheck-inline
-  :require flycheck
-  :hook
-  (flycheck-mode . flycheck-inline-mode)
-  (global-flycheck-mode . global-flycheck-inline-mode)
-  )
-(req-package flycheck-irony
-  :config
-  )
 (req-package god-mode
-  :require god-mode
   :config
-  )
-(req-package hide-mode-line
-  :hook
-  (init-setup . global-hide-mode-line-mode)
   )
 (req-package helm
   :after hydra
   :require
-  helm-projectile
   helm-flycheck
+  helm-projectile
+  helm-rg
   helm-swoop
   :init
   ;; Completley hide helm header
@@ -319,38 +351,20 @@ configuration see cemacs-configure-local-frame"
   (setq helm-autoresize-mode t
         helm-display-header-line nil
         helm-header-line-space-before-prompt nil
-        helm-autoresize-max-height 40   ;Always takes up half the screen
-        helm-autoresize-min-height 40
-        helm-split-window-in-side-p t   ;Shows helm window in current buffer
+        helm-autoresize-max-height 30   ;Always take up 30% the screen
+        helm-autoresize-min-height 30
+        helm-split-window-inside-p t    ;Shows helm window in current buffer
+        helm-swoop-split-with-multiple-windows helm-split-window-inside-p
         helm-mode-line-string nil
+        helm-use-frame-when-more-than-two-windows helm-split-window-inside-p
         )
-  :config
-  (require 'helm-config)
- ;;;Helm minibuffer config
+  ;; ;Helm minibuffer config
+  ;;TODO(mallchad) Need to reduce the size of the space after helm source
   ;; Don't use helm's own displaying mode line function
   (set-face-attribute 'helm-source-header nil
                       :height 1.1
                       :foreground "dark cyan"
                       )
-  ;; (set-face-attribute 'helm-eob-line nil :height 0.1)
-  ;; (set-face-attribute 'helm-helper nil :height 0.1))
-  ;; (defvar helm-source-header-default-box (face-attribute 'helm-source-header :box))
-  ;; (defun helm-toggle-header-line ()
-  ;;   (if (> (length helm-sources) 1)
-  ;;    (set-face-attribute 'helm-source-header
-  ;;                        nil
-  ;;                        :foreground helm-source-header-default-foreground
-  ;;                        :background helm-source-header-default-background
-  ;;                        :box helm-source-header-default-box
-  ;;                        :height 1.0)
-  ;;     (set-face-attribute 'helm-source-header
-  ;;                      nil
-  ;;                      :foreground (face-attribute 'helm-selection :background)
-  ;;                      :background (face-attribute 'helm-selection :background)
-  ;;                      :box nil
-  ;;                      :height 0.1)))
-  ;; (add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
-                                        ;(add-hook 'helm-before-initialize-hook 'helm-toggle-header-line)
   ;;Keybinds
   (global-set-key (kbd "M-x") 'helm-M-x)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
@@ -358,6 +372,7 @@ configuration see cemacs-configure-local-frame"
   (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action)
+  ;; TODO(mallchad) need to find more elegant keybinds
   ;;Query
   (defhydra hydra-query (:color blue)
     "query for"
@@ -386,17 +401,35 @@ configuration see cemacs-configure-local-frame"
   (global-hl-todo-mode
    )
   )
+(req-package hungry-delete
+  :config
+  (global-hungry-delete-mode)
+  )
 (req-package hydra
   :config
-  (defhydra hydra-slayer (global-map "C-s" :color blue)
+  (defhydra hydra-slayer (:color blue)
     "kill shortcuts"
     ("x" slay-function "function(x)" :color red)
     ("l" kill-whole-line "whole line" :color red)
-    ("b" kill-whole-buffer "whole buffer")
+    ("b" slay-whole-buffer "whole buffer")
     )
+  (global-set-key (kbd "C-s") 'hydra-slayer/body)
                                         ;(defhydra hydra-grab (:color)
                                         ;  )
                                         ;(global-set-key (kbd "C-g") (hydra-grab/body))
+  (defun cemacs-vinilla-keys-configure()
+    "Set up personal keybinds after initilization."
+    (interactive)
+    ;;Emacs Control Bindings
+    (global-set-key (kbd "C-x r") 'revert-buffer)
+    (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
+    (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
+    (global-set-key (kbd "M-d") 'cemacs-delete-word)
+    (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
+    (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
+    (defhydra hydra-emacs (:color blue :hint nil))
+    )
+  (cemacs-vinilla-keys-configure)
   )
 (req-package lsp-mode
   :after company
@@ -415,13 +448,15 @@ configuration see cemacs-configure-local-frame"
   :config
   )
 (req-package magit
-  :require magit
+  :config
+  )
+(req-package lua-mode
   :config
   )
 (req-package multiple-cursors
-  :require hydra
+  :after hydra
   :config
-  (global-set-key (kbd "M-m") mc/edit-lines-empty-lines)
+  (global-set-key (kbd "M-m") 'mc/edit-lines)
   ;; (defhydra hydra-multicurses (global-map "C-m" :color red)
   ;;   "Multiple Cursors"
   ;;   ("q" hydra--body-exit "quit")
@@ -431,8 +466,15 @@ configuration see cemacs-configure-local-frame"
   ;;   )
   )
 (req-package omnisharp
-  ;; :hook
-  ;; (csharp-mode . omnisharp-mode)
+  :hook
+  (csharp-mode . omnisharp-mode)
+  :config
+  (add-to-list 'company-backends 'company-omnisharp)
+  )
+(req-package origami
+  :require lsp-origami
+  :config
+  ;; TODO(mallchad) need to setup keybinds for this package
   )
 (req-package projectile
   :hook
@@ -466,9 +508,9 @@ configuration see cemacs-configure-local-frame"
   (set-face-attribute 'rainbow-delimiters-depth-9-face nil :foreground "sienna1")
   )
 (req-package rainbow-mode
-:hook
-(prog-mode . rainbow-mode)
-)
+  :hook
+  (prog-mode . rainbow-mode)
+  )
 (req-package restart-emacs
   :config
   (global-set-key (kbd "C-x C-a") 'restart-emacs)
@@ -476,6 +518,7 @@ configuration see cemacs-configure-local-frame"
 (req-package rtags
   :require
   :config
+  ;; TODO(need to evaluate whether is package is more useful than lsp or not)
   )
 (req-package smartparens
   :hook
@@ -485,12 +528,20 @@ configuration see cemacs-configure-local-frame"
   ;;Disable Emacs Lisp Quote Pairs
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
+  ;; TODO(mallchad) need  to setup bindings for this package
+  ;; TODO(mallchad) need to get rid of annoying escape character completion
+  ;; TODO(mallchad) need to make angled bracket pair for cc modes
+  ;; TODO(mallchad) need to evalue a potentiol workaround to make hybrid
+  ;; sexps spill over lines to make it useful for cc mode development
   )
 (req-package smooth-scrolling
   :hook
   (init-setup . smooth-scrolling-mode)
   :config
   (setq scroll-conservatively nil)
+  )
+(req-package smart-yank
+  :config
   )
 (req-package sublimity
   :hook
@@ -507,33 +558,46 @@ configuration see cemacs-configure-local-frame"
         ;;      sublimity-map-text-scale -7
         ;;      sublimity-map-set-delay 1
         )
+  ;; TODO(mallchad) see if minimap or sublimity map can be readded
   )
 (req-package treemacs
+  :require lsp-treemacs
+  :config
+  ;; TODO(mallchad) this package needs bindings
   )
 (req-package undo-tree
   :config
   (global-undo-tree-mode)
   (global-set-key (kbd "C-z") 'undo-tree-undo)
   (global-set-key (kbd "C-S-z") 'undo-tree-redo)
-  (setq undo-tree-enable-undo-in-region nil)
+  (setq undo-tree-enable-undo-in-region nil  ; brings performance enhancement
+        undo-tree-history-directory-alist backup-directory-alist
+        )
+  ;; TODO(mallchad) need to setup undo-tree persistent history
+  ;; Unbind Included Keymaps
+  (define-key undo-tree-map (kbd "C-x r u") nil)
+  (define-key undo-tree-map (kbd "C-x r U") nil)
+  (define-key undo-tree-map (kbd "C-x r") nil)
+  )
+(req-package vlf
+  :config
+  (require 'vlf-setup)
   )
 (req-package volatile-highlights
-:config
-(volatile-highlights-mode)
-)
+  :config
+  (volatile-highlights-mode)
+  )
 (req-package ws-butler
-:config
-(ws-butler-global-mode)
-)
+  ;; Unobtrusively clean up extrenuous whitespace and convert tabs to whitespace
+  :config
+  (ws-butler-global-mode)
+  (setq ws-butler-convert-leading-tabs-or-spaces t)
+  )
 (req-package zoom
   )
 ;;Solve Dependencies and Load in Correct Order
 ;; Order here doesn't matter
 (req-package-finish)
-;;Automatic Custom Variables
-(custom-set-variables)
-(custom-set-faces)
-
 (init-setup)
 (provide 'init)
 ;;; init.el ends here
