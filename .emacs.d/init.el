@@ -414,6 +414,7 @@ This "
     ("l" kill-whole-line "whole line" :color red)
     ("b" slay-whole-buffer "whole buffer")
     )
+  (global-set-key (kbd "C-s") 'hydra-slayer/body)
   (defun cemacs-vinilla-keys-configure()
     "Set up personal keybinds after initilization."
     (interactive)
