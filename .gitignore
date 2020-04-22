@@ -2,6 +2,7 @@
 *
 
 #Whitelsit
-!init.el
-!icons-in-terminal.el
-!font-lock+.el
+!/.emacs.d/init.el
+!/etc/*.el
+!.gitignore
+!README.md
