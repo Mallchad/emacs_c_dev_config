@@ -288,7 +288,7 @@ This "
   (require 'company-tng-patch)
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay 0.1
+	company-idle-delay 0.05
         )
   )
 (req-package crux
