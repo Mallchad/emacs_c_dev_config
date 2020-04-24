@@ -13,7 +13,7 @@ adjusting many behaviors to be more user friendly and efficient
 New Functions
 cemacs-kill-volatile-buffer
 cemacs-scroll-up-in-place
-cemacs-scroll-
+cemacs-scroll-down-in-place
 slay-function
 slay-whole-buffer
 
@@ -25,12 +25,13 @@ Keybind Changes
 C-j is now 'join-line
 M-p is now 'scroll-up-in-place
 M-n is now 'scroll-down-in-place
-C-s will a now instead pull up hydra-slayer, a prefix command that allows you 
+C-s will a now instead pull up 'hydra-slayer, a prefix command that allows you 
 to kill entire regions of text more easilly, for text searching see hydra-query
-C-q is now hydra-query, a prefix command for searching, C-q s replaces isearch 
+C-q is now 'hydra-query, a prefix command for searching, C-q s replaces isearch 
 with helm-swoop
-C-r is now avy-goto-char this is an extremely efficient way of text navigation
-M-r is now avy-pop-mark which will navigate through previous locations before
+C-r is now 'avy-goto-char this is an extremely efficient way of text navigation
+M-r is now 'avy-pop-mark which will navigate through previous locations before
 avy enhanced movement
-C-x e is now crux-find-user-init-file
+C-x e is now 'crux-find-user-init-file
 C-x k now calls a new function 'cemacs-kill-volatile-buffer
+C-x a calls 'restart-emacs
