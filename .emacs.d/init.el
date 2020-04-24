@@ -455,7 +455,7 @@ This "
 (req-package multiple-cursors
   :after hydra
   :config
-  ;; (global-set-key (kbd "M-m") 'mc/edit-lines)
+  (global-set-key (kbd "M-m") 'mc/edit-lines)
   ;; (defhydra hydra-multicurses (global-map "C-m" :color red)
   ;;   "Multiple Cursors"
   ;;   ("q" hydra--body-exit "quit")
