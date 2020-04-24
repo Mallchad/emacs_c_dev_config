@@ -190,7 +190,8 @@ This "
         )
   ;; Backup
   (setq make-backup-files nil
-        backup-by-copying t)
+	backup-by-copying t
+	auto-save-default nil)
   ;; Niggles
   (setq custom-file (concat user-emacs-directory cemacs-custom-variables-dir)
         ;; TODO(mallchad) this should really be a function
