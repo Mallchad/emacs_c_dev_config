@@ -556,7 +556,7 @@ This "
   ;; (require 'sublimity-attractive)
   ;;(require 'sublimity-map) ;; experimental
 
-  (setq sublimity-scroll-weight 15
+  (setq sublimity-scroll-weight 7
         sublimity-scroll-drift-length 0
         ;;      sublimity-map-size 10
         ;;      sublimity-map-fraction 0.3
