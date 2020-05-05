@@ -450,7 +450,13 @@ This "
   :config
   )
 (req-package lua-mode
+  :after
+  lsp
+  :hook
+  (lua-mode . lsp)
   :config
+  (add-to-list 'company-lsp-filter-candidates '(lsp-emmy-lua . t))
+  ;; TODO(mallchad) should automatically extract emmy-lua for supported systems
   )
 (req-package multiple-cursors
   :after hydra
