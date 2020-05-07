@@ -565,7 +565,12 @@ This "
   )
 (req-package treemacs
   :require lsp-treemacs
+  :hook
+  (treemacs-mode . (lambda() (text-scale-adjust -2)))
   :config
+  (setq treemacs-width 30
+	treemacs-position 'right
+	)
   ;; TODO(mallchad) this package needs bindings
   )
 (req-package undo-tree
