@@ -317,11 +317,6 @@ This "
   (global-flycheck-mode . global-flycheck-inline-mode)
   :config
   )
-(req-package flycheck-clang-analyzer
-  :after flycheck
-  :config
-  (flycheck-clang-analyzer-setup)
-  )
 (req-package god-mode
   :config
   )
