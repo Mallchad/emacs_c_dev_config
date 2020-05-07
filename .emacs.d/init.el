@@ -444,7 +444,10 @@ This "
   :after
   lsp-mode
   flycheck
+  :hook
+  (lsp-ui-mode . (lambda() (lsp-ui-doc-mode -1)))
   :config
+  (setq-default lsp-ui-doc-position 'top)
   )
 (req-package magit
   :config
