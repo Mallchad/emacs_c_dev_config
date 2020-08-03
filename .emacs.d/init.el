@@ -176,10 +176,10 @@ configuration see cemacs-configure-local-frame"
                 menu-bar-mode nil
                 )
   (fringe-mode (cons 0 0))
+  (setq whitespace-style '(trailing tabs tab-mark))
   )
 (defun init-setup()
-  "Run after-initilization setup.
-This "
+  "Run after-initilization setup."
   (interactive)
   ;;Misc Setup
   (delete-other-windows)
@@ -188,7 +188,8 @@ This "
         global-subword-mode t              ;easier navigation for camelcasing
         indent-tabs-mode nil               ;use spaces for indendation
         transient-mark-mode nil
-        global-hl-line-mode t
+	global-hl-line-mode t
+	global-whitespace-mode t
         )
   ;; Backup
   (setq make-backup-files nil
