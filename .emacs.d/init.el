@@ -356,7 +356,7 @@ configuration see cemacs-configure-local-frame"
         helm-split-window-inside-p t    ;Shows helm window in current buffer
         helm-swoop-split-with-multiple-windows helm-split-window-inside-p
         helm-mode-line-string nil
-	helm-use-frame-when-more-than-two-windows n
+	helm-use-frame-when-more-than-two-windows nil
         )
   ;; ;Helm minibuffer config
   ;;TODO(mallchad) Need to reduce the size of the space after helm source
