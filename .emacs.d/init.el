@@ -89,18 +89,20 @@ This command is a reverse of cemacs-delete-word"
   "Kill the current buffer unconditionally."
   (interactive)
   (run-hooks 'cemacs-kill-volatile-buffer-pre-hook)
-  (set-buffer-modified-p nil)
   (kill-buffer (current-buffer))
   (run-hooks 'cemacs-kill-volatile-buffer-post-hook)
   )
 ;; Configuration
-(defun cemacs-c-mode-common-setup()
+(defun cemacs-cc-mode-setup()
   "A function which will set up a c-style language buffer."
+  (interactive)
+  (setq-local c-basic-offset 4)
   ;; (c-add-style "cemacs-c-derivative"
   ;;              (c-offsets-alist
   ;;               '(topmost-intro-cont . 0))
   ;;              )
   )
+(add-hook 'cc-mode 'cemacs-cc-mode-setup)
 (defun cpp-mode-setup()
   ;; c-indent-comment-alist, c-indent-comments-syntactically-p (see Indentation Commands);
   ;; c-doc-comment-style (see Doc Comments);
