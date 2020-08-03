@@ -312,6 +312,7 @@ configuration see cemacs-configure-local-frame"
   :config
   (dashboard-setup-startup-hook)
   )
+(req-package fireplace)
 (req-package flycheck
   :require flycheck-inline
   :hook
