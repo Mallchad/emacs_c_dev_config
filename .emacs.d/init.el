@@ -167,23 +167,25 @@ configuration see cemacs-configure-local-frame"
   (fringe-mode (cons 0 0))
   (setq whitespace-style '(trailing tabs tab-mark))
   )
-(defun init-setup()
+(defun cemacs-init-setup()
   "Run after-initilization setup."
   (interactive)
   ;;Misc Setup
   (delete-other-windows)
+  (setq-default indent-tabs-mode nil
+                )
   (setq inhibit-compacting-font-caches t   ;performance improvement
         ;; Mode Setting
-        global-subword-mode t              ;easier navigation for camelcasing
         indent-tabs-mode nil               ;use spaces for indendation
         transient-mark-mode nil
-	global-hl-line-mode t
-	global-whitespace-mode t
+        global-hl-line-mode t
         )
+  (global-subword-mode t)
+  (global-whitespace-mode t)
   ;; Backup
   (setq make-backup-files nil
-	backup-by-copying t
-	auto-save-default nil)
+        backup-by-copying t
+        auto-save-default nil)
   ;; Niggles
   (setq custom-file (concat user-emacs-directory cemacs-custom-variables-dir)
         ;; TODO(mallchad) this should really be a function
