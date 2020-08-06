@@ -96,49 +96,38 @@ This command is a reverse of cemacs-delete-word"
 (defun cemacs-cc-mode-setup()
   "A function which will set up a c-style language buffer."
   (interactive)
-  (setq-local c-basic-offset 4)
-  ;; (c-add-style "cemacs-c-derivative"
-  ;;              (c-offsets-alist
-  ;;               '(topmost-intro-cont . 0))
-  ;;              )
+  (setq-default c-basic-offset 4)
   )
-(add-hook 'cc-mode 'cemacs-cc-mode-setup)
-(defun cpp-mode-setup()
-  ;; c-indent-comment-alist, c-indent-comments-syntactically-p (see Indentation Commands);
-  ;; c-doc-comment-style (see Doc Comments);
-  ;; c-block-comment-prefix, c-comment-prefix-regexp (see Custom Filling and Breaking);
-  ;; c-hanging-braces-alist (see Hanging Braces);
-  ;; c-hanging-colons-alist (see Hanging Colons);
-  ;; c-hanging-semi&comma-criteria (see Hanging Semicolons and Commas);
-  ;; c-cleanup-list (see Clean-ups);
-  ;; c-basic-offset (see Customizing Indentation);
-  ;; c-offsets-alist (see c-offsets-alist);
-  ;; c-comment-only-line-offset (see Comment Line-Up);
-  ;; c-special-indent-hook, c-label-minimum-indentation (see Other Indentation);
-  ;; c-backslash-column, c-backslash-max-column (see Custom Macros).
-  ;; (add-to-list ())
+(add-hook 'cemacs-init-setup 'cemacs-cc-mode-setup)
+(defun cemacs-cc-mode()
+  (interactive)
   )
-(add-hook 'c++-mode-hook 'cpp-mode-setup)
-(defun cemacs-csharp-setup()
+(add-hook 'cc-mode 'cemacs-cc-mode)
+(defun cemacs-csharp-mode()
   "Setup for csharp-modethat is hooked onto csharp-mode."
   ;; (c-set-style "cemacs-c-derivative")
   )
-(defun elisp-mode-setup()
+(defun cemacs-elisp-mode()
   )
-(add-hook 'emacs-lisp-mode 'elisp-mode-setup)
-(defun programming-mode()
-  ;;Sets up buffer for programming
+(add-hook 'emacs-lisp-mode 'cemacs-elisp-mode)
+(defun cemacs-prog-mode()
+  "Set up buffer for programming."
   (setq
    electric-indent-mode nil)
   (display-line-numbers-mode)
   )
+(add-hook 'prog-mode-hook 'cemacs-prog-mode)
+(defun cemacs-markdown-mode()
+  (interactive)
+  (flyspell-mode)
+  )
+(add-hook 'markdown-mode-hook 'cemacs-markdown-mode)
 (defvar cemacs-custom-variables-dir "var/custom.el")
-(add-hook 'prog-mode-hook 'programming-mode)
-(defvar init-setup-hook nil
+(defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
 (defun cemacs-configure-local-frame(frame)
-  "Set the frame paramaters for the current frame."
+  "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
   (set-frame-parameter frame 'menu-bar-lines nil)
   (set-frame-parameter frame 'vertical-scroll-bars nil)
