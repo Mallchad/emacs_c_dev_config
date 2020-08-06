@@ -1,3 +1,4 @@
+;;; Commentary:
 ;; Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
 ;;; Code:
@@ -193,8 +194,8 @@ configuration see cemacs-configure-local-frame"
   (setq save-interprogram-paste-before-kill t)
   ;; Run Functions
   (cemacs-configure-session-decorations)
-  (run-hooks 'admin-init-setup-hook)
-  (run-hooks 'init-setup-hook)
+  (run-hooks 'admin-cemacs-init-setup-hook)
+  (run-hooks 'cemacs-init-setup-hook)
   )
 ;;Req Package Setup
 (require 'req-package)
@@ -211,11 +212,6 @@ configuration see cemacs-configure-local-frame"
   :hook
   (prog-mode . aggressive-indent-mode)
   :config
-  (add-to-list 'aggressive-indent-dont-indent-if
-               '(and (derived-mode-p 'c++-mode)
-                     (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
-                                         (thing-at-point 'line))))
-               )
   )
 (req-package all-the-icons
   :config
@@ -242,7 +238,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package beacon
   :hook
-  (init-setup . beacon-mode)
+  (cemacs-init-setup . beacon-mode)
   :config
   (setq beacon-color "gold"
         beacon-blink-when-point-moves-vertically 1    ;; blink if the line changes
@@ -251,7 +247,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package centaur-tabs
   :hook
-  (init-setup . centaur-tabs-mode)
+  (cemacs-init-setup . centaur-tabs-mode)
   :bind
   ("<C-tab>" . centaur-tabs-forward)
   ("<C-S-tab>" . centaur-tabs-backward)
@@ -282,7 +278,7 @@ configuration see cemacs-configure-local-frame"
   (require 'company-tng-patch)
   (company-tng-configure-default)
   (setq company-require-match 'never
-	company-idle-delay 0.05
+        company-idle-delay 0.05
         )
   )
 (req-package crux
@@ -347,7 +343,7 @@ configuration see cemacs-configure-local-frame"
         helm-split-window-inside-p t    ;Shows helm window in current buffer
         helm-swoop-split-with-multiple-windows helm-split-window-inside-p
         helm-mode-line-string nil
-	helm-use-frame-when-more-than-two-windows nil
+        helm-use-frame-when-more-than-two-windows nil
         )
   ;; ;Helm minibuffer config
   ;;TODO(mallchad) Need to reduce the size of the space after helm source
@@ -379,7 +375,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package highlight-parentheses
   :hook
-  (init-setup . global-highlight-parentheses-mode)
+  (cemacs-init-setup . global-highlight-parentheses-mode)
   :config
   (setq hl-paren-background-colors '("gray"
                                      )
@@ -474,7 +470,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package omnisharp
   :hook
-  (csharp-mode . omnisharp-mode)
+  ;; (csharp-mode . omnisharp-mode)
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   )
@@ -485,7 +481,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package projectile
   :hook
-  (init-setup . projectile-mode)
+  (cemacs-init-setup . projectile-mode)
   :config
   )
 (req-package rainbow-blocks
@@ -529,7 +525,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package smartparens
   :hook
-  (init-setup . smartparens-global-mode)
+  (cemacs-init-setup . smartparens-global-mode)
   :config
   (require 'smartparens-config)
   ;;Disable Emacs Lisp Quote Pairs
@@ -543,7 +539,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package smooth-scrolling
   :hook
-  (init-setup . smooth-scrolling-mode)
+  (cemacs-init-setup . smooth-scrolling-mode)
   :config
   (setq scroll-conservatively nil)
   )
@@ -552,7 +548,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package sublimity
   :hook
-  (init-setup . sublimity-mode)
+  (cemacs-init-setup . sublimity-mode)
   :config
   (require 'sublimity-scroll)
   ;; (require 'sublimity-attractive)
@@ -573,8 +569,8 @@ configuration see cemacs-configure-local-frame"
   (treemacs-mode . (lambda() (text-scale-adjust -2)))
   :config
   (setq treemacs-width 30
-	treemacs-position 'right
-	)
+        treemacs-position 'right
+        )
   ;; TODO(mallchad) this package needs bindings
   )
 (req-package undo-tree
@@ -610,6 +606,6 @@ configuration see cemacs-configure-local-frame"
 ;;Solve Dependencies and Load in Correct Order
 ;; Order here doesn't matter
 (req-package-finish)
-(init-setup)
+(cemacs-init-setup)
 (provide 'init)
 ;;; init.el ends here
