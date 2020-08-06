@@ -415,7 +415,12 @@ configuration see cemacs-configure-local-frame"
     (global-set-key (kbd "M-d") 'cemacs-delete-word)
     (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
     (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
-    (defhydra hydra-emacs (:color blue :hint nil))
+    (global-set-key (kbd "M-l") 'downcase-dwim)
+    (global-set-key (kbd "C-M-l") 'downcase-char)
+    (global-set-key (kbd "M-c") 'upcase-dwim)
+    (global-set-key (kbd "C-M-c") 'upcase-char)
+    ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
+    ;; (defhydra hydra-emacs (:color blue :hint nil))
     )
   (cemacs-vinilla-keys-configure)
   )
