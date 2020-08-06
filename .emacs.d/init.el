@@ -138,15 +138,14 @@ This command is a reverse of cemacs-delete-word"
   )
 (add-hook 'after-make-frame-functions 'cemacs-configure-local-frame)
 (defun cemacs-configure-session-decorations()
-  "Set the default frame paramaters and aethetics for the whole Emacs
-session.
+  "Set the default frame paramaters and aethetics for the whole Emacs session.
 Note this assumes that a frame does not already exist, for frame
 configuration see cemacs-configure-local-frame"
   (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
-                 '(font . "Source Code Pro-13:style=Regular")
+                 '(font . "Hack-13:style=Regular")
                  ))
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
