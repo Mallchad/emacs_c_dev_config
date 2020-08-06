@@ -426,13 +426,18 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package lsp-mode
   :after company
-  :require company-lsp
+  ;; :require company-lsp
   :hook
   (c++-mode . lsp)
+  ;; (csharp-mode . lsp)
+  (csharp-mode . lsp)
   :config
   (setq lsp-enable-snippet nil
-        lsp-prefer-flymake nil)
-  (push 'company-lsp company-backends)
+        lsp-prefer-flymake nil
+        lsp-enable-indentation nil
+        lsp-enable-on-type-formatting nil
+        )
+  ;; (push 'company-lsp company-backends)
   )
 (req-package lsp-ui
   :after
