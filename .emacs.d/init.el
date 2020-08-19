@@ -352,13 +352,15 @@ configuration see cemacs-configure-local-frame"
                       :height 1.1
                       :foreground "dark cyan"
                       )
-  ;;Keybinds
+  ;; Keybinds
   (global-set-key (kbd "M-x") 'helm-M-x)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  ;;Swap Action and Completion Buttons
+  ;; Swap Action and Completion Buttons
   (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action)
+  ;; Org Mode
+  (global-set-key (kbd "C-.") 'org-time-stamp-inactive)
   ;; TODO(mallchad) need to find more elegant keybinds
   ;;Query
   (defhydra hydra-query (:color blue)
