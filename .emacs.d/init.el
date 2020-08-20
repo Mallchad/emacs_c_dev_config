@@ -359,8 +359,6 @@ configuration see cemacs-configure-local-frame"
   (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action)
-  ;; Org Mode
-  (global-set-key (kbd "C-.") 'org-time-stamp-inactive)
   ;; TODO(mallchad) need to find more elegant keybinds
   ;;Query
   (defhydra hydra-query (:color blue)
@@ -406,17 +404,24 @@ configuration see cemacs-configure-local-frame"
   (defun cemacs-vinilla-keys-configure()
     "Set up personal keybinds after initilization."
     (interactive)
-    ;;Emacs Control Bindings
+    ;; Emacs Control Bindings
+    ;; Navigation
     (global-set-key (kbd "C-x r") 'revert-buffer)
     (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
     (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
-    (global-set-key (kbd "M-d") 'cemacs-delete-word)
     (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
-    (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
+    ;; Editing Commands
+    (global-set-key (kbd "M-d") 'cemacs-delete-word)
     (global-set-key (kbd "M-l") 'downcase-dwim)
-    (global-set-key (kbd "C-M-l") 'downcase-char)
+    (global-set-key (kbd "C-M-l") 'downcase-word)
     (global-set-key (kbd "M-c") 'upcase-dwim)
     (global-set-key (kbd "C-M-c") 'upcase-char)
+    ;; Other
+    (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
+    ;; Org Mode
+    (global-set-key (kbd "C-.") 'org-time-stamp-inactive)
+    ;; Unbind
+    (define-key flyspell-mode-map (kbd "C-.") nil)
     ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
     ;; (defhydra hydra-emacs (:color blue :hint nil))
     )
