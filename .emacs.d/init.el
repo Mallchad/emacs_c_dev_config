@@ -410,6 +410,7 @@ configuration see cemacs-configure-local-frame"
     (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
     (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
     (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
+    (global-set-key (kbd "C-,") 'pop-to-mark-command)
     ;; Editing Commands
     (global-set-key (kbd "M-d") 'cemacs-delete-word)
     (global-set-key (kbd "M-l") 'downcase-dwim)
