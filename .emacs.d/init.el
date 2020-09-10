@@ -94,20 +94,11 @@ This command is a reverse of cemacs-delete-word"
   (run-hooks 'cemacs-kill-volatile-buffer-post-hook)
   )
 ;; Configuration
-(defun cemacs-cc-mode-setup()
-  "A function which will set up a c-style language buffer."
-  (interactive)
-  (setq-default c-basic-offset 4)
-  )
-(add-hook 'cemacs-init-setup 'cemacs-cc-mode-setup)
 (defun cemacs-cc-mode()
   (interactive)
+  (setq tab-width 4)
   )
-(add-hook 'cc-mode 'cemacs-cc-mode)
-(defun cemacs-csharp-mode()
-  "Setup for csharp-modethat is hooked onto csharp-mode."
-  ;; (c-set-style "cemacs-c-derivative")
-  )
+(add-hook 'c-mode-common-hook 'cemacs-cc-mode)
 (defun cemacs-elisp-mode()
   )
 (add-hook 'emacs-lisp-mode 'cemacs-elisp-mode)
@@ -290,8 +281,8 @@ configuration see cemacs-configure-local-frame"
   (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
   )
 (req-package csharp-mode
-  ;; :hook
-  ;; (csharp-mode . cemacs-csharp-setup)
+  :hook
+  (csharp-mode . cemacs-cc-mode)
   :config
   )
 (req-package dashboard
