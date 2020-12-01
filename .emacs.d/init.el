@@ -189,22 +189,25 @@ configuration see cemacs-configure-local-frame"
         )
   (global-subword-mode t)
   (global-whitespace-mode t)
+  (global-visual-line-mode)
   ;; Backup
   (setq make-backup-files nil
         backup-by-copying t
         auto-save-default nil)
   ;; Niggles
   (setq custom-file (concat user-emacs-directory cemacs-custom-variables-dir)
-        ;; TODO(mallchad) this should really be a function
-        ) ; move location of custom file
+                                        ; move location of custom file
+        )
+  ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
-  (setq save-interprogram-paste-before-kill t)
   ;; Run Functions
   (cemacs-configure-session-decorations)
   (run-hooks 'admin-cemacs-init-setup-hook)
   (run-hooks 'cemacs-init-setup-hook)
   )
 ;;Req Package Setup
+
+
 (require 'req-package)
 (setq use-package-always-ensure t)
 (req-package async
