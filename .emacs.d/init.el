@@ -389,16 +389,14 @@ configuration see cemacs-configure-local-frame"
   :hook
   (cemacs-init-setup . global-highlight-parentheses-mode)
   :config
-  (setq hl-paren-background-colors '("gray"
-                                     )
+  (setq hl-paren-background-colors '("gray")
         hl-paren-colors '("black")
         hl-paren-highlight-adjacent nil
         )
   )
 (req-package hl-todo
   :config
-  (global-hl-todo-mode
-   )
+  (global-hl-todo-mode)
   )
 (req-package hungry-delete
   :config
@@ -491,7 +489,7 @@ configuration see cemacs-configure-local-frame"
   )
 (req-package omnisharp
   :hook
-  ;; (csharp-mode . omnisharp-mode)
+  (csharp-mode . omnisharp-mode)
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   )
