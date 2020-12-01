@@ -495,6 +495,12 @@ configuration see cemacs-configure-local-frame"
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   )
+(req-package org-noter
+  :config
+  )
+(req-package org-super-agenda
+  :config
+  )
 (req-package origami
   :require lsp-origami
   :config
