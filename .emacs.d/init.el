@@ -222,6 +222,8 @@ configuration see cemacs-configure-local-frame"
   :hook
   (prog-mode . aggressive-indent-mode)
   :config
+  ;; Apply Aggressive Indent Patch
+  (require 'aggressive-indent-patch)
   )
 (req-package all-the-icons
   :config
