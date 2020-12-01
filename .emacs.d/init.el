@@ -84,6 +84,11 @@ This command is a reverse of cemacs-delete-word"
   (interactive "p")
   (cemacs-delete-word (- mult))
   )
+(defun cemacs-find-user-init-file ()
+  "Edit the `user-init-file'."
+  (interactive)
+  (find-file user-init-file)
+  )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
 (defvar cemacs-kill-volatile-buffer-post-hook nil)
 (defun cemacs-kill-volatile-buffer()
