@@ -435,6 +435,7 @@ configuration see cemacs-configure-local-frame"
     (global-set-key (kbd "C-.") 'org-time-stamp-inactive)
     ;; Unbind
     (define-key flyspell-mode-map (kbd "C-.") nil)
+    (define-key flyspell-mode-map (kbd "C-,") nil)
     ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
     ;; (defhydra hydra-emacs (:color blue :hint nil))
     )
