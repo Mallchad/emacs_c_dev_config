@@ -121,6 +121,15 @@ This command is a reverse of cemacs-delete-word"
   (flyspell-mode)
   )
 (add-hook 'markdown-mode-hook 'cemacs-markdown-mode)
+(defun cemacs-org-mode()
+  (interactive)
+  (org-indent-mode)
+  (flyspell-mode)
+  (setq-local org-hide-leading-stars nil)
+  (define-key org-mode-map (kbd "C-,") nil)
+  (setq-local ws-butler-mode nil)
+  )
+(add-hook 'org-mode-hook 'cemacs-org-mode)
 (defvar cemacs-custom-variables-dir "var/custom.el")
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
