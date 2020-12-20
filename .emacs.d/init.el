@@ -423,10 +423,10 @@ configuration see cemacs-configure-local-frame"
     (global-set-key (kbd "C-,") 'pop-to-mark-command)
     ;; Editing Commands
     (global-set-key (kbd "M-d") 'cemacs-delete-word)
-    (global-set-key (kbd "M-l") 'downcase-dwim)
-    (global-set-key (kbd "C-M-l") 'downcase-word)
-    (global-set-key (kbd "M-c") 'upcase-dwim)
-    (global-set-key (kbd "C-M-c") 'upcase-char)
+    ;; (global-set-key (kbd "M-l") 'downcase-dwim)
+    ;; (global-set-key (kbd "C-M-l") 'nil)
+    ;; (global-set-key (kbd "M-c") 'capitalize-word)
+    ;; (global-set-key (kbd "C-M-c") 'upcase-char)
     ;; Other
     (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
     ;; Org Mode
