@@ -444,6 +444,7 @@ configuration see cemacs-configure-local-frame"
   ;; :require company-lsp
   :hook
   (c++-mode . lsp)
+  (c-mode . lsp)
   ;; (csharp-mode . lsp)
   (csharp-mode . lsp)
   :config
