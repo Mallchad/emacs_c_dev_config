@@ -301,6 +301,8 @@ configuration see cemacs-configure-local-frame"
   (global-set-key (kbd "C-x C-o") 'crux-swap-windows)
   (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
   )
+(req-package cmake-mode
+  )
 (req-package csharp-mode
   :hook
   (csharp-mode . cemacs-cc-mode)
