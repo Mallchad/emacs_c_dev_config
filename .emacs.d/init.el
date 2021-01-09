@@ -197,6 +197,7 @@ configuration see cemacs-configure-local-frame"
   ;; Niggles
   (setq custom-file (concat user-emacs-directory cemacs-custom-variables-dir)
                                         ; move location of custom file
+        recentf-max-saved-items 1000
         )
   ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
