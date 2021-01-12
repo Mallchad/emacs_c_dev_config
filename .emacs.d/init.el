@@ -116,9 +116,17 @@ This command is a reverse of cemacs-delete-word"
   (interactive)
   (setq tab-width 4)
   (setq-default c-basic-offset 4)
-  (c-set-style "stroustrup")
   )
 (add-hook 'c-mode-common-hook 'cemacs-cc-mode)
+(defun cemacs-cpp-mode()
+  (interactive)
+  (c-set-style "stroustrup")
+  )
+(add-hook 'c-mode-common-hook 'cemacs-cpp-mode)
+(defun cemacs-c-mode()
+  (interactive)
+  )
+(add-hook 'c-mode-hook 'cemacs-c-mode)
 (defun cemacs-elisp-mode()
   )
 (add-hook 'emacs-lisp-mode 'cemacs-elisp-mode)
@@ -351,6 +359,13 @@ configuration see cemacs-configure-local-frame"
   :hook
   (csharp-mode . cemacs-cc-mode)
   :config
+  (defun cemacs-csharp-mode()
+    (interactive)
+    (setq tab-width 4)
+    (setq-default c-basic-offset 4)
+    (c-set-style "c#")
+    )
+  (add-hook 'csharp-mode-hook 'cemacs-csharp-mode)
   )
 (req-package dashboard
   :config
@@ -468,7 +483,6 @@ configuration see cemacs-configure-local-frame"
   :hook
   (c++-mode . lsp)
   (c-mode . lsp)
-  ;; (csharp-mode . lsp)
   (csharp-mode . lsp)
   :config
   (setq lsp-enable-snippet nil
@@ -512,8 +526,8 @@ configuration see cemacs-configure-local-frame"
   ;;   )
   )
 (req-package omnisharp
-  :hook
-  (csharp-mode . omnisharp-mode)
+  ;; :hook
+  ;; (csharp-mode . omnisharp-mode)
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   )
