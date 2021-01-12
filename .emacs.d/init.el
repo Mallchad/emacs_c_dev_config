@@ -604,7 +604,7 @@ configuration see cemacs-configure-local-frame"
   :hook
   (cemacs-init-setup . smooth-scrolling-mode)
   :config
-  (setq scroll-conservatively nil)
+  (setq scroll-conservatively 0)
   )
 (req-package smart-yank
   :config
