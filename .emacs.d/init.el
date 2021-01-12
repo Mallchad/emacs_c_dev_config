@@ -414,7 +414,7 @@ configuration see cemacs-configure-local-frame"
     ("b" slay-whole-buffer "whole buffer")
     )
   (global-set-key (kbd "C-s") 'hydra-slayer/body)
-  (defun cemacs-vinilla-keys-configure()
+  (defun cemacs-vanilla-keys-configure()
     "Set up personal keybinds after initilization."
     (interactive)
     ;; Emacs Control Bindings
@@ -440,7 +440,7 @@ configuration see cemacs-configure-local-frame"
     ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
     ;; (defhydra hydra-emacs (:color blue :hint nil))
     )
-  (cemacs-vinilla-keys-configure)
+  (cemacs-vanilla-keys-configure)
   )
 (req-package lsp-mode
   :after company
