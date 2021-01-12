@@ -193,6 +193,11 @@ configuration see cemacs-configure-local-frame"
   ;; Other
   (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
   ;; Org Mode
+  (global-set-key (kbd "C-M-#")
+                  '(lambda()
+                     (interactive)
+                     (call-interactively (org-time-stamp '(16) 'inactive))
+                     ))
   ;; Unbind
   ;; (define-key flyspell-mode-map (kbd "C-.") nil)
   ;; (define-key flyspell-mode-map (kbd "C-,") nil)
