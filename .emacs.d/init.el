@@ -322,6 +322,8 @@ configuration see cemacs-configure-local-frame"
   (global-flycheck-mode . global-flycheck-inline-mode)
   :config
   )
+(req-package free-keys
+  )
 (req-package god-mode
   :config
   )
