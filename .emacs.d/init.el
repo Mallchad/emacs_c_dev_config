@@ -174,6 +174,29 @@ configuration see cemacs-configure-local-frame"
   (fringe-mode (cons 0 0))
   (setq whitespace-style '(trailing tabs tab-mark))
   )
+(defun cemacs-vanilla-keys-configure()
+  "Set up personal keybinds after initilization."
+  (interactive)
+  ;; Emacs Control Bindings
+  ;; Navigation
+  (global-set-key (kbd "C-x r") 'revert-buffer)
+  (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
+  (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
+  (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
+  (global-set-key (kbd "C-,") 'pop-to-mark-command)
+  ;; Editing Commands
+  (global-set-key (kbd "M-d") 'cemacs-delete-word)
+  ;; (global-set-key (kbd "M-l") 'downcase-dwim)
+  ;; (global-set-key (kbd "C-M-l") 'nil)
+  ;; (global-set-key (kbd "M-c") 'capitalize-word)
+  ;; (global-set-key (kbd "C-M-c") 'upcase-char)
+  ;; Other
+  (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
+  ;; Org Mode
+  ;; Unbind
+  ;; (define-key flyspell-mode-map (kbd "C-.") nil)
+  ;; (define-key flyspell-mode-map (kbd "C-,") nil)
+  )
 (defun cemacs-init-setup()
   "Run after-initilization setup."
   (interactive)
@@ -203,6 +226,7 @@ configuration see cemacs-configure-local-frame"
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   ;; Run Functions
   (cemacs-configure-session-decorations)
+  (cemacs-vanilla-keys-configure)
   (run-hooks 'admin-cemacs-init-setup-hook)
   (run-hooks 'cemacs-init-setup-hook)
   )
@@ -416,33 +440,8 @@ configuration see cemacs-configure-local-frame"
     ("b" slay-whole-buffer "whole buffer")
     )
   (global-set-key (kbd "C-s") 'hydra-slayer/body)
-  (defun cemacs-vanilla-keys-configure()
-    "Set up personal keybinds after initilization."
-    (interactive)
-    ;; Emacs Control Bindings
-    ;; Navigation
-    (global-set-key (kbd "C-x r") 'revert-buffer)
-    (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
-    (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
-    (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
-    (global-set-key (kbd "C-,") 'pop-to-mark-command)
-    ;; Editing Commands
-    (global-set-key (kbd "M-d") 'cemacs-delete-word)
-    ;; (global-set-key (kbd "M-l") 'downcase-dwim)
-    ;; (global-set-key (kbd "C-M-l") 'nil)
-    ;; (global-set-key (kbd "M-c") 'capitalize-word)
-    ;; (global-set-key (kbd "C-M-c") 'upcase-char)
-    ;; Other
-    (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
-    ;; Org Mode
-    (global-set-key (kbd "C-.") 'org-time-stamp-inactive)
-    ;; Unbind
-    (define-key flyspell-mode-map (kbd "C-.") nil)
-    (define-key flyspell-mode-map (kbd "C-,") nil)
-    ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
-    ;; (defhydra hydra-emacs (:color blue :hint nil))
-    )
-  (cemacs-vanilla-keys-configure)
+  ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
+  ;; (defhydra hydra-emacs (:color blue :hint nil))
   )
 (req-package lsp-mode
   :after company
