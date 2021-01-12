@@ -30,6 +30,19 @@ There are two things you can do about this warning:
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
   )
 (package-initialize)
+;; Constants
+(defconst cemacs-universal-argument-double  '(16)
+  "A constant that represents the value an argument is \
+passed when a single universal argument is called.
+
+The value essentially a list with the single value of 4"
+  )
+(defconst cemacs-universal-argument-double  '(16)
+  "A constant that represents the value an argument is \
+passed when two universal arguments are called.
+
+The value essentially a list with the single value of 16"
+  )
 ;; Custom Functions
 (defun slay-function()
   "Kill the function surrounding the point.
@@ -196,7 +209,8 @@ configuration see cemacs-configure-local-frame"
   (global-set-key (kbd "C-M-#")
                   '(lambda()
                      (interactive)
-                     (call-interactively (org-time-stamp '(16) 'inactive))
+                     (call-interactively
+                      (org-time-stamp cemacs-universal-argument-double 'inactive))
                      ))
   ;; Unbind
   ;; (define-key flyspell-mode-map (kbd "C-.") nil)
