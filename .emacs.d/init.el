@@ -249,6 +249,7 @@ configuration see cemacs-configure-local-frame"
                                         ; move location of custom file
         recentf-max-saved-items 1000
         )
+  (add-hook 'find-file-hook #'recentf-save-list)
   ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   ;; Run Functions
