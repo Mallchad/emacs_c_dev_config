@@ -249,8 +249,8 @@ configuration see cemacs-configure-local-frame"
         recentf-max-saved-items 1000
         )
   (add-hook 'find-file-hook #'recentf-save-list)
-  (add-hook 'write-file-functions #'recentf-save-list)
-  (add-hook 'kill-buffer-hook #'recentf-save-list)
+  ;; (add-hook 'write-file-functions #'recentf-save-list)
+  ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
   ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   ;; Run Functions
