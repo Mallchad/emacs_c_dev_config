@@ -220,8 +220,6 @@ configuration see cemacs-configure-local-frame"
                       (org-time-stamp cemacs-universal-argument-double 'inactive))
                      ))
   ;; Unbind
-  (define-key flyspell-mode-map [(control ?\,)] nil)
-  (define-key flyspell-mode-map [(control ?\.)] nil)
   )
 (defun cemacs-init-setup()
   "Run after-initilization setup."
@@ -264,6 +262,13 @@ configuration see cemacs-configure-local-frame"
 
 (require 'req-package)
 (setq use-package-always-ensure t)
+;; Built in Packages
+(req-package flyspell
+  :config
+  (define-key flyspell-mode-map [(control ?\,)] nil)
+  (define-key flyspell-mode-map [(control ?\.)] nil)
+  )
+;; External Packages
 (req-package async
   :config
   (setq async-bytecomp-package-mode t)
