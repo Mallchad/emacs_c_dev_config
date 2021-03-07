@@ -147,7 +147,6 @@ This command is a reverse of cemacs-delete-word"
   (org-indent-mode)
   (flyspell-mode)
   (setq-local org-hide-leading-stars nil)
-  (define-key org-mode-map (kbd "C-,") nil)
   (setq-local ws-butler-mode nil)
   )
 (add-hook 'org-mode-hook 'cemacs-org-mode)
@@ -221,8 +220,8 @@ configuration see cemacs-configure-local-frame"
                       (org-time-stamp cemacs-universal-argument-double 'inactive))
                      ))
   ;; Unbind
-  ;; (define-key flyspell-mode-map (kbd "C-.") nil)
-  ;; (define-key flyspell-mode-map (kbd "C-,") nil)
+  (define-key flyspell-mode-map [(control ?\,)] nil)
+  (define-key flyspell-mode-map [(control ?\.)] nil)
   )
 (defun cemacs-init-setup()
   "Run after-initilization setup."
