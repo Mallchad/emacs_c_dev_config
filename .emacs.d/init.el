@@ -269,7 +269,7 @@ configuration see cemacs-configure-local-frame"
   (define-key flyspell-mode-map [(control ?\.)] nil)
   )
 (req-package org
-  :init
+  :config
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
   )
 ;; External Packages
