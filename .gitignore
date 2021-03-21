@@ -3,6 +3,6 @@
 
 #Whitelsit
 !/.emacs.d/init.el
-!/etc/*.el
+!/.emacs.d/etc/*.el
 !.gitignore
 !README.md
