@@ -353,7 +353,6 @@ configuration see cemacs-configure-local-frame"
   (prog-mode . company-mode)
   :config
   ;; Apply company-tng patch
-  (require 'company-tng-patch)
   (company-tng-configure-default)
   (setq company-require-match 'never
         company-idle-delay 0.05
