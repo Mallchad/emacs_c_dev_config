@@ -173,7 +173,7 @@ configuration see cemacs-configure-local-frame"
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
-                 '(font . "Hack-13:style=Regular")
+                 '(font . "MesloLGS NF-13:style=Regular")
                  ))
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
