@@ -251,6 +251,9 @@ configuration see cemacs-configure-local-frame"
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
   ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
+  ;; Re-enable disabled functions
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
   ;; Run Functions
   (cemacs-configure-session-decorations)
   (cemacs-vanilla-keys-configure)
