@@ -246,6 +246,7 @@ configuration see cemacs-configure-local-frame"
                                         ; move location of custom file
         recentf-max-saved-items 1000
         )
+  (load custom-file)
   (add-hook 'find-file-hook #'recentf-save-list)
   ;; (add-hook 'write-file-functions #'recentf-save-list)
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
