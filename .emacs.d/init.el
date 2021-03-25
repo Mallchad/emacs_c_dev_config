@@ -150,7 +150,9 @@ This command is a reverse of cemacs-delete-word"
   (setq-local ws-butler-mode nil)
   )
 (add-hook 'org-mode-hook 'cemacs-org-mode)
-(defvar cemacs-custom-variables-dir "var/custom.el")
+(defvar cemacs-var-dir (concat user-emacs-directory "var/"))
+(defvar cemacs-custom-path (concat cemacs-var-dir "custom.el"))
+(defvar cemacs-recentf-path (concat cemacs-var-dir "recentf"))
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
@@ -242,9 +244,10 @@ configuration see cemacs-configure-local-frame"
         backup-by-copying t
         auto-save-default nil)
   ;; Niggles
-  (setq custom-file (concat user-emacs-directory cemacs-custom-variables-dir)
-                                        ; move location of custom file
+  ;; move location of custom file
+  (setq custom-file cemacs-custom-path
         recentf-max-saved-items 1000
+        recentf-save-file cemacs-recentf-path
         )
   (load custom-file)
   (add-hook 'find-file-hook #'recentf-save-list)
