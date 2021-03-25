@@ -327,6 +327,10 @@ configuration see cemacs-configure-local-frame"
         beacon-blink-when-point-moves-horizontally 20
         )
   )
+;;; A robust, prettified calender framework
+(req-package calfw
+  :require calfw-org
+  )
 (req-package centaur-tabs
   :hook
   (cemacs-init-setup . centaur-tabs-mode)
