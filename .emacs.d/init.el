@@ -102,6 +102,16 @@ This command is a reverse of cemacs-delete-word"
   (interactive)
   (find-file (file-truename user-init-file))
   )
+(defun cemacs-open-files-background (filelist)
+  "Open all files in FILELIST in offscreen buffers."
+  (cl-loop for x-file in filelist
+           do (if (and (file-exists-p x-file ) (file-regular-p x-file))
+                  (find-file-noselect x-file)
+                )))
+(defun cemacs-open-files-in-directory (directory-path)
+  "Opens all files in a DIRECTORY-PATH in offscreen buffers."
+  (cemacs-open-files-background (directory-files directory-path t))
+  )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
 (defvar cemacs-kill-volatile-buffer-post-hook nil)
 (defun cemacs-kill-volatile-buffer()
@@ -282,6 +292,9 @@ configuration see cemacs-configure-local-frame"
 (req-package org
   :config
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
+  ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
+  ;; change.
+  (cemacs-open-files-in-directory "~/org")
   )
 ;; External Packages
 (req-package async
