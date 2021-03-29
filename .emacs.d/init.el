@@ -311,9 +311,10 @@ configuration see cemacs-configure-local-frame"
   :config
   )
 (req-package all-the-icons
+  :require async
   :config
-  ;; NOTE(mallchad) this slows down initial load massively
-  (all-the-icons-install-fonts 'skip)
+  (async-start (lambda () (all-the-icons-install-fonts 'skip)
+                 ))
   )
 (req-package avy
   :config
