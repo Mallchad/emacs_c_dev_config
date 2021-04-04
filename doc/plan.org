@@ -15,6 +15,11 @@ written.
 ** TODO [#B] Add a more detailed description to this document
 Self explanatory.
 
+** TODO [#B] Fix annoying smartparens
+The current smartparens behaviour won't balance sexp when you insert a new pair,
+ie if you already have an unmatched brace ~)~ and type ~(~ to the left of that sexp,
+it will insert ~()~ instead if realizing that the sexp is already balanced out.
+
 ** TODO Create a system to open up a bunch of files when one of them is visited
 The point of this is to open up many files in one go when you visit files in a
 user-specified file "group".
