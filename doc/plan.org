@@ -1,0 +1,32 @@
+#+Title: Plan
+* Overview
+* Priority
+** TODO [#B] Add a more detailed description to this document
+Self explanatory.
+
+** TODO Create a system to open up a bunch of files when one of them is visited
+The point of this is to open up many files in one go when you visit files in a
+user-specified file "group".
+
+The motivation behind such a mechanism is to improve the usage of files that are
+compressed, encrypted, or are just generally large files.
+In all of the above cases it is extremely tedious to open all the files manually,
+especially considering cases where emacs will block the entire application whilst
+it opens, every, single, individual, file.
+This could be made asynchronously if the operation is done in bulk.
+
+This could be as simple as hooking onto or modifying the ~file-file~ function and
+checking the requested file to open against the file groups.
+This system should replace the horrifically rigid org mode setup they opens all
+files in the directory =~/org=
+
+** Unbind ~overwrite-mode~ by deafult
+overwrite mode has almost no benefits and can be easily replaced with deleting
+or killing text before typing.
+Yet at the same time it is extremely annoying when you start typing not realizing
+you accidentally hit that one exact insert key on the keyboard.
+
+* Backburner
+** Make the config more configurable so other people can use it
+** Create a high-performance mode that disables many unnecessary functions
+** Create a close-to-vanilla emacs setup, similar to ergomacs
