@@ -313,8 +313,10 @@ configuration see cemacs-configure-local-frame"
 (req-package all-the-icons
   :require async
   :config
-  (async-start (lambda () (all-the-icons-install-fonts 'skip)
-                 ))
+  (if (not (eq cemacs-all-the-icons-fonts-installed t))
+      (progn (all-the-icons-install-fonts 'skip)
+             (customize-save-variable 'cemacs-all-the-icons-fonts-installed t))
+    )
   )
 (req-package avy
   :config
