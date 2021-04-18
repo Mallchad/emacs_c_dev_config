@@ -156,6 +156,7 @@ This command is a reverse of cemacs-delete-word"
   (interactive)
   (org-indent-mode)
   (flyspell-mode)
+  (auto-fill-mode)
   (setq-local org-hide-leading-stars nil)
   (setq-local ws-butler-mode nil)
   )
