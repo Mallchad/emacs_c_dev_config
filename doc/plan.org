@@ -43,6 +43,7 @@ Yet at the same time it is extremely annoying when you start typing not realizin
 you accidentally hit that one exact insert key on the keyboard.
 
 * Backburner
+** Mode all org-mode related functions to the req-package macro
 ** Make the config more configurable so other people can use it
 ** Create a high-performance mode that disables many unnecessary functions
 ** Create a close-to-vanilla emacs setup, similar to ergomacs
