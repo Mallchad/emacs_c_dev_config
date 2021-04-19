@@ -526,12 +526,25 @@ configuration see cemacs-configure-local-frame"
   (c++-mode . lsp)
   (c-mode . lsp)
   (csharp-mode . lsp)
+
   :config
   (setq lsp-enable-snippet nil
         lsp-prefer-flymake nil
         lsp-enable-indentation nil
         lsp-enable-on-type-formatting nil
+        ;; Performance Tuning
         )
+  (setq
+   ;; Source for performance improvements https://emacs-lsp.github.io/lsp-mode/page/performance/
+   ;; Adjust gc-cons-threshold. The default setting is too low for lsp-mode's
+   ;; needs due to the fact that client/server communication generates
+   ;; a lot of memory/garbage.
+   gc-cons-threshold 100000000
+   ;; Increase the amount of data which Emacs reads from the process.
+   ;; Again the emacs default is too low 4k considering that the some of the
+   ;; language server responses are in 800k - 3M range.
+   read-process-output-max (* 1024 1024) ;; 1mb
+   )
   ;; (push 'company-lsp company-backends)
   )
 (req-package lsp-ui
