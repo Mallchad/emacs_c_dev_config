@@ -532,8 +532,9 @@ configuration see cemacs-configure-local-frame"
         lsp-prefer-flymake nil
         lsp-enable-indentation nil
         lsp-enable-on-type-formatting nil
-        ;; Performance Tuning
+        lsp-clients-clangd-args '("--header-insertion-decorators=0" "--background-index")
         )
+  ;; Performance Tuning
   (setq
    ;; Source for performance improvements https://emacs-lsp.github.io/lsp-mode/page/performance/
    ;; Adjust gc-cons-threshold. The default setting is too low for lsp-mode's
