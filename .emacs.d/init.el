@@ -295,9 +295,9 @@ configuration see cemacs-configure-local-frame"
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
   ;; change.
-  (if (yes-or-no-p "Load and decrypt org files up now?")
-      (cemacs-open-files-in-directory "~/org")
-    )
+  (defun cemacs-org-open-org-files ()
+    (interactive)
+    (cemacs-open-files-in-directory "~/org"))
   )
 ;; External Packages
 (req-package async
