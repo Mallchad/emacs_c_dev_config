@@ -406,6 +406,7 @@ configuration see cemacs-configure-local-frame"
 (req-package cmake-mode
   )
 (req-package csharp-mode
+  :require csproj-mode
   :hook
   (csharp-mode . cemacs-cc-mode)
   :config
