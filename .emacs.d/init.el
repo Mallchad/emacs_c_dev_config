@@ -171,6 +171,10 @@ This command is a reverse of cemacs-delete-word"
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
+(defun cemacs-void-function (&rest)
+  "Does absolutely nothing, useful for eating a function call."
+  )
+;; Setup Functions
 (defun cemacs-configure-local-frame(frame)
   "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
@@ -270,6 +274,8 @@ configuration see cemacs-configure-local-frame"
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
   ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
+  ;; TODO(mallcahd): This is a lazy way compared to finding the right key to unbind
+  (fset 'overwrite-mode 'cemacs-void-function) ; Disable pain in the arse insert mode
   ;; Re-enable disabled functions
   (put 'downcase-region 'disabled nil)
   (put 'upcase-region 'disabled nil)
