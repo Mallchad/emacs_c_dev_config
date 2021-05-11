@@ -730,6 +730,11 @@ configuration see cemacs-configure-local-frame"
   (setq ws-butler-convert-leading-tabs-or-spaces t)
   )
 (req-package zoom
+  ;; A window rebalancing minor mode
+  :config
+  (zoom-mode)
+  ;; Tweak tweak rebalancing ratios
+  (setq zoom-size '(70 . 30))
   )
 ;;Solve Dependencies and Load in Correct Order
 ;; Order here doesn't matter
