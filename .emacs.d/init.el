@@ -590,6 +590,9 @@ configuration see cemacs-configure-local-frame"
   ;;   ("r" mc/mark-all-in-region "mark in region")
   ;;   )
   )
+(req-package json-mode
+  ;; A minor mode to aid with json editing
+  )
 (req-package omnisharp
   ;; :hook
   ;; (csharp-mode . omnisharp-mode)
@@ -714,6 +717,9 @@ configuration see cemacs-configure-local-frame"
   (define-key undo-tree-map (kbd "C-x r u") nil)
   (define-key undo-tree-map (kbd "C-x r U") nil)
   (define-key undo-tree-map (kbd "C-x r") nil)
+  )
+(req-package visible-mark
+  ;; A minor mode to show you where the mark is current
   )
 (req-package vlf
   :config
