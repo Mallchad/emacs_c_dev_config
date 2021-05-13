@@ -8,37 +8,20 @@
   (declare (indent defun))
   `(when (eq system-type ',type)
      ,@body))
-;; MELPA
+;; Enable Package Repositories
 (require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (when no-ssl
-    (warn "/
-Your version of Emacs does not support SSL connections,
-which is unsafe because it allows man-in-the-middle attacks.
-There are two things you can do about this warning:
-1. Install an Emacs version that does support SSL and be safe.
-2. Remove this warning from your init file so you won't see it again."))
-  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
-  (add-to-list 'package-archives
-               (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives
-               (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
-  )
+;; For important compatibility libraries like cl-lib
+(add-to-list 'package-archives (cons "gnu" "https://elpa.gnu.org/packages/"))
+;; Melpa
+(add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 (package-initialize)
 ;; Constants
-(defconst cemacs-universal-argument-double  '(4)
+(defconst cemacs-universal-argument  '(4)
   "Represents the value a single 'universal-argument' call passes.
 The value essentially a list with the single value of 4"
   )
 (defconst cemacs-universal-argument-double  '(16)
-  "A constant that represents the value an argument is \
-passed when two universal arguments are called.
-
+  "Represents the value two 'universal-argument' calls passes.
 The value essentially a list with the single value of 16"
   )
 ;; Custom Functions
@@ -538,7 +521,6 @@ configuration see cemacs-configure-local-frame"
     ("b" slay-whole-buffer "whole buffer")
     )
   (global-set-key (kbd "C-s") 'hydra-slayer/body)
-  ;; TODO(mallchad) error occurs sometimes when killing-non-file buffers
   ;; (defhydra hydra-emacs (:color blue :hint nil))
   )
 (req-package lsp-mode
@@ -662,11 +644,6 @@ configuration see cemacs-configure-local-frame"
   :config
   (global-set-key (kbd "C-x C-a") 'restart-emacs)
   )
-(req-package rtags
-  :require
-  :config
-  ;; TODO(need to evaluate whether is package is more useful than lsp or not)
-  )
 (req-package smartparens
   :hook
   (cemacs-init-setup . smartparens-global-mode)
@@ -705,7 +682,6 @@ configuration see cemacs-configure-local-frame"
         ;;      sublimity-map-text-scale -7
         ;;      sublimity-map-set-delay 1
         )
-  ;; TODO(mallchad) see if minimap or sublimity map can be readded
   )
 (req-package treemacs
   :require lsp-treemacs
