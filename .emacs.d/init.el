@@ -118,6 +118,12 @@ This command is a reverse of cemacs-delete-word"
   "Kill the current buffer unconditionally."
   (interactive)
   (run-hooks 'cemacs-kill-volatile-buffer-pre-hook)
+  (if (not (file-exists-p
+            (buffer-file-name (current-buffer)
+                              )))
+      (progn (message "Buffer does not have associated file, killing instantly")
+             (set-buffer-modified-p nil))
+    )
   (kill-buffer (current-buffer))
   (run-hooks 'cemacs-kill-volatile-buffer-post-hook)
   )
@@ -341,11 +347,20 @@ configuration see cemacs-configure-local-frame"
 (req-package backup-each-save
   :hook
   (after-save . backup-each-save)
-  (cemacs-kill-volatile-buffer-pre . (lambda ()
-                                       (if (buffer-file-name)
-                                           (backup-each-save)
-                                         )))
+  (cemacs-kill-volatile-buffer-pre . backup-each-save)
   :config
+  ;; TODO Stop being lazy and turn this is into a custom function
+  (defun backup-each-save ()
+    (if (and (buffer-file-name)
+             (file-exists-p (buffer-file-name)
+                            ))
+        (let ((bfn (buffer-file-name)))
+          (when (and (or backup-each-save-remote-files
+                         (not (file-remote-p bfn)))
+                     (funcall backup-each-save-filter-function bfn)
+                     (or (not backup-each-save-size-limit)
+                         (<= (buffer-size) backup-each-save-size-limit)))
+            (copy-file bfn (backup-each-save-compute-location bfn) t t t)))))
   )
 (req-package beacon
   :hook
