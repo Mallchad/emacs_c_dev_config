@@ -31,10 +31,8 @@ There are two things you can do about this warning:
   )
 (package-initialize)
 ;; Constants
-(defconst cemacs-universal-argument-double  '(16)
-  "A constant that represents the value an argument is \
-passed when a single universal argument is called.
-
+(defconst cemacs-universal-argument-double  '(4)
+  "Represents the value a single 'universal-argument' call passes.
 The value essentially a list with the single value of 4"
   )
 (defconst cemacs-universal-argument-double  '(16)
