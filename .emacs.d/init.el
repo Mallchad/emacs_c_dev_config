@@ -40,6 +40,14 @@ This function is effectively a shorthand of 'mark-defun' 'kill-region'."
   (kill-region (point-min) (point-max))
   (kill-region (region-beginning) (region-end))
   )
+(defun cemacs-activate-mark ()
+  "Activates the region between the point and mark.
+This is a good alternative to dealing with functions that assume
+you use transient mark mode since it lets you run without having to
+traverse back to set the region again"
+  (interactive)
+  (activate-mark)
+  )
 (defun cemacs-scroll-up-in-place()
   "Scroll buffer up 1 line without moving cursor position vertically."
   ;; TODO(mallchad) this could accept an arg quite easilly
