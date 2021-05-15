@@ -99,7 +99,7 @@ This command is a reverse of cemacs-delete-word"
                 )))
 (defun cemacs-open-files-in-directory (directory-path)
   "Opens all files in a DIRECTORY-PATH in offscreen buffers."
-  (if (not (directory-empty-p directory-path))
+  (if (file-directory-p directory-path)
       (cemacs-open-files-background
        (directory-files directory-path t)
        ))
@@ -307,7 +307,7 @@ configuration see cemacs-configure-local-frame"
                "~/userdata/org"
                "~/userdata/notes"
                )
-             do (cemacs-open-files-in-directory "~/userdata/org")
+             do (cemacs-open-files-in-directory x-folder)
              ))
   )
 ;; External Packages
