@@ -295,6 +295,9 @@ configuration see cemacs-configure-local-frame"
   (define-key flyspell-mode-map [(control ?\.)] nil)
   )
 (req-package org
+  :require
+  ;; A cool new package
+  org-cliplink
   :config
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
