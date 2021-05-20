@@ -35,3 +35,14 @@ avy enhanced movement
 C-x e is now 'crux-find-user-init-file  
 C-x k now calls a new function 'cemacs-kill-volatile-buffer  
 C-x a calls 'restart-emacs  
+
+# Credit
+It's nice to show some appreciation for the hacks and help you come
+across.
+As well as pointing people towards the various places where they might
+get a little more information than from here.
+
+This is a hack responsible for the coloured checkbox lines in
+org-mode,
+which is largely based on this post [https://fuco1.github.io/2017-05-25-Fontify-done-checkbox-items-in-org-mode.html](Fontify done checkbox items in org-mode)
+[faces - Change color of org-mode checkboxes - Emacs Stack Exchange](https://emacs.stackexchange.com/questions/45291/change-color-of-org-mode-checkboxes)
