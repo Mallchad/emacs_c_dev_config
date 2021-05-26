@@ -173,7 +173,7 @@ This command is a reverse of cemacs-delete-word"
   "Does absolutely nothing, useful for eating a function call."
   )
 ;; Setup Functions
-(defun cemacs-configure-local-frame(frame)
+(defun cemacs-init-local-frame(frame)
   "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
   (set-frame-parameter frame 'menu-bar-lines nil)
@@ -187,7 +187,7 @@ This command is a reverse of cemacs-delete-word"
 (defun cemacs-configure-session-decorations()
   "Set the default frame paramaters and aethetics for the whole Emacs session.
 Note this assumes that a frame does not already exist, for frame
-configuration see cemacs-configure-local-frame"
+configuration see cemacs-init-local-frame"
   (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
@@ -202,7 +202,7 @@ configuration see cemacs-configure-local-frame"
   (global-hl-line-mode)
   ;; Disable Window Decorations
   (if (display-graphic-p)  ; Resolve inital frame configuration
-      (cemacs-configure-local-frame (selected-frame))
+      (cemacs-init-local-frame (selected-frame))
     )
   (setq-default mode-line-format nil
                 vertical-scroll-bar nil
@@ -283,6 +283,8 @@ configuration see cemacs-configure-local-frame"
   (run-hooks 'admin-cemacs-init-setup-hook)
   (run-hooks 'cemacs-init-setup-hook)
   )
+;; Run early setup to prettify the session
+(cemacs-init-local-frame (selected-frame))
 ;;Req Package Setup
 
 
