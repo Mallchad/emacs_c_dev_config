@@ -331,7 +331,7 @@ configuration see cemacs-configure-local-frame"
 ;; External Packages
 (req-package async
   :config
-  (setq async-bytecomp-package-mode t)
+  (async-bytecomp-package-mode t)
   )
 (req-package color-theme-sanityinc-tomorrow
   :config
