@@ -284,11 +284,16 @@ configuration see cemacs-init-local-frame"
   (run-hooks 'cemacs-init-setup-hook)
   )
 ;; Run early setup to prettify the session
-(cemacs-init-local-frame (selected-frame))
+(if (display-graphic-p)  ; Resolve inital frame configuration
+    (cemacs-init-local-frame (selected-frame))
+  )
 ;;Req Package Setup
-
-
-(require 'req-package)
+;; Attempt to install req-package if it's not alread loaded
+(when (not (require 'req-package nil 'noerror))
+  (package-refresh-contents)
+  (package-install 'req-package)
+  (require 'req-package)
+  )
 (setq use-package-always-ensure t)
 ;; Built in Packages
 (req-package flyspell
