@@ -749,7 +749,6 @@ configuration see cemacs-init-local-frame"
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
   ;; TODO(mallchad) need  to setup bindings for this package
-  ;; TODO(mallchad) need to get rid of annoying escape character completion
   ;; TODO(mallchad) need to make angled bracket pair for cc modes
   ;; TODO(mallchad) need to evalue a potentiol workaround to make hybrid
   ;; sexps spill over lines to make it useful for cc mode development
