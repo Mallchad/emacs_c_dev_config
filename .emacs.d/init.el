@@ -24,6 +24,17 @@ The value essentially a list with the single value of 4"
   "Represents the value two 'universal-argument' calls passes.
 The value essentially a list with the single value of 16"
   )
+;; Variables
+(defvar cemacs-custom-directory-list nil
+  "A list of custom directories being used by this config."
+  )
+(defvar cemacs-custom-directory-clean-list nil
+  "A list of custom config directories in which is safe to delete.
+This is without without too much trouble when cleaning up,
+ especially after a clean Emacs install.
+This primarily targets files in cemacs-custom-directory-list but
+ it isn't actually a pre-requisite"
+  )
 ;; Custom Functions
 (defun slay-function()
   "Kill the function surrounding the point.
@@ -104,6 +115,20 @@ This command is a reverse of cemacs-delete-word"
        (directory-files directory-path t)
        ))
   )
+(defun cemacs-defdir (new-dir &optional associated-var local-only)
+  "Define a variable equal to NEW-PATH a path which is then automatically created.
+
+If there is a direct, existing variable which the path is an intermediate for than
+then it can be spceified using ASSOCIATED-VAR.
+This also hooks into a directory creation and destruction list, it can be specified whether or not this directory contains LOCAL-ONLY files that aren't too important if
+they are lost between computers when LOCAL-ONLY is non-nil"
+  (interactive)
+  (push new-dir cemacs-custom-directory-list)
+  (if 'associated-var
+      (setq associated-var 'new-dir)
+    )
+  (make-directory new-dir :recursive)
+  )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
 (defvar cemacs-kill-volatile-buffer-post-hook nil)
 (defun cemacs-kill-volatile-buffer()
@@ -165,7 +190,7 @@ This command is a reverse of cemacs-delete-word"
 (add-hook 'text-mode-hook #'cemacs-org-mode)
 (defvar cemacs-var-dir (concat user-emacs-directory "var/"))
 (defvar cemacs-custom-path (concat cemacs-var-dir "custom.el"))
-(defvar cemacs-recentf-path (concat cemacs-var-dir "recentf"))
+(defvar cemacs-recentf-file (concat cemacs-var-dir "recentf"))
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
@@ -173,6 +198,13 @@ This command is a reverse of cemacs-delete-word"
   "Does absolutely nothing, useful for eating a function call."
   )
 ;; Setup Functions
+;; TODO this *supposed* to clean up deprecated files and put them in a trash
+;; folder when the config fire replaces it with new ones
+;; Although some particular folders like recentf and custom might benefit from
+;; adopting the files instead of cleaning them
+;; (defun cemacs-pre-init-setup ()
+;; (loop for x-folder in cemacs-directory-clean-list
+;; )
 (defun cemacs-init-local-frame(frame)
   "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
@@ -261,16 +293,16 @@ configuration see cemacs-init-local-frame"
         backup-by-copying t
         auto-save-default nil)
   ;; Niggles
-  ;; move location of custom file
-  (setq custom-file cemacs-custom-path
-        recentf-max-saved-items 1000
+  (setq recentf-max-saved-items 1000
         recentf-save-file cemacs-recentf-path
         )
+  ;; move default location of emacs files
+  (cemacs-defdir cemacs-custom-path custom-file :local-only)
+  (cemacs-defdir cemacs-recentf-file recentf-save-file :local-only)
   (load custom-file)
   (add-hook 'find-file-hook #'recentf-save-list)
   ;; (add-hook 'write-file-functions #'recentf-save-list)
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
-  ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   ;; TODO(mallcahd): This is a lazy way compared to finding the right key to unbind
   (fset 'overwrite-mode 'cemacs-void-function) ; Disable pain in the arse insert mode
