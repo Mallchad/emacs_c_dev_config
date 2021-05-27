@@ -45,6 +45,11 @@ Yet at the same time it is extremely annoying when you start typing not realizin
 you accidentally hit that one exact insert key on the keyboard.
 
 * Backburner
+** TODO Add yasippet for fast boilerplate code and text
+In the future this could be tied in with a future project
+"boilermancer" is the current name for the project, a project which
+creates templates for boilerplate code.
+
 ** TODO Create a custom function to clean up or adopt deprecated files/directories
 This is a way to periodically clean up files that are not necessary or
 no longer adhere to the new custom locations specified by this config
