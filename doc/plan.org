@@ -43,6 +43,15 @@ Yet at the same time it is extremely annoying when you start typing not realizin
 you accidentally hit that one exact insert key on the keyboard.
 
 * Backburner
+** TODO Make a reverse pop to mark command
+pop-to-mark command is great but it's far too common to shoot past the
+desired location, and then you want to head back up the marker stack,
+but you can't
+
+** TODO Make helm swoop drop a mark
+This is actually used surprisingly often and having it drop the make
+would make pop-to-mark-command way more useful.
+
 ** TODO Make an org-mode binding to set TODO to DONE and archive tag in one go
 ** TODO Mode all org-mode related functions to the req-package macro
 ** TODO Make the config more configurable so other people can use it
