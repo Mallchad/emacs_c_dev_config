@@ -8,6 +8,20 @@
   (declare (indent defun))
   `(when (eq system-type ',type)
      ,@body))
+(defmacro WHEN_WINDOWS (&rest body)
+  "Evalute BODY when the OS is Windows"
+  (declare (indent defun))
+  (when (eq system-type 'windows-nt)
+    (body)
+    )
+  )
+(defmacro WHEN_LINUX (&rest body)
+  "Evalute BODY when the OS is Linux"
+  (declare (indent defun))
+  (when (eq system-type 'gnu/linux)
+    (body)
+    )
+  )
 ;; Enable Package Repositories
 (require 'package)
 ;; For important compatibility libraries like cl-lib
@@ -463,8 +477,15 @@ configuration see cemacs-init-local-frame"
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay 0.05
+        (company-idle-delay :immediate)
         )
+  (define-key company-tng-map (kbd "C-p") nil)
+  (define-key company-tng-map (kbd "C-n") nil)
+  (WHEN_WINDOWS
+   ;; Slow down company-idle-delay so it doesn't choke emacs
+   (setq company-idle-delay 0.02)
+
+   )
   )
 (req-package crux
   :config
