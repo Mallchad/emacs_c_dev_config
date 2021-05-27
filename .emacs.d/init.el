@@ -8,6 +8,20 @@
   (declare (indent defun))
   `(when (eq system-type ',type)
      ,@body))
+(defmacro WHEN_WINDOWS (&rest body)
+  "Evalute BODY when the OS is Windows"
+  (declare (indent defun))
+  (when (eq system-type 'windows-nt)
+    (body)
+    )
+  )
+(defmacro WHEN_LINUX (&rest body)
+  "Evalute BODY when the OS is Linux"
+  (declare (indent defun))
+  (when (eq system-type 'gnu/linux)
+    (body)
+    )
+  )
 ;; Enable Package Repositories
 (require 'package)
 ;; For important compatibility libraries like cl-lib
@@ -23,6 +37,17 @@ The value essentially a list with the single value of 4"
 (defconst cemacs-universal-argument-double  '(16)
   "Represents the value two 'universal-argument' calls passes.
 The value essentially a list with the single value of 16"
+  )
+;; Variables
+(defvar cemacs-custom-directory-list nil
+  "A list of custom directories being used by this config."
+  )
+(defvar cemacs-custom-directory-clean-list nil
+  "A list of custom config directories in which is safe to delete.
+This is without without too much trouble when cleaning up,
+ especially after a clean Emacs install.
+This primarily targets files in cemacs-custom-directory-list but
+ it isn't actually a pre-requisite"
   )
 ;; Custom Functions
 (defun slay-function()
@@ -104,6 +129,20 @@ This command is a reverse of cemacs-delete-word"
        (directory-files directory-path t)
        ))
   )
+(defun cemacs-defdir (new-dir &optional associated-var local-only)
+  "Define a variable equal to NEW-PATH a path which is then automatically created.
+
+If there is a direct, existing variable which the path is an intermediate for than
+then it can be spceified using ASSOCIATED-VAR.
+This also hooks into a directory creation and destruction list, it can be specified whether or not this directory contains LOCAL-ONLY files that aren't too important if
+they are lost between computers when LOCAL-ONLY is non-nil"
+  (interactive)
+  (push new-dir cemacs-custom-directory-list)
+  (if 'associated-var
+      (setq associated-var 'new-dir)
+    )
+  (make-directory new-dir :recursive)
+  )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
 (defvar cemacs-kill-volatile-buffer-post-hook nil)
 (defun cemacs-kill-volatile-buffer()
@@ -165,7 +204,7 @@ This command is a reverse of cemacs-delete-word"
 (add-hook 'text-mode-hook #'cemacs-org-mode)
 (defvar cemacs-var-dir (concat user-emacs-directory "var/"))
 (defvar cemacs-custom-path (concat cemacs-var-dir "custom.el"))
-(defvar cemacs-recentf-path (concat cemacs-var-dir "recentf"))
+(defvar cemacs-recentf-file (concat cemacs-var-dir "recentf"))
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
@@ -173,7 +212,14 @@ This command is a reverse of cemacs-delete-word"
   "Does absolutely nothing, useful for eating a function call."
   )
 ;; Setup Functions
-(defun cemacs-configure-local-frame(frame)
+;; TODO this *supposed* to clean up deprecated files and put them in a trash
+;; folder when the config fire replaces it with new ones
+;; Although some particular folders like recentf and custom might benefit from
+;; adopting the files instead of cleaning them
+;; (defun cemacs-pre-init-setup ()
+;; (loop for x-folder in cemacs-directory-clean-list
+;; )
+(defun cemacs-init-local-frame(frame)
   "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
   (set-frame-parameter frame 'menu-bar-lines nil)
@@ -187,7 +233,7 @@ This command is a reverse of cemacs-delete-word"
 (defun cemacs-configure-session-decorations()
   "Set the default frame paramaters and aethetics for the whole Emacs session.
 Note this assumes that a frame does not already exist, for frame
-configuration see cemacs-configure-local-frame"
+configuration see cemacs-init-local-frame"
   (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
@@ -202,7 +248,7 @@ configuration see cemacs-configure-local-frame"
   (global-hl-line-mode)
   ;; Disable Window Decorations
   (if (display-graphic-p)  ; Resolve inital frame configuration
-      (cemacs-configure-local-frame (selected-frame))
+      (cemacs-init-local-frame (selected-frame))
     )
   (setq-default mode-line-format nil
                 vertical-scroll-bar nil
@@ -261,16 +307,16 @@ configuration see cemacs-configure-local-frame"
         backup-by-copying t
         auto-save-default nil)
   ;; Niggles
-  ;; move location of custom file
-  (setq custom-file cemacs-custom-path
-        recentf-max-saved-items 1000
+  (setq recentf-max-saved-items 1000
         recentf-save-file cemacs-recentf-path
         )
+  ;; move default location of emacs files
+  (cemacs-defdir cemacs-custom-path custom-file :local-only)
+  (cemacs-defdir cemacs-recentf-file recentf-save-file :local-only)
   (load custom-file)
   (add-hook 'find-file-hook #'recentf-save-list)
   ;; (add-hook 'write-file-functions #'recentf-save-list)
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
-  ;; TODO(mallchad) this should really be a function
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   ;; TODO(mallcahd): This is a lazy way compared to finding the right key to unbind
   (fset 'overwrite-mode 'cemacs-void-function) ; Disable pain in the arse insert mode
@@ -283,10 +329,17 @@ configuration see cemacs-configure-local-frame"
   (run-hooks 'admin-cemacs-init-setup-hook)
   (run-hooks 'cemacs-init-setup-hook)
   )
+;; Run early setup to prettify the session
+(if (display-graphic-p)  ; Resolve inital frame configuration
+    (cemacs-init-local-frame (selected-frame))
+  )
 ;;Req Package Setup
-
-
-(require 'req-package)
+;; Attempt to install req-package if it's not alread loaded
+(when (not (require 'req-package nil 'noerror))
+  (package-refresh-contents)
+  (package-install 'req-package)
+  (require 'req-package)
+  )
 (setq use-package-always-ensure t)
 ;; Built in Packages
 (req-package flyspell
@@ -332,7 +385,7 @@ configuration see cemacs-configure-local-frame"
 ;; External Packages
 (req-package async
   :config
-  (setq async-bytecomp-package-mode t)
+  (async-bytecomp-package-mode t)
   )
 (req-package color-theme-sanityinc-tomorrow
   :config
@@ -425,8 +478,15 @@ configuration see cemacs-configure-local-frame"
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay 0.05
+        (company-idle-delay :immediate)
         )
+  (define-key company-tng-map (kbd "C-p") nil)
+  (define-key company-tng-map (kbd "C-n") nil)
+  (WHEN_WINDOWS
+   ;; Slow down company-idle-delay so it doesn't choke emacs
+   (setq company-idle-delay 0.02)
+
+   )
   )
 (req-package crux
   :config
@@ -690,7 +750,6 @@ configuration see cemacs-configure-local-frame"
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
   ;; TODO(mallchad) need  to setup bindings for this package
-  ;; TODO(mallchad) need to get rid of annoying escape character completion
   ;; TODO(mallchad) need to make angled bracket pair for cc modes
   ;; TODO(mallchad) need to evalue a potentiol workaround to make hybrid
   ;; sexps spill over lines to make it useful for cc mode development
