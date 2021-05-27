@@ -294,20 +294,6 @@ configuration see cemacs-configure-local-frame"
   ;; Unbind Default keys
   (define-key flyspell-mode-map [(control ?\,)] nil)
   (define-key flyspell-mode-map [(control ?\.)] nil)
-  (defface org-checkbox-todo-text
-    '((t (:inherit org-todo)))
-    "Face for the text part of an unchecked org-mode checkbox.")
-  (font-lock-add-keywords
-   'org-mode
-   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
-   'append)
-  (defface org-checkbox-done-text
-    '((t (:inherit org-done)))
-    "Face for the text part of a checked org-mode checkbox.")
-  (font-lock-add-keywords
-   'org-mode
-   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
-   'append)
   )
 (req-package org
   :require
@@ -327,6 +313,21 @@ configuration see cemacs-configure-local-frame"
                )
              do (cemacs-open-files-in-directory x-folder)
              ))
+  (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
+  (defface org-checkbox-todo-text
+    '((t (:inherit org-todo)))
+    "Face for the text part of an unchecked org-mode checkbox.")
+  (font-lock-add-keywords
+   'org-mode
+   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
+   'append)
+  (defface org-checkbox-done-text
+    '((t (:inherit org-done)))
+    "Face for the text part of a checked org-mode checkbox.")
+  (font-lock-add-keywords
+   'org-mode
+   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
+   'append)
   )
 ;; External Packages
 (req-package async
