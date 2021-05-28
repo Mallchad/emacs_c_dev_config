@@ -229,7 +229,7 @@ they are lost between computers when LOCAL-ONLY is non-nil"
   (set-frame-parameter frame 'width (x-display-pixel-width))
   (set-frame-parameter frame 'height (x-display-pixel-height))
   )
-(add-hook 'after-make-frame-functions 'cemacs-configure-local-frame)
+(add-hook 'after-make-frame-functions 'cemacs-init-local-frame)
 (defun cemacs-configure-session-decorations()
   "Set the default frame paramaters and aethetics for the whole Emacs session.
 Note this assumes that a frame does not already exist, for frame
