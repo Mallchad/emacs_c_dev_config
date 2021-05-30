@@ -184,12 +184,13 @@ they are lost between computers when LOCAL-ONLY is non-nil"
   "Kill the current buffer unconditionally."
   (interactive)
   (run-hooks 'cemacs-kill-volatile-buffer-pre-hook)
-  (if (not (file-exists-p
-            (buffer-file-name (current-buffer)
-                              )))
-      (progn (message "Buffer does not have associated file, killing instantly")
-             (set-buffer-modified-p nil))
-    )
+  (when (not (file-exists-p
+              (buffer-file-name
+               (current-buffer)
+               )))
+    (message "Buffer does not have associated file, killing instantly")
+    (set-buffer-modified-p nil)
+    ))
   (kill-buffer (current-buffer))
   (run-hooks 'cemacs-kill-volatile-buffer-post-hook)
   )
