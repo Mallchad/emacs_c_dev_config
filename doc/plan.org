@@ -45,6 +45,15 @@ Yet at the same time it is extremely annoying when you start typing not realizin
 you accidentally hit that one exact insert key on the keyboard.
 
 * Backburner
+** TODO Hook in documentation for cemacs custom variables
+** TODO Differentiate  between temporary local files and ones that should be kept
+This is for cemacs-defdir and cemacs-deffile functions
+
+** TODO Replace all todo entries with checkboxes instead
+For people unfamiliar with org-mode its friendlier, and nicer to read.
+:P
+
+** TODO Make a dedicated debugging function for the config
 ** TODO Add yasippet for fast boilerplate code and text
 In the future this could be tied in with a future project
 "boilermancer" is the current name for the project, a project which
