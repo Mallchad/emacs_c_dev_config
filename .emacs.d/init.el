@@ -136,19 +136,47 @@ This command is a reverse of cemacs-delete-word"
        (directory-files directory-path t)
        ))
   )
-(defun cemacs-defdir (new-dir &optional associated-var local-only)
-  "Define a variable equal to NEW-PATH a path which is then automatically created.
+(defun cemacs-defdir (var-name new-dir &optional associated-var local-only)
+  "Define VAR-NAME equal to NEW-DIR a path which is then automatically created.
+
+If there is a direct, existing variable which the path is an intermediate for
+than then it can be spceified using ASSOCIATED-VAR.
+This also hooks into a directory creation and destruction list, it can be
+specified whether or not this directory contains LOCAL-ONLY files that aren't
+too important if they are lost between computers when LOCAL-ONLY is non-nil"
+  (interactive)
+  (push new-dir cemacs-custom-directory-list)
+  (set var-name new-dir)
+  ;; A value is supplied to associated-var
+  (when (and (boundp 'associated-var)
+             (symbol-value 'associated-var))
+    (set associated-var new-dir)
+    )
+  ;; Directory does not already exist
+  (if (not (file-exists-p new-dir))
+      (make-directory new-dir :recursive)
+    (cemacs-warn (concat new-dir " has a special file or directory already present!"))
+    )
+  )
+(defun cemacs-deffile (var-name new-dir &optional associated-var local-only)
+  "Define VAR-NAME equal to NEW-PATH a path which is then automatically created.
 
 If there is a direct, existing variable which the path is an intermediate for than
 then it can be spceified using ASSOCIATED-VAR.
 This also hooks into a directory creation and destruction list, it can be specified whether or not this directory contains LOCAL-ONLY files that aren't too important if
 they are lost between computers when LOCAL-ONLY is non-nil"
   (interactive)
+  (set var-name new-dir)
   (push new-dir cemacs-custom-directory-list)
-  (if 'associated-var
-      (setq associated-var 'new-dir)
+  ;; A value supplied to associated-var
+  (when (and (boundp 'associated-var)
+             (symbol-value 'associated-var))
+    (set associated-var new-dir)
     )
-  (make-directory new-dir :recursive)
+  (if (not (file-exists-p new-dir))
+      (make-empty-file new-dir :recursive)
+    (cemacs-warn (concat new-dir " has a special file or directory already present!"))
+    )
   )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
 (defvar cemacs-kill-volatile-buffer-post-hook nil)
@@ -209,9 +237,6 @@ they are lost between computers when LOCAL-ONLY is non-nil"
   (flyspell-mode)
   )
 (add-hook 'text-mode-hook #'cemacs-org-mode)
-(defvar cemacs-var-dir (concat user-emacs-directory "var/"))
-(defvar cemacs-custom-path (concat cemacs-var-dir "custom.el"))
-(defvar cemacs-recentf-file (concat cemacs-var-dir "recentf"))
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
@@ -315,12 +340,8 @@ configuration see cemacs-init-local-frame"
         auto-save-default nil)
   ;; Niggles
   (setq recentf-max-saved-items 1000
-        recentf-save-file cemacs-recentf-path
         )
-  ;; move default location of emacs files
-  (cemacs-defdir cemacs-custom-path custom-file :local-only)
-  (cemacs-defdir cemacs-recentf-file recentf-save-file :local-only)
-  (load custom-file)
+  ;; Save recentf on every file open
   (add-hook 'find-file-hook #'recentf-save-list)
   ;; (add-hook 'write-file-functions #'recentf-save-list)
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
@@ -337,16 +358,29 @@ configuration see cemacs-init-local-frame"
   (run-hooks 'cemacs-init-setup-hook)
   )
 ;; Run early setup to prettify the session
-(if (display-graphic-p)  ; Resolve inital frame configuration
-    (cemacs-init-local-frame (selected-frame))
+(defun cemacs-early-init ()
+  (interactive)
+  ;; Variables
+  (setq warning-minimum-log-level :debug)
+  (cemacs-defdir 'cemacs-var-dir (concat user-emacs-directory "var/"))
+  (cemacs-deffile 'cemacs-custom-file (concat cemacs-var-dir "custom.el")
+                  'custom-file :local-only)
+  (cemacs-defdir 'cemacs-recentf-save-file (concat cemacs-var-dir "recentf")
+                 'recentf-save-file :local-only)
+  ;; Just prettify the frame whilst waiting for loading
+  (if (display-graphic-p)  ; Resolve inital frame configuration
+      (cemacs-init-local-frame (selected-frame))
+    )
+  (load custom-file)
   )
+(cemacs-early-init)
 ;;Req Package Setup
 ;; Attempt to install req-package if it's not alread loaded
 (when (not (require 'req-package nil 'noerror))
   (package-refresh-contents)
   (package-install 'req-package)
-  (require 'req-package)
   )
+(require 'req-package)
 (setq use-package-always-ensure t)
 ;; Built in Packages
 (req-package flyspell
@@ -406,10 +440,9 @@ configuration see cemacs-init-local-frame"
 (req-package all-the-icons
   :require async
   :config
-  (if (not (eq cemacs-all-the-icons-fonts-installed t))
-      (progn (all-the-icons-install-fonts 'skip)
-             (customize-save-variable 'cemacs-all-the-icons-fonts-installed t))
-    )
+  (when (not (boundp 'cemacs-all-the-icons-fonts-installed))
+    (all-the-icons-install-fonts 'skip)
+    (customize-save-variable 'cemacs-all-the-icons-fonts-installed t))
   )
 (req-package avy
   :config
