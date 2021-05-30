@@ -111,6 +111,13 @@ This command is a reverse of cemacs-delete-word"
   (interactive "p")
   (cemacs-delete-word (- mult))
   )
+(defun cemacs-warn (warning-message)
+  "Create a warning event outputting WARNING-MESSAGE duplicate it to the minibuffer."
+  (display-warning 'emacs
+                   warning-message
+                   :debug)
+  (message warning-message)
+  )
 (defun cemacs-find-user-init-file ()
   "Edit the `user-init-file'."
   (interactive)
@@ -739,7 +746,7 @@ configuration see cemacs-init-local-frame"
   )
 (req-package restart-emacs
   :config
-  (global-set-key (kbd "C-x C-a") 'restart-emacs)
+  (global-set-key (kbd "C-x M-a") 'restart-emacs)
   )
 (req-package smartparens
   :hook
