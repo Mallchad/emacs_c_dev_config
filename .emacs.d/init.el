@@ -430,7 +430,11 @@ configuration see cemacs-init-local-frame"
   )
 (req-package color-theme-sanityinc-tomorrow
   :config
-  (load-theme 'sanityinc-tomorrow-bright t)
+  (if (and (boundp 'cemacs-selected-sanityinc-theme)
+           (symbol-value 'cemacs-selected-sanityinc-theme))
+      (load-theme cemacs-selected-sanityinc-theme)
+    (load-theme 'sanityinc-tomorrow-bright t)
+    )
   )
 (req-package aggressive-indent
   :hook
