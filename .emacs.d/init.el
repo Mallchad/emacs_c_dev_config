@@ -583,7 +583,7 @@ configuration see cemacs-init-local-frame"
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay :immediate
+        company-idle-delay 0
         )
   (define-key company-tng-map (kbd "C-p") nil)
   (define-key company-tng-map (kbd "C-n") nil)
