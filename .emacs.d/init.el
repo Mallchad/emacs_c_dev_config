@@ -394,6 +394,10 @@ configuration see cemacs-init-local-frame"
   ;; A cool new package
   org-cliplink
   :config
+  (defvar cemacs-org-priority-list
+    '(("* *" "top")
+      ("ARCHIVE" "bottom")
+      ))
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
   ;; change.
@@ -407,6 +411,66 @@ configuration see cemacs-init-local-frame"
                )
              do (cemacs-open-files-in-directory x-folder)
              ))
+  (defun cemacs-org-tagwise-comp-func (taglist-left taglist-right)
+    (interactive)
+    (let ((less-than 'no-match)
+          (comp-left (list ""))
+          (comp-right (list ""))
+          (less-than 'no-priority)
+          (comp-left-tag-string "")
+          (comp-right-tag-string "")
+          )
+      (while (or (car taglist-left) (car taglist-right))
+        (set 'left-tag (or (pop taglist-left) ""))
+        (set 'right-tag (or (pop taglist-right) ""))
+        (when (stringp left-tag)
+          (push (downcase left-tag) comp-left)
+          )
+        (when (stringp right-tag)
+          (push (downcase right-tag) comp-right)
+          ))
+      ;; This currently only pushes the "ARCHIVE" tag to the bottom
+      ;; Whilst this does the job for general todo lists it is far from ideal
+      ;; Here `less-than` actually counter-intuitively means the beginning of the
+      ;; buffer, despite it being physically at the top, this is purely down to
+      ;; character storing mechanics where in ASCII
+      ;; `a == 0 + 97` and  `a == 0 + 122`
+      ;; Which leads values closer to a being considered "lower" and being sorted
+      ;; closer to the numerically lower buffer position 0, the very top left
+      (cond ((member "archive" comp-left)
+             (set 'less-than nil)
+             )
+            ((member "archive" comp-right)
+             (set 'less-than t)
+             ))
+      ;; Blindly comapre tags alphanumerically
+      (while (car comp-left)
+        (set 'comp-left-tag-string
+             (concat comp-left-tag-string (pop comp-left)
+                     )))
+      (while (car comp-right)
+        (set 'comp-right-tag-string
+             (concat comp-right-tag-string (pop comp-right)
+                     )))
+      (if (eq less-than 'no-priority)
+          (set 'less-than
+               (string-collate-lessp comp-left-tag-string comp-right-tag-string))
+        )
+      less-than
+      )
+    )
+  (defun cemacs-org-sort-taglist-get ()
+    (or (org-get-tags) (list ""))
+    )
+  (defun cemacs-org-sort-entries ()
+    (interactive)
+    ;; (set 'point-start (point))
+    ;; (beginning-of-buffer cemacs-universal-argument)
+    (org-global-cycle) ; Hide all subtrees
+    (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func)
+    ;; (set-window-point (get-buffer-window (current-buffer)) point-start)
+    )
+  ;; This is an absolutely disgusting hack I found online and it needs to go.
   (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
   (defface org-checkbox-todo-text
     '((t (:inherit org-todo)))
