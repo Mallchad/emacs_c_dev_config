@@ -618,7 +618,18 @@ configuration see cemacs-init-local-frame"
   :config
   (dashboard-setup-startup-hook)
   )
-(req-package fireplace)
+(req-package fireplace
+  :config
+  (defun cemacs-fireplace-visit (frame)
+    (select-frame frame)
+    (unless (get-buffer "*fireplace*")
+      (fireplace)
+      )
+    (switch-to-buffer (get-buffer "*fireplace*"))
+    (setq fireplace-smoke-on t)
+    )
+  (add-hook 'after-make-frame-functions 'cemacs-fireplace-visit)
+  )
 (req-package flycheck
   :require flycheck-inline
   :hook
