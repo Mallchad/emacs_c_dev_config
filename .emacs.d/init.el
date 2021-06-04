@@ -399,9 +399,10 @@ configuration see cemacs-init-local-frame"
       ("ARCHIVE" "bottom")
       ))
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
+  ;; Functions
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
   ;; change.
-  (defun cemacs-org-open-org-files ()
+  (defun cemacs-org-load-files ()
     (interactive)
     (cl-loop for x-folder in
              '("~/org"
