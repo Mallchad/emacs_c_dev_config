@@ -308,7 +308,7 @@ configuration see cemacs-init-local-frame"
   ;; (global-set-key (kbd "M-c") 'capitalize-word)
   ;; (global-set-key (kbd "C-M-c") 'upcase-char)
   ;; Other
-  (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
+  (global-set-key (kbd "C-x k") #'cemacs-kill-volatile-buffer)
   ;; Org Mode
   (global-set-key (kbd "C-M-#")
                   '(lambda()
@@ -394,10 +394,15 @@ configuration see cemacs-init-local-frame"
   ;; A cool new package
   org-cliplink
   :config
+  (defvar cemacs-org-priority-list
+    '(("* *" "top")
+      ("ARCHIVE" "bottom")
+      ))
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
+  ;; Functions
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
   ;; change.
-  (defun cemacs-org-open-org-files ()
+  (defun cemacs-org-load-files ()
     (interactive)
     (cl-loop for x-folder in
              '("~/org"
@@ -407,13 +412,74 @@ configuration see cemacs-init-local-frame"
                )
              do (cemacs-open-files-in-directory x-folder)
              ))
+  (defun cemacs-org-tagwise-comp-func (taglist-left taglist-right)
+    (interactive)
+    (let ((less-than 'no-match)
+          (comp-left (list ""))
+          (comp-right (list ""))
+          (less-than 'no-priority)
+          (comp-left-tag-string "")
+          (comp-right-tag-string "")
+          )
+      (while (or (car taglist-left) (car taglist-right))
+        (set 'left-tag (or (pop taglist-left) ""))
+        (set 'right-tag (or (pop taglist-right) ""))
+        (when (stringp left-tag)
+          (push (downcase left-tag) comp-left)
+          )
+        (when (stringp right-tag)
+          (push (downcase right-tag) comp-right)
+          ))
+      ;; This currently only pushes the "ARCHIVE" tag to the bottom
+      ;; Whilst this does the job for general todo lists it is far from ideal
+      ;; Here `less-than` actually counter-intuitively means the beginning of the
+      ;; buffer, despite it being physically at the top, this is purely down to
+      ;; character storing mechanics where in ASCII
+      ;; `a == 0 + 97` and  `a == 0 + 122`
+      ;; Which leads values closer to a being considered "lower" and being sorted
+      ;; closer to the numerically lower buffer position 0, the very top left
+      (cond ((member "archive" comp-left)
+             (set 'less-than nil)
+             )
+            ((member "archive" comp-right)
+             (set 'less-than t)
+             ))
+      ;; Blindly comapre tags alphanumerically
+      (while (car comp-left)
+        (set 'comp-left-tag-string
+             (concat comp-left-tag-string (pop comp-left)
+                     )))
+      (while (car comp-right)
+        (set 'comp-right-tag-string
+             (concat comp-right-tag-string (pop comp-right)
+                     )))
+      (if (eq less-than 'no-priority)
+          (set 'less-than
+               (string-collate-lessp comp-left-tag-string comp-right-tag-string))
+        )
+      less-than
+      )
+    )
+  (defun cemacs-org-sort-taglist-get ()
+    (or (org-get-tags) (list ""))
+    )
+  (defun cemacs-org-sort-entries ()
+    (interactive)
+    ;; (set 'point-start (point))
+    ;; (beginning-of-buffer cemacs-universal-argument)
+    (org-global-cycle) ; Hide all subtrees
+    (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func)
+    ;; (set-window-point (get-buffer-window (current-buffer)) point-start)
+    )
+  ;; This is an absolutely disgusting hack I found online and it needs to go.
   (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
   (defface org-checkbox-todo-text
     '((t (:inherit org-todo)))
     "Face for the text part of an unchecked org-mode checkbox.")
   (font-lock-add-keywords
    'org-mode
-   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
+   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+      1 'org-checkbox-todo-text prepend))
    'append)
   (defface org-checkbox-done-text
     '((t (:inherit org-done)))
@@ -522,7 +588,7 @@ configuration see cemacs-init-local-frame"
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay :immediate
+        company-idle-delay 0
         )
   (define-key company-tng-map (kbd "C-p") nil)
   (define-key company-tng-map (kbd "C-n") nil)
@@ -558,7 +624,18 @@ configuration see cemacs-init-local-frame"
   :config
   (dashboard-setup-startup-hook)
   )
-(req-package fireplace)
+(req-package fireplace
+  :config
+  (defun cemacs-fireplace-visit (frame)
+    (select-frame frame)
+    (unless (get-buffer "*fireplace*")
+      (fireplace)
+      )
+    (switch-to-buffer (get-buffer "*fireplace*"))
+    (setq fireplace-smoke-on t)
+    )
+  (add-hook 'after-make-frame-functions 'cemacs-fireplace-visit)
+  )
 (req-package flycheck
   :require flycheck-inline
   :hook
