@@ -308,7 +308,7 @@ configuration see cemacs-init-local-frame"
   ;; (global-set-key (kbd "M-c") 'capitalize-word)
   ;; (global-set-key (kbd "C-M-c") 'upcase-char)
   ;; Other
-  (global-set-key (kbd "C-x k") 'cemacs-kill-volatile-buffer)
+  (global-set-key (kbd "C-x k") #'cemacs-kill-volatile-buffer)
   ;; Org Mode
   (global-set-key (kbd "C-M-#")
                   '(lambda()
@@ -478,7 +478,8 @@ configuration see cemacs-init-local-frame"
     "Face for the text part of an unchecked org-mode checkbox.")
   (font-lock-add-keywords
    'org-mode
-   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
+   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+      1 'org-checkbox-todo-text prepend))
    'append)
   (defface org-checkbox-done-text
     '((t (:inherit org-done)))
