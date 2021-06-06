@@ -930,6 +930,8 @@ configuration see cemacs-init-local-frame"
   :config
   (require 'vlf-setup)
   )
+(req-package visual-fill-column
+  )
 (req-package volatile-highlights
   :config
   (volatile-highlights-mode)
