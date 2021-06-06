@@ -341,6 +341,8 @@ configuration see cemacs-init-local-frame"
   ;; Niggles
   (setq recentf-max-saved-items 1000
         )
+  (setq-default fill-column 80        ; Change where auto-line wrap fill modes trigger
+                )
   ;; Save recentf on every file open
   (add-hook 'find-file-hook #'recentf-save-list)
   ;; (add-hook 'write-file-functions #'recentf-save-list)
