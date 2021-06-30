@@ -767,7 +767,6 @@ configuration see cemacs-init-local-frame"
   )
 (req-package lsp-mode
   :after company
-  ;; :require company-lsp
   :hook
   (c++-mode . lsp)
   (c-mode . lsp)
@@ -792,7 +791,7 @@ configuration see cemacs-init-local-frame"
    ;; language server responses are in 800k - 3M range.
    read-process-output-max (* 1024 1024) ;; 1mb
    )
-  ;; (push 'company-lsp company-backends)
+  (define-key lsp-mode-map (kbd "M-o") #'lsp-clangd-find-other-file))
   )
 (req-package lsp-ui
   :after
