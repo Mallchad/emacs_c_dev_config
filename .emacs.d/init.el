@@ -316,6 +316,7 @@ configuration see cemacs-init-local-frame"
                      (call-interactively
                       (org-time-stamp cemacs-universal-argument-double 'inactive))
                      ))
+  (global-set-key (kbd "M-o") #'ff-find-other-file)
   ;; Unbind
   )
 (defun cemacs-init-setup()
