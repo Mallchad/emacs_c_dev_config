@@ -525,9 +525,21 @@ configuration see cemacs-init-local-frame"
   (setq avy-highlight-first t
         avy-background t
         )
-  (set-face-attribute 'avy-lead-face nil :background '"firebrick" :foreground "white")
-  (set-face-attribute 'avy-lead-face-0 nil :background "navy" :foreground "white")
-  (set-face-attribute 'avy-lead-face-2 nil :background "dark olive green" :foreground "white")
+  ;; The colours picked here are designed to maximize readabiltiy
+  ;;
+  ;; This is achieved by reducing 'glare' or 'eye-catching' colours
+  ;; of the background by using dark and slightly desatured colours
+  ;; The resulting effect is that the actual character part is the
+  ;; most attenting grabbing part, which is exactly the pint of avy -
+  ;; going where you're looking
+  ;;
+  ;; However rather annoyingly the text / boxes are spaced closed together,
+  ;; making them bleed into each other
+  ;; This is likely impossible to fix in GNU emacs fonts aside
+  ;; Increasing font size works. But is not optimal
+  (set-face-attribute 'avy-lead-face nil :background '"dark red" :foreground "white")
+  (set-face-attribute 'avy-lead-face-0 nil :background "#1d1d62" :foreground "white")
+  (set-face-attribute 'avy-lead-face-2 nil :background "#2a3418" :foreground "white")
   )
 (req-package backup-each-save
   :config
