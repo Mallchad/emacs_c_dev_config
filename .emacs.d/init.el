@@ -332,9 +332,10 @@ configuration see cemacs-init-local-frame"
         transient-mark-mode nil
         global-hl-line-mode t
         )
-  (global-subword-mode t)
-  (global-whitespace-mode t)
-  (global-visual-line-mode)
+  (delete-selection-mode t)             ; delete activated region on typing
+  (global-subword-mode t)               ; treat delimited words seperately
+  (global-whitespace-mode t)            ; visualize tab characters
+  (global-visual-line-mode t)           ; make some commands to operate on visual lines
   ;; Backup
   (setq make-backup-files nil
         backup-by-copying t
