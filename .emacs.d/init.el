@@ -866,6 +866,8 @@ configuration see cemacs-init-local-frame"
   ;; TODO(mallchad) need to setup keybinds for this package
   )
 (req-package projectile
+  :require
+  flycheck-projectile
   :hook
   (cemacs-init-setup . projectile-mode)
   :config
