@@ -766,6 +766,12 @@ configuration see cemacs-init-local-frame"
 (req-package hungry-delete
   :config
   (global-hungry-delete-mode)
+  ;; The default hungry-delete behaviour deletes all whitespace backwards
+  ;; This is annoying since the point of using it was to rmeove extraneous
+  ;; whitespace, not to remove all of it
+  ;; The new behaviour leaves 1 space for words so its more comfortable and
+  ;; similar to other editors
+  (set hungry-delete-join-reluctantly t)
   )
 (req-package hydra
   :config
