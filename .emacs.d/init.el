@@ -303,10 +303,8 @@ configuration see cemacs-init-local-frame"
   (global-set-key (kbd "C-,") 'pop-to-mark-command)
   ;; Editing Commands
   (global-set-key (kbd "M-d") 'cemacs-delete-word)
-  ;; (global-set-key (kbd "M-l") 'downcase-dwim)
-  ;; (global-set-key (kbd "C-M-l") 'nil)
-  ;; (global-set-key (kbd "M-c") 'capitalize-word)
   ;; (global-set-key (kbd "C-M-c") 'upcase-char)
+  ;; (global-set-key (kbd "C-M-c") 'downcase-char)
   ;; Other
   (global-set-key (kbd "C-x k") #'cemacs-kill-volatile-buffer)
   ;; Org Mode
@@ -317,7 +315,9 @@ configuration see cemacs-init-local-frame"
                       (org-time-stamp cemacs-universal-argument-double 'inactive))
                      ))
   (global-set-key (kbd "M-o") #'ff-find-other-file)
-  ;; Unbind
+  ;; Unbind Keys
+  (unbind-key (kbd "<insert>"))         ; 'overwrite-mode
+  (unbind-key (kbd "<insertchar>"))     ; 'overwrite-mode
   )
 (defun cemacs-init-setup()
   "Run after-initilization setup."
