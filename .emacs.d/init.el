@@ -530,9 +530,6 @@ configuration see cemacs-init-local-frame"
   (set-face-attribute 'avy-lead-face-2 nil :background "dark olive green" :foreground "white")
   )
 (req-package backup-each-save
-  :hook
-  (after-save . backup-each-save)
-  (cemacs-kill-volatile-buffer-pre . backup-each-save)
   :config
   ;; TODO Stop being lazy and turn this is into a custom function
   (defun backup-each-save ()
@@ -546,6 +543,9 @@ configuration see cemacs-init-local-frame"
                      (or (not backup-each-save-size-limit)
                          (<= (buffer-size) backup-each-save-size-limit)))
             (copy-file bfn (backup-each-save-compute-location bfn) t t t)))))
+  :hook
+  (after-save . backup-each-save)
+  (cemacs-kill-volatile-buffer-pre . backup-each-save)
   )
 (req-package beacon
   :hook
