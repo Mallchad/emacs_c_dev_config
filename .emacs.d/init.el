@@ -986,6 +986,13 @@ configuration see cemacs-init-local-frame"
   (ws-butler-global-mode)
   (setq ws-butler-convert-leading-tabs-or-spaces t)
   )
+(req-package which-key
+  :config
+  (which-key-mode t)
+  (setq which-key-idle-delay 2          ; Don't get in the way of normal usage
+        which-key-sort-order 'which-key-description-order
+        )
+  )
 (req-package zoom
   ;; A window rebalancing minor mode
   :config
