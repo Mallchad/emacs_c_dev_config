@@ -240,9 +240,6 @@ they are lost between computers when LOCAL-ONLY is non-nil"
 (defvar cemacs-init-setup-hook nil
   ;;A normal hook that runs at the end of init setup
   )
-(defun cemacs-void-function (&rest)
-  "Does absolutely nothing, useful for eating a function call."
-  )
 ;; Setup Functions
 ;; TODO this *supposed* to clean up deprecated files and put them in a trash
 ;; folder when the config fire replaces it with new ones
@@ -351,7 +348,7 @@ configuration see cemacs-init-local-frame"
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   ;; TODO(mallcahd): This is a lazy way compared to finding the right key to unbind
-  (fset 'overwrite-mode 'cemacs-void-function) ; Disable pain in the arse insert mode
+  (fset 'overwrite-mode 'ignore) ; Disable pain in the arse insert mode
   ;; Re-enable disabled functions
   (put 'downcase-region 'disabled nil)
   (put 'upcase-region 'disabled nil)
