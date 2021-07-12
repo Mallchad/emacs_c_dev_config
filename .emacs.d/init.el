@@ -789,13 +789,15 @@ configuration see cemacs-init-local-frame"
   (c++-mode . lsp)
   (c-mode . lsp)
   (csharp-mode . lsp)
-
   :config
   (setq lsp-enable-snippet nil
         lsp-prefer-flymake nil
         lsp-enable-indentation nil
+        ;; Disable auto-formatting which is conflusing and conflcits with indenters
         lsp-enable-on-type-formatting nil
+        ;; Allow indexing in the background
         lsp-clients-clangd-args '("--header-insertion-decorators=0" "--background-index")
+        lsp-headerline-breadcrumb-enable nil    ; Disable lsp info heading
         )
   ;; Performance Tuning
   (setq
