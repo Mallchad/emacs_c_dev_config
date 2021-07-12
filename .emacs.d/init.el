@@ -347,7 +347,6 @@ configuration see cemacs-init-local-frame"
   ;; (add-hook 'write-file-functions #'recentf-save-list)
   ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
-  ;; TODO(mallcahd): This is a lazy way compared to finding the right key to unbind
   (fset 'overwrite-mode 'ignore) ; Disable pain in the arse insert mode
   ;; Re-enable disabled functions
   (put 'downcase-region 'disabled nil)
