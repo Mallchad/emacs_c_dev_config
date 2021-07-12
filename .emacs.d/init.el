@@ -790,6 +790,9 @@ configuration see cemacs-init-local-frame"
   (c-mode . lsp)
   (csharp-mode . lsp)
   :config
+  ;; Keybindings
+  (define-key lsp-mode-map (kbd "M-#") 'lsp-ui-doc-show)
+  ;; Configuration
   (setq lsp-enable-snippet nil
         lsp-prefer-flymake nil
         lsp-enable-indentation nil
