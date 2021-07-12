@@ -797,7 +797,12 @@ configuration see cemacs-init-local-frame"
         lsp-enable-on-type-formatting nil
         ;; Allow indexing in the background
         lsp-clients-clangd-args '("--header-insertion-decorators=0" "--background-index")
-        lsp-headerline-breadcrumb-enable nil    ; Disable lsp info heading
+        ;; Disable lsp info heading
+        lsp-headerline-breadcrumb-enable nil
+        ;; Disable attention grabbing, screen moving, modeline signature documentation
+        lsp-signature-render-documentation nil
+        ;; Disable sideline, flycheck-inline is more readable and less intrusive
+        lsp-ui-sideline-enable nil
         )
   ;; Performance Tuning
   (setq
