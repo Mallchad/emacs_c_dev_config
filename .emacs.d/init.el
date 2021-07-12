@@ -507,6 +507,9 @@ configuration see cemacs-init-local-frame"
   :hook
   (prog-mode . aggressive-indent-mode)
   :config
+  (add-to-list 'aggressive-indent-protected-commands 'cemacs-delete-word)
+  (add-to-list 'aggressive-indent-protected-commands 'backward-kill-word)
+  (add-to-list 'aggressive-indent-protected-commands 'cemacs-natural-delete-word)
   )
 (req-package all-the-icons
   :require async
