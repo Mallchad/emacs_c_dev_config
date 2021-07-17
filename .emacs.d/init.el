@@ -179,19 +179,18 @@ they are lost between computers when LOCAL-ONLY is non-nil"
     )
   )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
-(defvar cemacs-kill-volatile-buffer-post-hook nil)
-(defun cemacs-kill-volatile-buffer()
+(defun cemacs-kill-buffer-volatile()
   "Kill the current buffer unconditionally."
   (interactive)
   (run-hooks 'cemacs-kill-volatile-buffer-pre-hook)
-  (when (not (file-exists-p
-              (buffer-file-name (current-buffer))
-              ))
+  ;; Buffer isn't visiting a file
+  (when (not (buffer-file-name (current-buffer))
+             )
     (message "Buffer does not have associated file, killing instantly")
+    ;; Slight hack to bypass user prompts
     (set-buffer-modified-p nil)
     )
   (kill-buffer (current-buffer))
-  (run-hooks 'cemacs-kill-volatile-buffer-post-hook)
   )
 ;; Configuration
 (defun cemacs-cc-mode()
@@ -303,7 +302,7 @@ configuration see cemacs-init-local-frame"
   ;; (global-set-key (kbd "C-M-c") 'upcase-char)
   ;; (global-set-key (kbd "C-M-c") 'downcase-char)
   ;; Other
-  (global-set-key (kbd "C-x k") #'cemacs-kill-volatile-buffer)
+  (global-set-key (kbd "C-x k") 'cemacs-kill-buffer-volatile)
   ;; Org Mode
   (global-set-key (kbd "C-M-#")
                   '(lambda()
