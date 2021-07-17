@@ -917,15 +917,36 @@ configuration see cemacs-init-local-frame"
 (req-package smartparens
   :hook
   (cemacs-init-setup . smartparens-global-mode)
+  (prog-mode . smartparens-strict-mode)
   :config
+  ;; Defualt Configuration
   (require 'smartparens-config)
-  ;;Disable Emacs Lisp Quote Pairs
+  ;; smartparens Adapted Functions
+  (defun cemacs-sp-delete-word (&optional arg)
+    "Shim function to impliment future logic"
+    (interactive "p")
+    (sp-delete-word arg)
+    )
+  (defun cemacs-sp-delete-word-backwards (&optional arg)
+    "Shim function to impliment future logic"
+    (interactive "p")
+    (sp-backward-delete-word arg)
+    )
+  ;; Keybinds
+  ;; Enforce smartparens-strict-mode with keybinds
+  (define-key smartparens-mode-map (kbd "C-<backspace>") 'cemacs-sp-delete-word-backwards)
+  (define-key smartparens-mode-map (kbd "M-d") 'cemacs-sp-delete-word)
+  ;; Strict Mode Ignoring Binds
+  (define-key smartparens-mode-map (kbd "M-<backspace>") 'cemacs-delete-word-backwards)
+  (define-key smartparens-mode-map (kbd "M-S-d") 'cemacs-delete-word)
+  ;; Pair management bindings which are required for strict-mode
+  (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
+  (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
+  ;; Disable Emacs Lisp Quote Pairs
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
-  ;; TODO(mallchad) need  to setup bindings for this package
-  ;; TODO(mallchad) need to make angled bracket pair for cc modes
-  ;; TODO(mallchad) need to evalue a potentiol workaround to make hybrid
-  ;; sexps spill over lines to make it useful for cc mode development
+  ;; Pair angled brackets in c-modes
+  (sp-local-pair sp-c-modes "<" ">")
   )
 (req-package smooth-scrolling
   :hook
