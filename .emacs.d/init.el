@@ -158,7 +158,7 @@ too important if they are lost between computers when LOCAL-ONLY is non-nil"
     (cemacs-warn (concat new-dir " has a special file or directory already present!"))
     )
   )
-(defun cemacs-deffile (var-name new-dir &optional associated-var local-only)
+(defun cemacs-deffile (var-name new-file &optional associated-var local-only)
   "Define VAR-NAME equal to NEW-PATH a path which is then automatically created.
 
 If there is a direct, existing variable which the path is an intermediate for than
@@ -166,16 +166,16 @@ then it can be spceified using ASSOCIATED-VAR.
 This also hooks into a directory creation and destruction list, it can be specified whether or not this directory contains LOCAL-ONLY files that aren't too important if
 they are lost between computers when LOCAL-ONLY is non-nil"
   (interactive)
-  (set var-name new-dir)
-  (push new-dir cemacs-custom-directory-list)
+  (set var-name new-file)
+  (push new-file cemacs-custom-directory-list)
   ;; A value supplied to associated-var
   (when (and (boundp 'associated-var)
              (symbol-value 'associated-var))
-    (set associated-var new-dir)
+    (set associated-var new-file)
     )
-  (if (not (file-exists-p new-dir))
-      (make-empty-file new-dir :recursive)
-    (cemacs-warn (concat new-dir " has a special file or directory already present!"))
+  (if (not (file-exists-p new-file))
+      (make-empty-file new-file :recursive)
+    (cemacs-warn (concat new-file " has a special file or directory already present!"))
     )
   )
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
