@@ -1,3 +1,6 @@
+;; MIT License
+;; Copyright (c) 2021 Mallchad
+;; This source is provided with no limitations or warrent whatsoever.
 ;;; Commentary:
 ;; Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
@@ -73,24 +76,6 @@ traverse back to set the region again"
   (interactive)
   (activate-mark)
   )
-(defun cemacs-scroll-up-in-place()
-  "Scroll buffer up 1 line without moving cursor position vertically."
-  ;; TODO(mallchad) this could accept an arg quite easilly
-  ;; TODO(mallchad) function feels like it skips 1 line up or down
-  ;; occasionally
-  (interactive)
-  (forward-line -1)
-  (scroll-down-command 1)
-  )
-(defun cemacs-scroll-down-in-place()
-  "Scroll buffer down 1 line without moving cursor position vertically.
-
-This is a reverse version of 'cemacs-scroll-up-in-place"
-  ;; TODO(mallchad) this could easilly be made mirror it's counterpart
-  (interactive)
-  (forward-line 1)
-  (scroll-down-command -1)
-  )
 (defun cemacs-delete-word(mult)
   "Delete characters forward until encountering the end of a word.
 With argument MULT, repeat this that many times, or perform deletion backwards
@@ -163,7 +148,8 @@ too important if they are lost between computers when LOCAL-ONLY is non-nil"
 
 If there is a direct, existing variable which the path is an intermediate for than
 then it can be spceified using ASSOCIATED-VAR.
-This also hooks into a directory creation and destruction list, it can be specified whether or not this directory contains LOCAL-ONLY files that aren't too important if
+This also hooks into a directory creation and destruction list, it can be specified
+whether or not this directory contains LOCAL-ONLY files that aren't too important if
 they are lost between computers when LOCAL-ONLY is non-nil"
   (interactive)
   (set var-name new-file)
@@ -285,6 +271,7 @@ configuration see cemacs-init-local-frame"
                 menu-bar-mode nil
                 )
   (fringe-mode (cons 0 0))
+  ;; Visualize Whitespace
   (setq whitespace-style '(trailing tabs tab-mark))
   )
 (defun cemacs-vanilla-keys-configure()
@@ -721,7 +708,7 @@ configuration see cemacs-init-local-frame"
         helm-use-frame-when-more-than-two-windows nil
         )
   ;; ;Helm minibuffer config
-  ;;TODO(mallchad) Need to reduce the size of the space after helm source
+  ;;TODO(mallchad) Need to reduce the size of the space after each helm source
   ;; Don't use helm's own displaying mode line function
   (set-face-attribute 'helm-source-header nil
                       :height 1.1
@@ -1027,7 +1014,6 @@ The current content of
   (require 'sublimity-scroll)
   ;; (require 'sublimity-attractive)
   ;;(require 'sublimity-map) ;; experimental
-
   (setq sublimity-scroll-weight 7
         sublimity-scroll-drift-length 0
         ;;      sublimity-map-size 10
@@ -1035,16 +1021,6 @@ The current content of
         ;;      sublimity-map-text-scale -7
         ;;      sublimity-map-set-delay 1
         )
-  )
-(req-package treemacs
-  :require lsp-treemacs
-  :hook
-  (treemacs-mode . (lambda() (text-scale-adjust -2)))
-  :config
-  (setq treemacs-width 30
-        treemacs-position 'right
-        )
-  ;; TODO(mallchad) this package needs bindings
   )
 (req-package undo-tree
   :config
@@ -1054,7 +1030,6 @@ The current content of
   (setq undo-tree-enable-undo-in-region nil  ; brings performance enhancement
         undo-tree-history-directory-alist backup-directory-alist
         )
-  ;; TODO(mallchad) need to setup undo-tree persistent history
   ;; Unbind Included Keymaps
   (define-key undo-tree-map (kbd "C-x r u") nil)
   (define-key undo-tree-map (kbd "C-x r U") nil)
