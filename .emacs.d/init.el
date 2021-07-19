@@ -771,7 +771,9 @@ configuration see cemacs-init-local-frame"
   ;; (defhydra hydra-emacs (:color blue :hint nil))
   )
 (req-package lsp-mode
-  :after company
+  :after
+  company
+  flycheck
   :hook
   (c++-mode . lsp)
   (c-mode . lsp)
@@ -787,13 +789,19 @@ configuration see cemacs-init-local-frame"
         lsp-enable-on-type-formatting nil
         ;; Allow indexing in the background
         lsp-clients-clangd-args '("--header-insertion-decorators=0" "--background-index")
-        ;; Disable lsp info heading
-        lsp-headerline-breadcrumb-enable nil
-        ;; Disable attention grabbing, screen moving, modeline signature documentation
-        lsp-signature-render-documentation nil
-        ;; Disable sideline, flycheck-inline is more readable and less intrusive
-        lsp-ui-sideline-enable nil
         )
+  (setq
+   ;; Mode the doc position to the top of the frame
+   lsp-ui-doc-position 'top
+   ;; Don't show docs on hover, instead use a command/binding
+   lsp-ui-doc-enable nil
+   ;; Disable lsp info heading
+   lsp-headerline-breadcrumb-enable nil
+   ;; Disable attention grabbing, screen moving, modeline signature documentation
+   lsp-signature-render-documentation nil
+   ;; Disable sideline, flycheck-inline is more readable and less intrusive
+   lsp-ui-sideline-enable nil
+   )
   ;; Performance Tuning
   (setq
    ;; Source for performance improvements https://emacs-lsp.github.io/lsp-mode/page/performance/
@@ -808,25 +816,13 @@ configuration see cemacs-init-local-frame"
    )
   (define-key lsp-mode-map (kbd "M-o") #'lsp-clangd-find-other-file)
   )
-(req-package lsp-ui
-  :after
-  lsp-mode
-  flycheck
-  :hook
-  (lsp-ui-mode . (lambda() (lsp-ui-doc-mode -1)))
-  :config
-  (setq-default lsp-ui-doc-position 'top)
-  )
 (req-package magit
   :config
   )
 (req-package lua-mode
-  :after
-  lsp
   :hook
   (lua-mode . lsp)
   :config
-  ;; TODO(mallchad) should automatically extract emmy-lua for supported systems
   )
 (req-package multiple-cursors
   :after hydra
