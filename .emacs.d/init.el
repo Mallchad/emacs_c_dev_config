@@ -763,7 +763,7 @@ configuration see cemacs-init-local-frame"
   )
 (req-package hungry-delete
   :config
-  (global-hungry-delete-mode)
+  ;; (global-hungry-delete-mode)
   ;; The default hungry-delete behaviour deletes all whitespace backwards
   ;; This is annoying since the point of using it was to rmeove extraneous
   ;; whitespace, not to remove all of it
@@ -916,36 +916,100 @@ configuration see cemacs-init-local-frame"
 (req-package smartparens
   :hook
   (cemacs-init-setup . smartparens-global-mode)
-  (prog-mode . smartparens-strict-mode)
   :config
   ;; Defualt Configuration
   (require 'smartparens-config)
-  ;; smartparens Adapted Functions
-  (defun cemacs-sp-delete-word (&optional arg)
-    "Shim function to impliment future logic"
-    (interactive "p")
-    (sp-delete-word arg)
+  ;; smartparens Custom Adapted Logic
+  (defun cemacs-sp-natural-delete-word (&optional arg)
+    "Modified version of `cemacs-natural-delete-word' for smartparens"
+    (interactive)
+    (let ((original-point (point)))
+      ;; Following two characters are whitespace/blank or end of line
+      (if (or (and (string-match "[[:blank:]]" (string (char-after)))
+                   (string-match "[[:blank:]]" (string (char-after
+                                                        (+ (point) 1))
+                                                       )))
+              (eq (line-end-position) original-point))
+          (progn (cemacs-forward-whitespace :traverse-newlines)
+                 ;; Delete whitespace hungrily upto line beginning
+                 (delete-region original-point (point))
+                 )
+        ;; Normal delete
+        (sp-delete-word 1)
+        ))
     )
-  (defun cemacs-sp-delete-word-backwards (&optional arg)
-    "Shim function to impliment future logic"
-    (interactive "p")
-    (sp-backward-delete-word arg)
+  (defun cemacs-sp-natural-delete-word-backwards ()
+    "Modified version of `cemacs-natural-delete-word-backwards' for smartparens"
+    (interactive)
+    (let ((original-point (point)))
+      ;; Delete whitespace hungrily if at line beginning across lines
+      (cond ((= (line-beginning-position) (point))
+             (cemacs-backward-whitespace :traverse-newlines)
+             (delete-region original-point (point))
+             )
+            ;; Previous two characters are whitespace/blank
+            ((and (string-match "[[:blank:]]" (string (char-before)))
+                  (string-match "[[:blank:]]" (string (char-before
+                                                       (- (point) 1))
+                                                      )))
+             ;; Delete whitespace hungrily upto line beginning
+             (cemacs-backward-whitespace)
+             (delete-region original-point (point))
+             )
+            ;; Typical sp delete
+            (:default (sp-backward-delete-word 1))
+            ))
     )
   ;; Keybinds
   ;; Enforce smartparens-strict-mode with keybinds
-  (define-key smartparens-mode-map (kbd "C-<backspace>") 'cemacs-sp-delete-word-backwards)
-  (define-key smartparens-mode-map (kbd "M-d") 'cemacs-sp-delete-word)
-  ;; Strict Mode Ignoring Binds
-  (define-key smartparens-mode-map (kbd "M-<backspace>") 'cemacs-delete-word-backwards)
-  (define-key smartparens-mode-map (kbd "M-S-d") 'cemacs-delete-word)
+  (defvar cemacs-smartparens-enforcer-mode-map nil
+    "Keymap used for `cemacs-smartparens-enforcer-mode'.")
+  (setq cemacs-smartparens-enforcer-mode-map
+        (let ((map (make-sparse-keymap)))
+          (define-key map [remap kill-word] 'sp-kill-word)
+          (define-key map [remap kill-line] 'sp-kill-hybrid-sexp)
+          (define-key map [remap backward-kill-word] 'sp-backward-kill-word)
+          (define-key map [remap kill-region] 'sp-kill-region)
+          (define-key map [remap delete-region] 'sp-delete-region)
+          (define-key map [remap kill-whole-line] 'sp-kill-whole-line)
+          (define-key map (kbd "<C-backspace>") 'cemacs-sp-natural-delete-word-backwards)
+          (define-key map (kbd "M-d") 'cemacs-sp-natural-delete-word)
+          map
+          ))
   ;; Pair management bindings which are required for strict-mode
   (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
   (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
+  (define-key smartparens-mode-map (kbd "M-e") 'sp-forward-slurp-sexp)
+  (define-key smartparens-mode-map (kbd "M-a") 'sp-backward-slurp-sexp)
+  (define-key smartparens-mode-map (kbd "M-[") 'sp-forward-barf-sexp)
+  (define-key smartparens-mode-map (kbd "M-]") 'sp-backward-barf-sexp)
+  (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
+
   ;; Disable Emacs Lisp Quote Pairs
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
+
   ;; Pair angled brackets in c-modes
   (sp-local-pair sp-c-modes "<" ">")
+  (define-minor-mode cemacs-smartparens-enforcer-mode
+    "Toggle smartparens mode but enforce balancing of sexps more.
+
+This mode tries harder to balance pairs, but isn't as aggressive as
+ smartparens-strict-mode.
+This is designed to help prevent delimiter based syntax errors
+This has the downside of being quite aggressive with interfering with editing,
+but, this is probably worth it, for the early 'alarm' for syntax errors.
+
+This mode, unlike `smartparens-strict-mode' does not affect all commands,
+particularly `delete-char' still can delete pairs as normal, so that can
+be used as an effective alternative to advanced sexp editing.
+The current content of
+`cemacs-smartparens-enforcer-mode-map' is:
+
+ \\{smartparens-enforcer-mode-map}"
+    :keymap cemacs-smartparens-enforcer-mode-map
+    )
+  (add-hook 'smartparens-mode-hook 'cemacs-smartparens-enforcer-mode)
   )
 (req-package smooth-scrolling
   :hook
