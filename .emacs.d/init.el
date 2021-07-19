@@ -507,6 +507,7 @@ configuration see cemacs-init-local-frame"
   :config
   (global-set-key (kbd "C-r") 'avy-goto-char)
   (global-set-key (kbd "M-r") 'avy-pop-mark)
+  (global-set-key (kbd "M-z") 'avy-zap-to-char-dwim)
   (setq avy-highlight-first t
         avy-background t
         )
