@@ -492,10 +492,22 @@ configuration see cemacs-init-local-frame"
   :hook
   (prog-mode . aggressive-indent-mode)
   :config
-  (add-to-list 'aggressive-indent-protected-commands 'cemacs-delete-word)
-  (add-to-list 'aggressive-indent-protected-commands 'backward-kill-word)
-  (add-to-list 'aggressive-indent-protected-commands 'cemacs-natural-delete-word)
-  )
+  ;; Prevent aggressive indentation after some commands
+  ;; This essentially makes the behaviour less "aggressive" and offers
+  ;; the user some freedom to move the cursor, before reverting to normal
+  ;; behaviour
+  (cemacs-add-multiple-tolist)
+  (dolist (x-command (list 'cemacs-delete-word
+                           'backward-kill-word
+                           'cemacs-natural-delete-word
+                           'cemacs-natural-delete-word-backwards
+                           'delete-char
+                           'backward-delete-char
+                           'hungry-delete-forward
+                           'tab-to-tab-stop
+                           ))
+    (add-to-list 'aggressive-indent-protected-commands x-command)
+    ))
 (req-package all-the-icons
   :require async
   :config
