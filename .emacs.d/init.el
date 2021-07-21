@@ -323,9 +323,6 @@ configuration see cemacs-init-local-frame"
   (setq make-backup-files nil
         backup-by-copying t
         auto-save-default nil)
-  ;; Niggles
-  (setq recentf-max-saved-items 1000
-        )
   (setq-default fill-column 80        ; Change where auto-line wrap fill modes trigger
                 )
   ;; Save recentf on every file open
@@ -347,7 +344,10 @@ configuration see cemacs-init-local-frame"
 (defun cemacs-early-init ()
   (interactive)
   ;; Variables
-  (setq warning-minimum-log-level :debug)
+  (setq warning-minimum-log-level :debug  ; Log warnings in a volatile buffer
+        ;; Set early to prevent truncation of the recentf
+        recentf-max-saved-items 1000
+        )
   (cemacs-defdir 'cemacs-var-dir (concat user-emacs-directory "var/"))
   (cemacs-deffile 'cemacs-custom-file (concat cemacs-var-dir "custom.el")
                   'custom-file :local-only)
