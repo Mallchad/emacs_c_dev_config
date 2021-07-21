@@ -1,10 +1,14 @@
 # Ignore everything
-*
+/*
 
 #Whitelsit
-!/.emacs.d/init.el
-!/.emacs.d/etc/*.el
-!.gitignore
+!.emacs.d
+!.emacs.d/*.el
+!.emacs.d/init.el
+!.emacs.d/etc/*.el
+!.emacs.d/src
+!.emacs.d/src/*.el
+!.emacs.d/resources
 !README.md
 !doc/
 !doc/plan.org
