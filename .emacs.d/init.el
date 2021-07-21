@@ -32,152 +32,9 @@
 ;; Melpa
 (add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 (package-initialize)
-;; Constants
-(defconst cemacs-universal-argument  '(4)
-  "Represents the value a single 'universal-argument' call passes.
-The value essentially a list with the single value of 4"
-  )
-(defconst cemacs-universal-argument-double  '(16)
-  "Represents the value two 'universal-argument' calls passes.
-The value essentially a list with the single value of 16"
-  )
-;; Variables
-(defvar cemacs-custom-directory-list nil
-  "A list of custom directories being used by this config."
-  )
-(defvar cemacs-custom-directory-clean-list nil
-  "A list of custom config directories in which is safe to delete.
-This is without without too much trouble when cleaning up,
- especially after a clean Emacs install.
-This primarily targets files in cemacs-custom-directory-list but
- it isn't actually a pre-requisite"
-  )
 ;; Custom Functions
-(defun slay-function()
-  "Kill the function surrounding the point.
-Emacs' built in 'mark-defun' is used so that is what determines what is
-aconsidered a function,
-This function is effectively a shorthand of 'mark-defun' 'kill-region'."
-  (interactive)
-  (mark-defun)
-  (kill-region (region-beginning) (region-end))
-  )
-(defun slay-whole-buffer()
-  "Kill the buffer in it's entirety."
-  (interactive)
-  (kill-region (point-min) (point-max))
-  (kill-region (region-beginning) (region-end))
-  )
-(defun cemacs-activate-mark ()
-  "Activates the region between the point and mark.
-This is a good alternative to dealing with functions that assume
-you use transient mark mode since it lets you run without having to
-traverse back to set the region again"
-  (interactive)
-  (activate-mark)
-  )
-(defun cemacs-delete-word(mult)
-  "Delete characters forward until encountering the end of a word.
-With argument MULT, repeat this that many times, or perform deletion backwards
-if negative.
-
-This command does not push text to `kill-ring'."
-  (interactive "p")
-  (delete-region
-   (point)
-   (progn
-     (forward-word mult)
-     (point))))
-(defun cemacs-delete-word-backwards(mult)
-  "Delete characters backward until encountering the beginning of a word.
-With argument MULT, repeat this many times.
-
-This command is a reverse of cemacs-delete-word"
-  (interactive "p")
-  (cemacs-delete-word (- mult))
-  )
-(defun cemacs-warn (warning-message)
-  "Create a warning event outputting WARNING-MESSAGE duplicate it to the minibuffer."
-  (display-warning 'emacs
-                   warning-message
-                   :debug)
-  (message warning-message)
-  )
-(defun cemacs-find-user-init-file ()
-  "Edit the `user-init-file'."
-  (interactive)
-  (find-file (file-truename user-init-file))
-  )
-(defun cemacs-open-files-background (filelist)
-  "Open all files in FILELIST in offscreen buffers."
-  (cl-loop for x-file in filelist
-           do (if (and (file-exists-p x-file ) (file-regular-p x-file))
-                  (find-file-noselect x-file)
-                )))
-(defun cemacs-open-files-in-directory (directory-path)
-  "Opens all files in a DIRECTORY-PATH in offscreen buffers."
-  (if (file-directory-p directory-path)
-      (cemacs-open-files-background
-       (directory-files directory-path t)
-       ))
-  )
-(defun cemacs-defdir (var-name new-dir &optional associated-var local-only)
-  "Define VAR-NAME equal to NEW-DIR a path which is then automatically created.
-
-If there is a direct, existing variable which the path is an intermediate for
-than then it can be spceified using ASSOCIATED-VAR.
-This also hooks into a directory creation and destruction list, it can be
-specified whether or not this directory contains LOCAL-ONLY files that aren't
-too important if they are lost between computers when LOCAL-ONLY is non-nil"
-  (interactive)
-  (push new-dir cemacs-custom-directory-list)
-  (set var-name new-dir)
-  ;; A value is supplied to associated-var
-  (when (and (boundp 'associated-var)
-             (symbol-value 'associated-var))
-    (set associated-var new-dir)
-    )
-  ;; Directory does not already exist
-  (if (not (file-exists-p new-dir))
-      (make-directory new-dir :recursive)
-    (cemacs-warn (concat new-dir " has a special file or directory already present!"))
-    )
-  )
-(defun cemacs-deffile (var-name new-file &optional associated-var local-only)
-  "Define VAR-NAME equal to NEW-PATH a path which is then automatically created.
-
-If there is a direct, existing variable which the path is an intermediate for than
-then it can be spceified using ASSOCIATED-VAR.
-This also hooks into a directory creation and destruction list, it can be specified
-whether or not this directory contains LOCAL-ONLY files that aren't too important if
-they are lost between computers when LOCAL-ONLY is non-nil"
-  (interactive)
-  (set var-name new-file)
-  (push new-file cemacs-custom-directory-list)
-  ;; A value supplied to associated-var
-  (when (and (boundp 'associated-var)
-             (symbol-value 'associated-var))
-    (set associated-var new-file)
-    )
-  (if (not (file-exists-p new-file))
-      (make-empty-file new-file :recursive)
-    (cemacs-warn (concat new-file " has a special file or directory already present!"))
-    )
-  )
-(defvar cemacs-kill-volatile-buffer-pre-hook nil)
-(defun cemacs-kill-buffer-volatile()
-  "Kill the current buffer unconditionally."
-  (interactive)
-  (run-hooks 'cemacs-kill-volatile-buffer-pre-hook)
-  ;; Buffer isn't visiting a file
-  (when (not (buffer-file-name (current-buffer))
-             )
-    (message "Buffer does not have associated file, killing instantly")
-    ;; Slight hack to bypass user prompts
-    (set-buffer-modified-p nil)
-    )
-  (kill-buffer (current-buffer))
-  )
+(add-to-list 'load-path (concat user-emacs-directory "src"))
+(require 'cemacs-utility)
 ;; Configuration
 (defun cemacs-cc-mode()
   (interactive)
@@ -282,14 +139,13 @@ configuration see cemacs-init-local-frame"
   (global-set-key (kbd "C-x r") 'revert-buffer)
   (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
   (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
-  (global-set-key (kbd "<C-backspace>") 'cemacs-delete-word-backwards)
   (global-set-key (kbd "C-,") 'pop-to-mark-command)
   ;; Editing Commands
   (global-set-key (kbd "M-d") 'cemacs-delete-word)
-  ;; (global-set-key (kbd "C-M-c") 'upcase-char)
-  ;; (global-set-key (kbd "C-M-c") 'downcase-char)
+  ;; (global-set-key (kbd "<C-backspace>") 'cemacs-natural-delete-word-backwards)
+  ;; (global-set-key (kbd "<M-d>") 'cemacs-natural-delete-word)
   ;; Other
-  (global-set-key (kbd "C-x k") 'cemacs-kill-buffer-volatile)
+  (global-set-key (kbd "C-x k") 'cemacs-buffer-kill-volatile)
   ;; Org Mode
   (global-set-key (kbd "C-M-#")
                   '(lambda()
