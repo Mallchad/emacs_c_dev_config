@@ -848,6 +848,10 @@ configuration see cemacs-init-local-frame"
           (define-key map (kbd "M-d") 'cemacs-sp-natural-delete-word)
           map
           ))
+  (add-to-list 'aggressive-indent-protected-commands
+               'cemacs-sp-natural-delete-word)
+  (add-to-list 'aggressive-indent-protected-commands
+               'cemacs-sp-natural-delete-word-backwards)
   ;; Pair management bindings which are required for strict-mode
   (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
   (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
