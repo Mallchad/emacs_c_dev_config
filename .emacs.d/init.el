@@ -860,6 +860,7 @@ configuration see cemacs-init-local-frame"
   (define-key smartparens-mode-map (kbd "M-[") 'sp-forward-barf-sexp)
   (define-key smartparens-mode-map (kbd "M-]") 'sp-backward-barf-sexp)
   (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
+  (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp) ; Allow killing by pair
 
   ;; Disable Emacs Lisp Quote Pairs
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
