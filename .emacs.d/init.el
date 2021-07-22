@@ -352,18 +352,16 @@ configuration see cemacs-init-local-frame"
   ;; This essentially makes the behaviour less "aggressive" and offers
   ;; the user some freedom to move the cursor, before reverting to normal
   ;; behaviour
-  (cemacs-add-multiple-tolist)
-  (dolist (x-command (list 'cemacs-delete-word
-                           'backward-kill-word
-                           'cemacs-natural-delete-word
-                           'cemacs-natural-delete-word-backwards
-                           'delete-char
-                           'backward-delete-char
-                           'hungry-delete-forward
-                           'tab-to-tab-stop
-                           ))
-    (add-to-list 'aggressive-indent-protected-commands x-command)
-    ))
+  (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands 'cemacs-delete-word
+                               'backward-kill-word
+                               'cemacs-natural-delete-word
+                               'cemacs-natural-delete-word-backwards
+                               'delete-char
+                               'backward-delete-char
+                               'hungry-delete-forward
+                               'tab-to-tab-stop
+                               )
+  )
 (req-package all-the-icons
   :require async
   :config
