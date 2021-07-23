@@ -142,8 +142,8 @@ configuration see cemacs-init-local-frame"
   (global-set-key (kbd "C-,") 'pop-to-mark-command)
   ;; Editing Commands
   (global-set-key (kbd "M-d") 'cemacs-delete-word)
-  ;; (global-set-key (kbd "<C-backspace>") 'cemacs-natural-delete-word-backwards)
-  ;; (global-set-key (kbd "<M-d>") 'cemacs-natural-delete-word)
+  (global-set-key (kbd "<C-backspace>") 'cemacs-natural-delete-word-backwards)
+  (global-set-key (kbd "<M-d>") 'cemacs-natural-delete-word)
   ;; Other
   (global-set-key (kbd "C-x k") 'cemacs-buffer-kill-volatile)
   ;; Org Mode
