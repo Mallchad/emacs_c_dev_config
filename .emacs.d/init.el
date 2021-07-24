@@ -647,7 +647,7 @@ configuration see cemacs-init-local-frame"
   ;; whitespace, not to remove all of it
   ;; The new behaviour leaves 1 space for words so its more comfortable and
   ;; similar to other editors
-  (set hungry-delete-join-reluctantly t)
+  (setq hungry-delete-join-reluctantly t)
   )
 (req-package hydra
   :config
