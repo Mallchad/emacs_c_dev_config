@@ -241,6 +241,8 @@ configuration see cemacs-init-local-frame"
       ("ARCHIVE" "bottom")
       ))
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
+  ;; `org-return' is infuriating, so disable it until something better is found
+  (define-key org-mode-map (kbd "RET") 'nil)
   ;; Functions
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
   ;; change.
