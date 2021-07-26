@@ -420,6 +420,8 @@ configuration see cemacs-init-local-frame"
   (setq beacon-color "gold"
         beacon-blink-when-point-moves-vertically 1    ;; blink if the line changes
         beacon-blink-when-point-moves-horizontally 20
+        ;; Don't push the mark when the cursor moves a long distance
+        beacon-push-mark nil
         )
   )
 ;;; A robust, prettified calender framework
