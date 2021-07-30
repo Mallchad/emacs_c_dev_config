@@ -264,10 +264,13 @@ configuration see cemacs-init-local-frame"
           (less-than 'no-priority)
           (comp-left-tag-string "")
           (comp-right-tag-string "")
+          (left-tag "")
+          (right-tag "")
           )
+      ;; Normalize tag strings
       (while (or (car taglist-left) (car taglist-right))
-        (set 'left-tag (or (pop taglist-left) ""))
-        (set 'right-tag (or (pop taglist-right) ""))
+        (setq left-tag (or (pop taglist-left) ""))
+        (setq right-tag (or (pop taglist-right) ""))
         (when (stringp left-tag)
           (push (downcase left-tag) comp-left)
           )
@@ -290,16 +293,16 @@ configuration see cemacs-init-local-frame"
              ))
       ;; Blindly comapre tags alphanumerically
       (while (car comp-left)
-        (set 'comp-left-tag-string
-             (concat comp-left-tag-string (pop comp-left)
-                     )))
+        (setq comp-left-tag-string
+              (concat comp-left-tag-string (pop comp-left)
+                      )))
       (while (car comp-right)
-        (set 'comp-right-tag-string
-             (concat comp-right-tag-string (pop comp-right)
-                     )))
+        (setq comp-right-tag-string
+              (concat comp-right-tag-string (pop comp-right)
+                      )))
       (if (eq less-than 'no-priority)
-          (set 'less-than
-               (string-collate-lessp comp-left-tag-string comp-right-tag-string))
+          (setq less-than
+                (string-collate-lessp comp-left-tag-string comp-right-tag-string))
         )
       less-than
       )
