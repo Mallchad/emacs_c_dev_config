@@ -427,6 +427,7 @@ configuration see cemacs-init-local-frame"
   (setq beacon-color "gold"
         beacon-blink-when-point-moves-vertically 1    ;; blink if the line changes
         beacon-blink-when-point-moves-horizontally 20
+        beacon-size 40
         ;; Don't push the mark when the cursor moves a long distance
         beacon-push-mark nil
         )
@@ -537,7 +538,7 @@ configuration see cemacs-init-local-frame"
     )
   (defun cemacs-fireplace-visit (&optional window)
     (interactive)
-    (if (windowp  window)
+    (if (windowp window)
         (select-window window)
       (set 'window (selected-window))
       )
@@ -952,6 +953,8 @@ The current content of
   (require 'vlf-setup)
   )
 (req-package visual-fill-column
+  :config
+  (setq visual-fill-column-width 80)
   )
 (req-package volatile-highlights
   :config
@@ -969,6 +972,8 @@ The current content of
   (setq which-key-idle-delay 2          ; Don't get in the way of normal usage
         which-key-sort-order 'which-key-description-order
         )
+  )
+(req-package yasnippet
   )
 (req-package zoom
   ;; A window rebalancing minor mode
