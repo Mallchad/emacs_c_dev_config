@@ -799,6 +799,8 @@ configuration see cemacs-init-local-frame"
 (req-package smartparens
   :hook
   (cemacs-init-setup . smartparens-global-mode)
+  (smartparens-global-mode . cemacs-smartparens-global-enforcer-mode)
+  (smartparens-mode . cemacs-smartparens-enforcer-mode)
   :config
   ;; Defualt Configuration
   (require 'smartparens-config)
@@ -897,7 +899,11 @@ The current content of
  \\{smartparens-enforcer-mode-map}"
     :keymap cemacs-smartparens-enforcer-mode-map
     )
-  (add-hook 'smartparens-mode-hook 'cemacs-smartparens-enforcer-mode)
+  (define-globalized-minor-mode cemacs-smartparens-global-enforcer-mode
+    cemacs-smartparens-enforcer-mode
+    ignore
+    )
+  (add-hook 'prog-mode-hook 'cemacs-smartparens-enforcer-mode)
   )
 (req-package smooth-scrolling
   :hook
