@@ -678,6 +678,8 @@ configuration see cemacs-init-local-frame"
   (c-mode . lsp)
   (csharp-mode . lsp)
   :config
+  ;; Fixes
+  (defalias 'yas-expand-snippet 'ignore)        ; Prevent company-capf from erroring
   ;; Keybindings
   (define-key lsp-mode-map (kbd "M-#") 'lsp-ui-doc-show)
   ;; Configuration
