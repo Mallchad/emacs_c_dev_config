@@ -379,6 +379,7 @@ configuration see cemacs-init-local-frame"
     (customize-save-variable 'cemacs-all-the-icons-fonts-installed t))
   )
 (req-package avy
+  :require avy-zap
   :config
   (global-set-key (kbd "C-r") 'avy-goto-char)
   (global-set-key (kbd "M-r") 'avy-pop-mark)
