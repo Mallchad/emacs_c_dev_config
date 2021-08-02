@@ -443,7 +443,7 @@ configuration see cemacs-init-local-frame"
   ("<C-tab>" . centaur-tabs-forward)
   ("<C-S-tab>" . centaur-tabs-backward)
   ("<C-iso-lefttab>" . centaur-tabs-backward)
-  :init
+  :config
   ;;Misc Settings
   (setq centaur-tabs-set-icons t
         centaur-tabs-set-modified-marker t
@@ -453,9 +453,7 @@ configuration see cemacs-init-local-frame"
         centaur-tabs-set-bar t
         centaur-tabs-bar 'over
         centaur-tabs-modified-marker "*"
-        centaur-tabs-mode t
         )
-  :config
   ;;Create Uniform Tabbar Appearance
   (centaur-tabs-headline-match)
   ;;Group tabs by projects
@@ -800,13 +798,10 @@ configuration see cemacs-init-local-frame"
   (global-set-key (kbd "C-x M-a") 'restart-emacs)
   )
 (req-package smartparens
-  :hook
-  (cemacs-init-setup . smartparens-global-mode)
-  (smartparens-global-mode . cemacs-smartparens-global-enforcer-mode)
-  (smartparens-mode . cemacs-smartparens-enforcer-mode)
+  :after aggressive-indent
   :config
   ;; Defualt Configuration
-  (require 'smartparens-config)
+  (require 'smartparens-config) 
   ;; smartparens Custom Adapted Logic
   (defun cemacs-sp-natural-delete-word (&optional arg)
     "Modified version of `cemacs-natural-delete-word' for smartparens"
@@ -887,26 +882,28 @@ configuration see cemacs-init-local-frame"
   (define-minor-mode cemacs-smartparens-enforcer-mode
     "Toggle smartparens mode but enforce balancing of sexps more.
 
-This mode tries harder to balance pairs, but isn't as aggressive as
- smartparens-strict-mode.
-This is designed to help prevent delimiter based syntax errors
-This has the downside of being quite aggressive with interfering with editing,
-but, this is probably worth it, for the early 'alarm' for syntax errors.
+  This mode tries harder to balance pairs, but isn't as aggressive as
+   smartparens-strict-mode.
+  This is designed to help prevent delimiter based syntax errors
+  This has the downside of being quite aggressive with interfering with editing,
+  but, this is probably worth it, for the early 'alarm' for syntax errors.
 
-This mode, unlike `smartparens-strict-mode' does not affect all commands,
-particularly `delete-char' still can delete pairs as normal, so that can
-be used as an effective alternative to advanced sexp editing.
-The current content of
-`cemacs-smartparens-enforcer-mode-map' is:
+  This mode, unlike `smartparens-strict-mode' does not affect all commands,
+  particularly `delete-char' still can delete pairs as normal, so that can
+  be used as an effective alternative to advanced sexp editing.
+  The current content of
+  `cemacs-smartparens-enforcer-mode-map' is:
 
- \\{smartparens-enforcer-mode-map}"
+   \\{cemacs-smartparens-enforcer-mode-map}"
     :keymap cemacs-smartparens-enforcer-mode-map
     )
   (define-globalized-minor-mode cemacs-smartparens-global-enforcer-mode
     cemacs-smartparens-enforcer-mode
     ignore
     )
-  (add-hook 'prog-mode-hook 'cemacs-smartparens-enforcer-mode)
+  (eval-after-load 'init (smartparens-global-mode))
+  (add-hook 'smartparens-global-mode 'cemacs-smartparens-global-enforcer-mode)
+  (add-hook 'smartparens-mode 'cemacs-smartparens-enforcer-mode)
   )
 (req-package smooth-scrolling
   :hook
