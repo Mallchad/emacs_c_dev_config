@@ -190,12 +190,12 @@ This command does not push text to `kill-ring'."
   "Delete characters backward until encountering the beginning of a word.
 With argument MULT, repeat this many times.
 
-This command is a reverse of cemacs-delete-word"
+This command is a reverse of `cemacs-delete-word'"
   (interactive "p")
   (cemacs-delete-word (- (or mult 1)))
   )
-(defun cemacs-natural-delete-word ()
-  "Delete a word block backwards, treating whitespace blocks as words.
+(defun cemacs-natural-forward-word ()
+  "Move the point 1 word block forwards, treating whitespace blocks as words.
 
 This is designed to have funcitonality closer to other common editor's
 word deletion behaviour, where each command stops after whitespace,
