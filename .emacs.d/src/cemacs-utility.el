@@ -1,5 +1,11 @@
-;; Custom Functions
+;; MIT License
+;; Copyright (c) 2021 Mallchad
+;; This source is provided with no limitations or warrent whatsoever.
+
+;;; cemacs-utility.el --- A collection of useful helper and interactive functions in one tidy package
+
 ;;; Code:
+;; Dependencies
 ;; Constants
 (defconst cemacs-universal-argument  '(4)
   "Represents the value a single 'universal-argument' call passes.
@@ -40,6 +46,72 @@ This is just a shorthand function."
   (interactive)
   (dolist (x-entry entries)
     (add-to-list list-symbol x-entry :append))
+  )
+(defun cemacs-natural-beginning-of-line ()
+  "A version of ' that acknowledges significant stops.
+
+This function will move the point in the order
+- beginning of visual line
+- beginning of logical line, the real line, jumping to first significnat char
+- beginning of the true line
+
+The behaviour for this function is borrowed concept of the package crux
+\(a Collcetion of Rediciously Useful eXtensions).
+This allowed for jumpping to the first significant character, rather than
+whitespace, which was generally more useful.
+Optionally jumping to the very beginning of the line, if already on the first
+significant character.
+
+However, the problem with this function is it ignored visual linnes, which was
+really confusing.
+Since truncating long lines is really, really, annoying, and not a good
+ alternative.
+This fixes that problem and visits the beginning of the visual line first."
+  (interactive)
+  (let ((original-point (point))
+        ;; Aparent line wrapped line beginning
+        (visual-line-beginning (save-excursion (beginning-of-visual-line) (point)))
+        ;; First significant character of the true line
+        (logical-line-beginning (save-excursion (beginning-of-line)
+                                                (cemacs-forward-whitespace) (point)))
+        (true-line-beginning (line-beginning-position))
+        )
+    (cond ((= original-point visual-line-beginning)
+           ;; try jumping to the true line beginning, first significant char
+           (goto-char logical-line-beginning)
+           )
+          ((= original-point logical-line-beginning)
+           (beginning-of-line)
+           )
+          ((= original-point true-line-beginning)
+           (goto-char logical-line-beginning)
+           )
+          ;; Default behaviour
+          (t (goto-char visual-line-beginning)
+             (cemacs-forward-whitespace))
+          ))
+  )
+(defun cemacs-natural-end-of-line ()
+  "A version of 'end-of-line' that stops at a visual line end.
+
+This function allows the user to choose if they wish to visit the end
+of the visual line, or the end of the real line.
+
+Pressing once will try you to the end of the visual line,
+pressing twice will always ensure you end up at the end of the real line."
+  (interactive)
+  (let ((original-point (point))
+        ;; Aparent line wrapped line end
+        (visual-line-end (save-excursion (end-of-visual-line) (point)))
+        (true-line-end (line-end-position))
+        )
+    (cond ((= original-point visual-line-end)
+           ;; try jumping to the true line end, first significant char
+           (goto-char true-line-end)
+           )
+          ;; Default behaviour
+          (t (goto-char visual-line-end))
+          ))
   )
 (defun cemacs-forward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
