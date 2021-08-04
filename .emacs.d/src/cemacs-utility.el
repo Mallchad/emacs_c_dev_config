@@ -8,11 +8,11 @@
 ;; Dependencies
 ;; Constants
 (defconst cemacs-universal-argument  '(4)
-  "Represents the value a single 'universal-argument' call passes.
+  "Represents the value a single `universal-argument' call passes.
 The value essentially a list with the single value of 4"
   )
 (defconst cemacs-universal-argument-double  '(16)
-  "Represents the value two 'universal-argument' calls passes.
+  "Represents the value two `universal-argument' calls passes.
 The value essentially a list with the single value of 16"
   )
 ;; Variables
@@ -23,7 +23,7 @@ The value essentially a list with the single value of 16"
   "A list of custom config directories in which is safe to delete.
 This is without without too much trouble when cleaning up,
  especially after a clean Emacs install.
-This primarily targets files in cemacs-custom-directory-list but
+This primarily targets files in `cemacs-custom-directory-list' but
  it isn't actually a pre-requisite"
   )
 (defvar cemacs-buffer-tmp-list nil
@@ -196,24 +196,6 @@ you use transient mark mode since it lets you run without having to
 traverse back to set the region again"
   (interactive)
   (activate-mark)
-  )
-(defun cemacs-scroll-up-in-place ()
-  "Scroll buffer up 1 line without moving cursor position vertically."
-  ;; TODO(mallchad) this could accept an arg quite easilly
-  ;; TODO(mallchad) function feels like it skips 1 line up or down
-  ;; occasionally
-  (interactive)
-  (forward-line -1)
-  (scroll-down-command 1)
-  )
-(defun cemacs-scroll-down-in-place ()
-  "Scroll buffer down 1 line without moving cursor position vertically.
-
-This is a reverse version of 'cemacs-scroll-up-in-place"
-  ;; TODO(mallchad) this could easilly be made mirror it's counterpart
-  (interactive)
-  (forward-line 1)
-  (scroll-down-command -1)
   )
 (defun cemacs-delete-word (&optional mult)
   "Delete characters forward until encountering the end of a word.
@@ -398,10 +380,10 @@ EMACS `backward-to-char' movement deleting everything between the new and
   )
 (defun cemacs-open-files-background (filelist)
   "Open all files in FILELIST in offscreen buffers."
-  (cl-loop for x-file in filelist
-           do (if (and (file-exists-p x-file ) (file-regular-p x-file))
-                  (find-file-noselect x-file)
-                )))
+  (dolist (x-file filelist)
+    (if (and (file-exists-p x-file ) (file-regular-p x-file))
+           (find-file-noselect x-file)
+         )))
 (defun cemacs-open-files-in-directory (directory-path)
   "Opens all files in a DIRECTORY-PATH in offscreen buffers."
   (if (file-directory-p directory-path)
@@ -432,12 +414,13 @@ too important if they are lost between computers when LOCAL-ONLY is non-nil"
     )
   )
 (defun cemacs-deffile (var-name new-dir &optional associated-var local-only)
-  "Define VAR-NAME equal to NEW-PATH a path which is then automatically created.
+  "Define VAR-NAME equal to NEW-DIR a path which is then automatically created.
 
-If there is a direct, existing variable which the path is an intermediate for than
-then it can be spceified using ASSOCIATED-VAR.
-This also hooks into a directory creation and destruction list, it can be specified whether or not this directory contains LOCAL-ONLY files that aren't too important if
-they are lost between computers when LOCAL-ONLY is non-nil"
+If there is a direct, existing variable which the path is an intermediate for
+than then it can be spceified using ASSOCIATED-VAR.
+This also hooks into a directory creation and destruction list, it can be
+specified whether or not this directory contains LOCAL-ONLY files that aren't
+too important if they are lost between computers when LOCAL-ONLY is non-nil"
   (interactive)
   (set var-name new-dir)
   (push new-dir cemacs-custom-directory-list)
@@ -456,7 +439,7 @@ they are lost between computers when LOCAL-ONLY is non-nil"
   "Kill the current buffer unconditionally.
 
 This function should be used with care, since it will NOT ask to save work.
-This config uses a modified backup-each-save to make sure there are always
+This config uses a modified `backup-each-save' to make sure there are always
 very recent versions of work kept around.
 This means the buffer is saved elsewhere before killing, so work is
 relatively safe."
@@ -468,7 +451,7 @@ relatively safe."
   (kill-buffer (current-buffer))
   )
 (defun cemacs-scratch-buffer-create (&optional new-major-mode)
-  "Create a new scratch buffer optionally with a default MAJOR-MODE."
+  "Create a new scratch buffer optionally with a default NEW-MAJOR-MODE."
   (interactive)
   (let* ((scratch-major-mode (if (fboundp new-major-mode)
                                  new-major-mode
@@ -482,18 +465,18 @@ relatively safe."
     (funcall major-mode)
     )
   )
-(defun cemacs-scratch-buffer-create-cpp (&optional new-major-mode)
-  "Create a new scratch buffer optionally with a default MAJOR-MODE."
+(defun cemacs-scratch-buffer-create-cpp ()
+  "Create a new scratch buffer optionally with the mode 'c++-mode'."
   (interactive)
   (cemacs-scratch-buffer-create 'c++-mode)
   )
-(defun cemacs-scratch-buffer-create-c (&optional new-major-mode)
-  "Create a new scratch buffer optionally with a default MAJOR-MODE."
+(defun cemacs-scratch-buffer-create-c ()
+  "Create a new scratch buffer optionally with the default mode 'c-mode'."
   (interactive)
   (cemacs-scratch-buffer-create 'c-mode)
   )
 (defun cemacs-scratch-buffer-kill-all ()
-  ""
+  "Kill all scratch buffers created by cemacs."
   (interactive)
   (while (car cemacs-buffer-tmp-list)
     ;; Just have to deal with prompts for saved files here

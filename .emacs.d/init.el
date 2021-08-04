@@ -1,6 +1,7 @@
 ;; MIT License
 ;; Copyright (c) 2021 Mallchad
 ;; This source is provided with no limitations or warrent whatsoever.
+
 ;;; Commentary:
 ;; Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
@@ -12,17 +13,17 @@
   `(when (eq system-type ',type)
      ,@body))
 (defmacro WHEN_WINDOWS (&rest body)
-  "Evalute BODY when the OS is Windows"
+  "Evalute BODY when the OS is Windows."
   (declare (indent defun))
   (when (eq system-type 'windows-nt)
     (body)
     )
   )
 (defmacro WHEN_LINUX (&rest body)
-  "Evalute BODY when the OS is Linux"
+  "Evalute BODY when the OS is Linux."
   (declare (indent defun))
   (when (eq system-type 'gnu/linux)
-    (body)
+    `(eval ,@body)
     )
   )
 ;; Enable Package Repositories
@@ -37,21 +38,26 @@
 (require 'cemacs-utility)
 ;; Configuration
 (defun cemacs-cc-mode()
+  "Hook function for cc derived modes."
   (interactive)
   (setq tab-width 4)
   (setq-default c-basic-offset 4)
   )
 (add-hook 'c-mode-common-hook 'cemacs-cc-mode)
 (defun cemacs-cpp-mode()
+  "Hook function for `c++-mode'."
   (interactive)
   (c-set-style "stroustrup")
   )
 (add-hook 'c-mode-common-hook 'cemacs-cpp-mode)
 (defun cemacs-c-mode()
+  "Hook function for `c-mode'."
   (interactive)
   )
 (add-hook 'c-mode-hook 'cemacs-c-mode)
 (defun cemacs-elisp-mode()
+  "Hook function for `emacs-lisp-mode'."
+  (interactive)
   )
 (add-hook 'emacs-lisp-mode 'cemacs-elisp-mode)
 (defun cemacs-prog-mode()
@@ -62,34 +68,24 @@
   )
 (add-hook 'prog-mode-hook 'cemacs-prog-mode)
 (defun cemacs-markdown-mode()
+  "Hook function for `markdown-mode'."
   (interactive)
   (flyspell-mode)
   )
 (add-hook 'markdown-mode-hook 'cemacs-markdown-mode)
-(defun cemacs-org-mode()
-  (interactive)
-  (org-indent-mode)
-  (flyspell-mode)
-  (auto-fill-mode)
-  (setq-local org-hide-leading-stars nil)
-  (setq-local ws-butler-mode nil)
-  )
-(add-hook 'org-mode-hook 'cemacs-org-mode)
 (defun cemacs-text-mode-hook()
-  (flyspell-mode)
+  "Hook function for `text-mode'."
+  (flyspell-mode)                       ; Spell checking
+  (auto-fill-mode)                      ; column
   )
-(add-hook 'text-mode-hook #'cemacs-org-mode)
 (defvar cemacs-init-setup-hook nil
-  ;;A normal hook that runs at the end of init setup
+  "A normal hook that runs at the end of init setup."
   )
 ;; Setup Functions
 ;; TODO this *supposed* to clean up deprecated files and put them in a trash
 ;; folder when the config fire replaces it with new ones
 ;; Although some particular folders like recentf and custom might benefit from
 ;; adopting the files instead of cleaning them
-;; (defun cemacs-pre-init-setup ()
-;; (loop for x-folder in cemacs-directory-clean-list
-;; )
 (defun cemacs-init-local-frame(frame)
   "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
@@ -104,7 +100,7 @@
 (defun cemacs-configure-session-decorations()
   "Set the default frame paramaters and aethetics for the whole Emacs session.
 Note this assumes that a frame does not already exist, for frame
-configuration see cemacs-init-local-frame"
+configuration see `cemacs-init-local-frame'"
   (interactive)
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
@@ -188,9 +184,7 @@ configuration see cemacs-init-local-frame"
   (setq-default fill-column 80        ; Change where auto-line wrap fill modes trigger
                 )
   ;; Save recentf on every file open
-  (add-hook 'find-file-hook #'recentf-save-list)
-  ;; (add-hook 'write-file-functions #'recentf-save-list)
-  ;; (add-hook 'kill-buffer-hook #'recentf-save-list)
+  (add-hook 'find-file-hook 'recentf-save-list)
   (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
   (fset 'overwrite-mode 'ignore) ; Disable pain in the arse insert mode
   ;; Re-enable disabled functions
@@ -199,11 +193,11 @@ configuration see cemacs-init-local-frame"
   ;; Run Functions
   (cemacs-configure-session-decorations)
   (cemacs-vanilla-keys-configure)
-  (run-hooks 'admin-cemacs-init-setup-hook)
   (run-hooks 'cemacs-init-setup-hook)
   )
 ;; Run early setup to prettify the session
 (defun cemacs-early-init ()
+  "An early setup function which must run be `cemacs-init-setup'."
   (interactive)
   ;; Variables
   (setq warning-minimum-log-level :debug  ; Log warnings in a volatile buffer
@@ -239,8 +233,10 @@ configuration see cemacs-init-local-frame"
   )
 (req-package org
   :require
-  ;; A cool new package
+  ;; A cool new package which inserts links
   org-cliplink
+  :hook
+  (org-mode . text-mode)
   :config
   (defvar cemacs-org-priority-list
     '(("* *" "top")
@@ -335,6 +331,23 @@ configuration see cemacs-init-local-frame"
       (goto-char (+ position-along-original-line (line-beginning-position)))
       )
     )
+  (defun cemacs-org-stamp-date ()
+    (interactive)
+    (call-interactively
+     (org-time-stamp cemacs-universal-argument-double 'inactive))
+    )
+  (defun cemacs-org-stamp-time ()
+    (interactive)
+    (call-interactively
+     (org-time-stamp cemacs-universal-argument-double 'inactive))
+    )
+  (defun cemacs-org-mode ()
+    "Hook function for `org-mode'"
+    (interactive)
+    (org-indent-mode)
+    (setq-local org-hide-leading-stars nil)
+    )
+  (add-hook 'org-mode-hook 'cemacs-org-mode)
   ;; This is an absolutely disgusting hack I found online and it needs to go.
   (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
   (defface org-checkbox-todo-text
@@ -352,10 +365,13 @@ configuration see cemacs-init-local-frame"
    'org-mode
    `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
    'append)
+  ;; Only cycle node under cursor
   (add-hook 'org-cycle-hook
             (lambda (state)
               (when (eq state 'children)
                 (setq org-cycle-subtree-status 'subtree))))
+  ;; Bindings
+  (global-set-key (kbd "C-M-#") #'cemacs-org-stamp-time)
   )
 ;; External Packages
 (req-package async
@@ -1015,6 +1031,8 @@ configuration see cemacs-init-local-frame"
   :config
   (ws-butler-global-mode)
   (setq ws-butler-convert-leading-tabs-or-spaces t)
+  (add-hook 'org-mode-hook '(lambda ()
+                              (setq-local ws-butler-mode nil)))
   )
 (req-package which-key
   :config
