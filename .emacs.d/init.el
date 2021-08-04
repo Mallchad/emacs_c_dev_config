@@ -927,8 +927,9 @@ configuration see cemacs-init-local-frame"
     ignore
     )
   (eval-after-load 'init (smartparens-global-mode))
-  (add-hook 'smartparens-global-mode-hook 'cemacs-smartparens-global-enforcer-mode)
-  (add-hook 'smartparens-mode-hook 'cemacs-smartparens-enforcer-mode)
+  (add-hook 'prog-mode-hook 'cemacs-smartparens-enforcer-mode)
+  ;; Fix for *scratch* loading before this is hooked
+  (add-hook 'lisp-interaction-mode-hook 'cemacs-smartparens-enforcer-mode)
   )
 (req-package smooth-scrolling
   :hook
