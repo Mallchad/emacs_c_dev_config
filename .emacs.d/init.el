@@ -568,6 +568,11 @@ configuration see cemacs-init-local-frame"
   (flycheck-mode . flycheck-inline-mode)
   (global-flycheck-mode . global-flycheck-inline-mode)
   :config
+  ;; Disable annoying documentation warnings which are too strict
+  ;; instead, use 'M-x checkdoc'
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+  ;; Fix flycheck not being able to find files in the load path
+  (setq flycheck-emacs-lisp-load-path 'inherit)
   )
 (req-package free-keys
   )
