@@ -948,19 +948,19 @@ configuration see cemacs-init-local-frame"
   :config
   )
 (req-package sublimity
-  :hook
-  (cemacs-init-setup . sublimity-mode)
-  :config
-  (require 'sublimity-scroll)
+  ;; :hook
+  ;; (cemacs-init-setup . sublimity-mode)
+  ;; :config
+  ;; (require 'sublimity-scroll)
   ;; (require 'sublimity-attractive)
   ;;(require 'sublimity-map) ;; experimental
-  (setq sublimity-scroll-weight 7
-        sublimity-scroll-drift-length 0
-        ;;      sublimity-map-size 10
-        ;;      sublimity-map-fraction 0.3
-        ;;      sublimity-map-text-scale -7
-        ;;      sublimity-map-set-delay 1
-        )
+  ;; (setq sublimity-scroll-weight 4
+  ;; sublimity-scroll-drift-length 4
+  ;;      sublimity-map-size 10
+  ;;      sublimity-map-fraction 0.3
+  ;;      sublimity-map-text-scale -7
+  ;;      sublimity-map-set-delay 1
+  ;; )
   )
 (req-package undo-tree
   :config
