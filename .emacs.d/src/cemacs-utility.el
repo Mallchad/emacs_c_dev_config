@@ -116,7 +116,9 @@ pressing twice will always ensure you end up at the end of the real line."
 (defun cemacs-forward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
 Each such block may be a single newline, or a sequence of
-consecutive space and/or tab characters."
+consecutive space and/or tab characters.
+
+If TRAVERSE-NEWLINES is non-nil, allow travelling to a new line."
   (interactive)
   (if (bound-and-true-p traverse-newlines)
       (skip-chars-forward " \t\n")
@@ -126,7 +128,9 @@ consecutive space and/or tab characters."
 (defun cemacs-backward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
 Each such block may be a single newline, or a sequence of
-consecutive space and/or tab characters."
+consecutive space and/or tab characters.
+
+If TRAVERSE-NEWLINES is non-nil, allow travelling to an new line."
   (interactive)
   (if (bound-and-true-p traverse-newlines)
       (skip-chars-backward " \t\n")
@@ -220,20 +224,82 @@ kill ring."
   (interactive)
   (let ((original-point (point)))
     ;; Following two characters are whitespace/blank or end of line
-    (if (or (and (string-match "[[:blank:]]" (string (char-after)))
-                 (string-match "[[:blank:]]" (string (char-after
-                                                      (+ (point) 1))
-                                                     )))
-            (eq (line-end-position) original-point))
-        (progn (cemacs-forward-whitespace :traverse-newlines)
-               ;; Delete whitespace hungrily upto line beginning
-               (delete-region original-point (point))
-               )
-      ;; Normal delete
-      (cemacs-delete-word)
-      ))
+    (cond ((= (line-end-position) (point))
+           (cemacs-forward-whitespace :traverse-newlines)
+           )
+          ;; Following two characters are whitespace/blank
+          ((and (string-match "[[:blank:]]" (string (char-after)))
+                (string-match "[[:blank:]]" (string (char-after
+                                                     (+ (point) 1))
+                                                    )))
+           ;; traverse all whitespace upto line beginning
+           (cemacs-forward-whitespace)
+           )
+          ;; Normal backward word
+          (:default (forward-word 1)
+                    )
+          )
+    ;; Keep the point inside an input field where applicable
+    (constrain-to-field nil (point))
+    (point)
+    )
   )
-(defun cemacs-natural-delete-word-backwards ()
+(defun cemacs-natural-backward-word ()
+  "Move the point 1 word block backwards, treating whitespace blocks as words.
+
+This is designed to have funcitonality closer to other common editor's
+word movement behaviour, where each command stops after whitespace,
+so you have a little more granular control over how you traverse words,
+rather than skipping across lines haphazardly.
+e.g. by default (if we assume '|' is the cursor)
+\(defun cemacs-natural-delete-word ()
+  |(interactive))
+
+ Running a typical `backward-kill-word' command
+would delete all the way up to 'natural-delete-'
+
+Which is both confusing and wholly excessive in nature.
+
+This version will move travese all whitespace backwards when 2 or more
+blank/whitespace characters are present, or 1 newline, leaving actual
+characters alone.
+
+A call only 1 character away from a 'word' object  will result in using
+the `backwards-to-word' command.
+
+This will also attempt to prevent traversing read-only prompt text
+This will also move the cursor to the beginning of the line if travesing
+lines."
+  (interactive)
+  (let ((original-point (point))
+        (original-line (line-number-at-pos (point)))
+        )
+    ;; Delete whitespace hungrily if at line beginning across lines
+    (cond ((= (line-beginning-position) (point))
+           (cemacs-backward-whitespace :traverse-newlines)
+           )
+          ;; Previous two characters are whitespace/blank
+          ((and (string-match "[[:blank:]]" (string (char-before)))
+                (string-match "[[:blank:]]" (string (char-before
+                                                     (- (point) 1))
+                                                    )))
+           ;; traverse all whitespace upto line beginning
+           (cemacs-backward-whitespace)
+           )
+          ;; Normal backward word
+          (:default
+           (backward-word 1)
+           (if (not (= original-line (line-number-at-pos (point))))
+               ;; Try not to move the cursor too far
+               (end-of-line)
+             ))
+          )
+    ;; Keep the point inside an input field where applicable
+    (constrain-to-field nil original-point)
+    (point)
+    )
+  )
+(defun cemacs-natural-delete-word ()
   "Delete a word block backwards, treating whitespace blocks as words.
 
 This is designed to have funcitonality closer to other common editor's
@@ -241,43 +307,44 @@ word deletion behaviour, where each command stops after whitespace,
  so you have a little more granular control over what you are deleting,
 rather than skipping across lines to delete a word.
 e.g. by default (if we assume '|' is the cursor)
-'(defun cemacs-natural-delete-word ()
-  |(interactive))'
+\(defun cemacs-natural-delete-word ()
+  |(interactive))
 
  Running a typical `backward-kill-word' command
-would delete all the way up to 'natural-delete-|'
+would delete all the way up to 'natural-delete-'
 
 Which is both confusing and wholly excessive in nature.
 
-This version will delete all whitespace backwards (stopping at newlines)
- when 2 or more blank/whitespace characters are present leaving actual
- characters alone.
+This version will delete all whitespace forwards when 2 or more blank/whitespace
+characters are present, or 1 newline, leaving actual characters alone.
 
-Using this command at the beginning of a line will hungrily delete whitespace
-until a non-blank/whitespace character is found
-
-A call only 1 character away from a 'word' object  will result in a 'normal'
-EMACS word deletion.
+A call only 1 character away from a 'word' object  will result in 'normal' EMACS
+ word deletion.
 In fact, this uses a custom word deletion function, so as to not pollute the
 kill ring."
   (interactive)
   (let ((original-point (point)))
-    ;; Delete whitespace hungrily if at line beginning across lines
-    (cond ((= (line-beginning-position) (point))
-           (cemacs-backward-whitespace :traverse-newlines)
-           (delete-region original-point (point))
-           )
-          ;; Previous two characters are whitespace/blank
-          ((and (string-match "[[:blank:]]" (string (char-before)))
-                (string-match "[[:blank:]]" (string (char-before
-                                                     (- (point) 1))
-                                                    )))
-           ;; Delete whitespace hungrily upto line beginning
-           (cemacs-backward-whitespace)
-           (delete-region original-point (point))
-           )
-          ;; Normal delete
-          (:default (cemacs-delete-word-backwards))))
+    ;; Following two characters are whitespace/blank or end of line
+    (cemacs-natural-forward-word)
+    (delete-region original-point (point))
+    )
+  )
+(defun cemacs-natural-delete-word-backwards ()
+  "Delete a word block backwards, treating whitespace blocks as words.
+
+This command uses `cemacs-natural-backward-word' to achieve more sane deletion
+ behaviour.
+It will delete all whitespace forwards when 2 or more blank/whitespace
+characters are present, or 1 newline, leaving actual characters alone.
+
+A call only 1 character away from a 'word' object  will result in close to
+EMACS `backward-to-char' movement deleting everything between the new and
+ old points."
+  (interactive)
+  (let ((original-point (point)))
+    (cemacs-natural-backward-word)
+    (delete-region original-point (point))
+    )
   )
 (defun cemacs-warn (warning-message)
   "Create a warning event outputting WARNING-MESSAGE duplicate it to the minibuffer."

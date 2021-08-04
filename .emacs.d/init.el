@@ -137,13 +137,14 @@ configuration see cemacs-init-local-frame"
   ;; Emacs Control Bindings
   ;; Navigation
   (global-set-key (kbd "C-x r") 'revert-buffer)
+  (global-set-key (kbd "M-b") 'cemacs-natural-backward-word)
+  (global-set-key (kbd "M-f") 'cemacs-natural-forward-word)
   (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
   (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
   (global-set-key (kbd "C-,") 'pop-to-mark-command)
   ;; Editing Commands
-  (global-set-key (kbd "M-d") 'cemacs-delete-word)
   (global-set-key (kbd "<C-backspace>") 'cemacs-natural-delete-word-backwards)
-  (global-set-key (kbd "<M-d>") 'cemacs-natural-delete-word)
+  (global-set-key (kbd "M-d") 'cemacs-natural-delete-word)
   ;; Other
   (global-set-key (kbd "C-x k") 'cemacs-buffer-kill-volatile)
   ;; Org Mode
@@ -809,40 +810,55 @@ configuration see cemacs-init-local-frame"
     (interactive)
     (let ((original-point (point)))
       ;; Following two characters are whitespace/blank or end of line
-      (if (or (and (string-match "[[:blank:]]" (string (char-after)))
-                   (string-match "[[:blank:]]" (string (char-after
-                                                        (+ (point) 1))
-                                                       )))
-              (eq (line-end-position) original-point))
-          (progn (cemacs-forward-whitespace :traverse-newlines)
-                 ;; Delete whitespace hungrily upto line beginning
-                 (delete-region original-point (point))
-                 )
-        ;; Normal delete
-        (sp-delete-word 1)
-        ))
+      (cond ((= (line-end-position) (point))
+             (cemacs-forward-whitespace :traverse-newlines)
+             (sp-delete-region original-point (point))
+             )
+            ;; Following two characters are whitespace/blank
+            ((and (string-match "[[:blank:]]" (string (char-after)))
+                  (string-match "[[:blank:]]" (string (char-after
+                                                       (+ (point) 1))
+                                                      )))
+             ;; traverse all whitespace upto line beginning
+             (cemacs-forward-whitespace)
+             (sp-delete-region original-point (point))
+             )
+            (:default (sp-kill-word 1)
+                      )
+            )
+      (constrain-to-field nil (point))
+      )
     )
   (defun cemacs-sp-natural-delete-word-backwards ()
     "Modified version of `cemacs-natural-delete-word-backwards' for smartparens"
     (interactive)
-    (let ((original-point (point)))
+    (let ((original-point (point))
+          (original-line (line-number-at-pos (point)))
+          )
       ;; Delete whitespace hungrily if at line beginning across lines
       (cond ((= (line-beginning-position) (point))
              (cemacs-backward-whitespace :traverse-newlines)
-             (delete-region original-point (point))
+             (sp-delete-region original-point (point))
              )
             ;; Previous two characters are whitespace/blank
             ((and (string-match "[[:blank:]]" (string (char-before)))
                   (string-match "[[:blank:]]" (string (char-before
                                                        (- (point) 1))
                                                       )))
-             ;; Delete whitespace hungrily upto line beginning
+             ;; traverse all whitespace upto line beginning
              (cemacs-backward-whitespace)
-             (delete-region original-point (point))
+             (sp-delete-region original-point (point))
              )
-            ;; Typical sp delete
-            (:default (sp-backward-delete-word 1))
-            ))
+            (:default
+             (sp-backward-kill-word 1)
+             (if (not (= original-line (line-number-at-pos (point))))
+                 ;; Try not to move the cursor too far
+                 (end-of-line)
+               ))
+            )
+      (constrain-to-field nil original-point)
+      (point)
+      )
     )
   ;; Keybinds
   ;; Enforce smartparens-strict-mode with keybinds
@@ -860,10 +876,18 @@ configuration see cemacs-init-local-frame"
           (define-key map (kbd "M-d") 'cemacs-sp-natural-delete-word)
           map
           ))
-  (add-to-list 'aggressive-indent-protected-commands
-               'cemacs-sp-natural-delete-word)
-  (add-to-list 'aggressive-indent-protected-commands
-               'cemacs-sp-natural-delete-word-backwards)
+  (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
+                               'cemacs-sp-natural-delete-word
+                               'cemacs-sp-natural-delete-word-backwards
+                               'sp-kill-word
+                               'sp-backward-kill-word
+                               'sp-kill-symbol
+                               'sp-backward-kill-symbol
+                               'sp-delete-symbol
+                               'sp-backward-delete-symbol
+                               'sp-delete-region
+                               'delete-region
+                               )
   ;; Pair management bindings which are required for strict-mode
   (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
   (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
@@ -903,8 +927,8 @@ configuration see cemacs-init-local-frame"
     ignore
     )
   (eval-after-load 'init (smartparens-global-mode))
-  (add-hook 'smartparens-global-mode 'cemacs-smartparens-global-enforcer-mode)
-  (add-hook 'smartparens-mode 'cemacs-smartparens-enforcer-mode)
+  (add-hook 'smartparens-global-mode-hook 'cemacs-smartparens-global-enforcer-mode)
+  (add-hook 'smartparens-mode-hook 'cemacs-smartparens-enforcer-mode)
   )
 (req-package smooth-scrolling
   :hook
