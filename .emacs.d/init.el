@@ -260,6 +260,7 @@ configuration see cemacs-init-local-frame"
              do (cemacs-open-files-in-directory x-folder)
              ))
   (defun cemacs-org-tagwise-comp-func (taglist-left taglist-right)
+    "Decide which tag should go above, biasing ARCHIVE tags to the bottom."
     (interactive)
     (let ((less-than 'no-match)
           (comp-left (list ""))
@@ -280,7 +281,7 @@ configuration see cemacs-init-local-frame"
         (when (stringp right-tag)
           (push (downcase right-tag) comp-right)
           ))
-      ;; This currently only pushes the "ARCHIVE" tag to the bottom
+      ;; This currently only pushes the ARCHIVE tag to the bottom
       ;; Whilst this does the job for general todo lists it is far from ideal
       ;; Here `less-than` actually counter-intuitively means the beginning of the
       ;; buffer, despite it being physically at the top, this is purely down to
@@ -288,10 +289,10 @@ configuration see cemacs-init-local-frame"
       ;; `a == 0 + 97` and  `a == 0 + 122`
       ;; Which leads values closer to a being considered "lower" and being sorted
       ;; closer to the numerically lower buffer position 0, the very top left
-      (cond ((member "archive" comp-left)
+      (cond ((member org-archive-tag comp-left)
              (set 'less-than nil)
              )
-            ((member "archive" comp-right)
+            ((member org-archive-tag comp-right)
              (set 'less-than t)
              ))
       ;; Blindly comapre tags alphanumerically
@@ -311,15 +312,25 @@ configuration see cemacs-init-local-frame"
       )
     )
   (defun cemacs-org-sort-taglist-get ()
+    "Get a list of tags for the heading under point."
+    (interactive)
     (or (org-get-tags) (list ""))
     )
-  (defun cemacs-org-sort-entries ()
+  (defun cemacs-org-sort-by-tag ()
+    "Sort top level org headings by tag alphanumerically, grouping archive tags."
     (interactive)
-    ;; (set 'point-start (point))
-    ;; (beginning-of-buffer cemacs-universal-argument)
-    (org-global-cycle) ; Hide all subtrees
-    (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func)
-    ;; (set-window-point (get-buffer-window (current-buffer)) point-start)
+    ;; Can't function by original point, get line and match it again
+    (let ((position-along-original-line (- (point) (line-beginning-position)))
+          (original-line-contents
+           (buffer-substring (line-beginning-position) (line-end-position)))
+          )
+      (mark-whole-buffer)
+      (org-global-cycle 1)                ; Hide all subtrees
+      (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func)
+      ;; Try return to the line the command was invoked on
+      (search-forward original-line-contents)
+      (goto-char (+ position-along-original-line (line-beginning-position)))
+      )
     )
   ;; This is an absolutely disgusting hack I found online and it needs to go.
   (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
