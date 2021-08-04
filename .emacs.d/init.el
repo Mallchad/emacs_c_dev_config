@@ -73,7 +73,7 @@
   (flyspell-mode)
   )
 (add-hook 'markdown-mode-hook 'cemacs-markdown-mode)
-(defun cemacs-text-mode-hook()
+(defun cemacs-text-mode ()
   "Hook function for `text-mode'."
   (flyspell-mode)                       ; Spell checking
   (auto-fill-mode)                      ; column
@@ -236,7 +236,7 @@ configuration see `cemacs-init-local-frame'"
   ;; A cool new package which inserts links
   org-cliplink
   :hook
-  (org-mode . text-mode)
+  (org-mode . cemacs-text-mode)
   :config
   (defvar cemacs-org-priority-list
     '(("* *" "top")
