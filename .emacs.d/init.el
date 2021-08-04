@@ -151,8 +151,8 @@ configuration see cemacs-init-local-frame"
   (global-set-key (kbd "<C-backspace>") #'cemacs-natural-delete-word-backwards)
   (global-set-key (kbd "M-d") #'cemacs-natural-delete-word)
   (global-set-key (kbd "<C-delete>") #'cemacs-natural-delete-word)
-  (global-set-key (kbd "M-\\") #'cemacs-delete-whitespace)
-  (global-set-key (kbd "M-SPC") #'cemacs-one-space)
+  (global-set-key (kbd "M-\\") #'cemacs-natural-delete-whitespace)
+  (global-set-key (kbd "M-SPC") #'cemacs-natural-one-space)
   (global-set-key (kbd "C-x r") #'revert-buffer)
   ;; Other
   (global-set-key (kbd "C-x k") #'cemacs-buffer-kill-volatile)
@@ -368,10 +368,15 @@ configuration see cemacs-init-local-frame"
                                'backward-kill-word
                                'cemacs-natural-delete-word
                                'cemacs-natural-delete-word-backwards
+                               'cemacs-natural-delete-whitespace
+                               'cemacs-natural-one-space
                                'delete-char
+                               'backward-delete-char
                                'backward-delete-char
                                'hungry-delete-forward
                                'tab-to-tab-stop
+                               'just-one-space
+                               'delete-horizontal-space
                                )
   )
 (req-package all-the-icons
@@ -481,7 +486,6 @@ configuration see cemacs-init-local-frame"
   )
 (req-package crux
   :config
-  (global-set-key (kbd "C-a") 'crux-move-beginning-of-line)
   (global-set-key (kbd "C-x e") 'cemacs-find-user-init-file)
   (global-set-key (kbd "C-j") 'crux-top-join-line)
   (global-set-key (kbd "C-x C-o") 'crux-swap-windows)
@@ -886,6 +890,8 @@ configuration see cemacs-init-local-frame"
   (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
                                'cemacs-sp-natural-delete-word
                                'cemacs-sp-natural-delete-word-backwards
+                               'sp-delete-char
+                               'sp-backward-delete-char
                                'sp-kill-word
                                'sp-backward-kill-word
                                'sp-kill-symbol

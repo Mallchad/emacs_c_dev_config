@@ -66,8 +66,8 @@ This is just a shorthand function."
     (point))
   )
 ;; End of helper only functions
-(defun cemacs-delete-whitespace ()
-  "An alternative to `delete-whitespace-horizontally' that traverses lines"
+(defun cemacs-natural-delete-whitespace ()
+  "An alternative to `delete-whitespace-horizontally' which traverses lines."
   (interactive)
   (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
         (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines)))
@@ -75,14 +75,15 @@ This is just a shorthand function."
     (delete-region whitespace-start whitespace-end)
     )
   )
-(defun cemacs-one-space ()
+(defun cemacs-natural-one-space ()
+  "An alternative to `just-one-space' which traverses lines."
   (interactive)
   (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
         (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines)))
         )
     (delete-region (1+ whitespace-start) whitespace-end)
     )
-)
+  )
 (defun cemacs-natural-beginning-of-line ()
   "A version of `beginning-of-line' that acknowledges significant stops.
 
