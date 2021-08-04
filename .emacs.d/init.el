@@ -168,12 +168,15 @@ configuration see cemacs-init-local-frame"
   (delete-other-windows)
   (setq-default indent-tabs-mode nil
                 )
-  (setq inhibit-compacting-font-caches t   ;performance improvement
-        ;; Mode Setting
-        indent-tabs-mode nil               ;use spaces for indendation
-        transient-mark-mode nil
-        global-hl-line-mode t
-        )
+  (setq
+   ;; Performance improvements
+   inhibit-compacting-font-caches t
+   jit-lock-chunk-size 6000
+   ;; Mode Setting
+   indent-tabs-mode nil               ;use spaces for indendation
+   transient-mark-mode nil
+   global-hl-line-mode t
+   )
   (delete-selection-mode t)             ; delete activated region on typing
   (global-subword-mode t)               ; treat delimited words seperately
   (global-whitespace-mode t)            ; visualize tab characters
