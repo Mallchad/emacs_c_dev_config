@@ -135,25 +135,27 @@ configuration see cemacs-init-local-frame"
   "Set up personal keybinds after initilization."
   (interactive)
   ;; Emacs Control Bindings
+  ;; Here we try to keep as many standard editor bindings as possible, to
+  ;; make it less jarring if a non-emacs user needs to use it for any reason
   ;; Navigation
-  (global-set-key (kbd "C-x r") 'revert-buffer)
-  (global-set-key (kbd "M-b") 'cemacs-natural-backward-word)
-  (global-set-key (kbd "M-f") 'cemacs-natural-forward-word)
-  (global-set-key (kbd "M-p") 'cemacs-scroll-up-in-place)
-  (global-set-key (kbd "M-n") 'cemacs-scroll-down-in-place)
-  (global-set-key (kbd "C-,") 'pop-to-mark-command)
+  (global-set-key (kbd "C-a") #'cemacs-natural-beginning-of-line)
+  (global-set-key (kbd "C-e") #'cemacs-natural-end-of-line)
+  (global-set-key (kbd "<home>") #'cemacs-natural-beginning-of-line)
+  (global-set-key (kbd "<end>") #'cemacs-natural-end-of-line)
+  (global-set-key (kbd "M-b") #'cemacs-natural-backward-word)
+  (global-set-key (kbd "M-f") #'cemacs-natural-forward-word)
+  (global-set-key (kbd "<C-left>") #'cemacs-natural-backward-word)
+  (global-set-key (kbd "<C-right>") #'cemacs-natural-forward-word)
+  (global-set-key (kbd "C-,") #'pop-to-mark-command)
   ;; Editing Commands
-  (global-set-key (kbd "<C-backspace>") 'cemacs-natural-delete-word-backwards)
-  (global-set-key (kbd "M-d") 'cemacs-natural-delete-word)
+  (global-set-key (kbd "<C-backspace>") #'cemacs-natural-delete-word-backwards)
+  (global-set-key (kbd "M-d") #'cemacs-natural-delete-word)
+  (global-set-key (kbd "<C-delete>") #'cemacs-natural-delete-word)
+  (global-set-key (kbd "M-\\") #'cemacs-delete-whitespace)
+  (global-set-key (kbd "M-SPC") #'cemacs-one-space)
+  (global-set-key (kbd "C-x r") #'revert-buffer)
   ;; Other
-  (global-set-key (kbd "C-x k") 'cemacs-buffer-kill-volatile)
-  ;; Org Mode
-  (global-set-key (kbd "C-M-#")
-                  '(lambda()
-                     (interactive)
-                     (call-interactively
-                      (org-time-stamp cemacs-universal-argument-double 'inactive))
-                     ))
+  (global-set-key (kbd "C-x k") #'cemacs-buffer-kill-volatile)
   (global-set-key (kbd "M-o") #'ff-find-other-file)
   ;; Unbind Keys
   (unbind-key (kbd "<insert>"))         ; 'overwrite-mode

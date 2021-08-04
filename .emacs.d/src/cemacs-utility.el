@@ -47,8 +47,44 @@ This is just a shorthand function."
   (dolist (x-entry entries)
     (add-to-list list-symbol x-entry :append))
   )
+(defun cemacs-char-at-pos (&optional pos)
+  "Return the char at POS without properties."
+  (interactive)
+  (let ((position (or pos (point))))
+    (buffer-substring-no-properties (point) (+ 1 (point)))
+    )
+  )
+(defun cemacs-org-hide-all-subtrees ()
+  "Hide all global subtrees in orgmode."
+  (interactive)
+  (org-global-cycle 1)
+  )
+(defun cemacs-excursion (&rest body)
+  "Do a `save-excursion' and return the point."
+  (save-excursion
+    `(eval ,@body)
+    (point))
+  )
+;; End of helper only functions
+(defun cemacs-delete-whitespace ()
+  "An alternative to `delete-whitespace-horizontally' that traverses lines"
+  (interactive)
+  (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
+        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines)))
+        )
+    (delete-region whitespace-start whitespace-end)
+    )
+  )
+(defun cemacs-one-space ()
+  (interactive)
+  (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
+        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines)))
+        )
+    (delete-region (1+ whitespace-start) whitespace-end)
+    )
+)
 (defun cemacs-natural-beginning-of-line ()
-  "A version of ' that acknowledges significant stops.
+  "A version of `beginning-of-line' that acknowledges significant stops.
 
 This function will move the point in the order
 - beginning of visual line
@@ -92,7 +128,7 @@ This fixes that problem and visits the beginning of the visual line first."
           ))
   )
 (defun cemacs-natural-end-of-line ()
-  "A version of 'end-of-line' that stops at a visual line end.
+  "A version of `end-of-line' that stops at a visual line end.
 
 This function allows the user to choose if they wish to visit the end
 of the visual line, or the end of the real line.
