@@ -354,6 +354,7 @@ configuration see `cemacs-init-local-frame'"
     (setq-local org-hide-leading-stars nil)
     )
   (add-hook 'org-mode-hook 'cemacs-org-mode)
+  ;; Colour org checkboxes based on state
   ;; This is an absolutely disgusting hack I found online and it needs to go.
   (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
   (defface org-checkbox-todo-text
