@@ -726,6 +726,8 @@ configuration see `cemacs-init-local-frame'"
   :after
   company
   flycheck
+  :require
+  lsp-ui
   :hook
   (c++-mode . lsp)
   (c-mode . lsp)
