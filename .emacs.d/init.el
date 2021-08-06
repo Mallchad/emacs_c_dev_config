@@ -341,6 +341,12 @@ configuration see `cemacs-init-local-frame'"
     (call-interactively
      (org-time-stamp cemacs-universal-argument-double 'inactive))
     )
+  (defun cemacs-org-archive-and-done ()
+    "Cycle the 'TODO' state and toggle the archive tag in one function."
+    (interactive)
+    (org-todo)
+    (org-toggle-archive-tag)
+    )
   (defun cemacs-org-mode ()
     "Hook function for `org-mode'"
     (interactive)
@@ -372,6 +378,7 @@ configuration see `cemacs-init-local-frame'"
                 (setq org-cycle-subtree-status 'subtree))))
   ;; Bindings
   (global-set-key (kbd "C-M-#") #'cemacs-org-stamp-time)
+  (define-key org-mode-map (kbd "C-c C-x C-s") #'cemacs-org-archive-and-done)
   )
 ;; External Packages
 (req-package async
