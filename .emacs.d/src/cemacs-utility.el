@@ -106,6 +106,7 @@ Since truncating long lines is really, really, annoying, and not a good
 This fixes that problem and visits the beginning of the visual line first."
   (interactive)
   (let ((original-point (point))
+        (original-line (line-number-at-pos (point)))
         ;; Aparent line wrapped line beginning
         (visual-line-beginning (save-excursion (beginning-of-visual-line) (point)))
         ;; First significant character of the true line
@@ -138,16 +139,23 @@ Pressing once will try you to the end of the visual line,
 pressing twice will always ensure you end up at the end of the real line."
   (interactive)
   (let ((original-point (point))
+        ;; Where 'end-of-visual-line' thinks we should land
+        (aparent-visual-line-number (save-excursion
+                                      (end-of-visual-line)
+                                      (line-number-at-pos)))
         ;; Aparent line wrapped line end
         (visual-line-end (save-excursion (end-of-visual-line) (point)))
         (true-line-end (line-end-position))
         )
-    (cond ((= original-point visual-line-end)
-           ;; try jumping to the true line end, first significant char
+    (cond ((not (= aparent-visual-line-number (line-number-at-pos)))
+           ;; Something went wrong and we changed lines
+           ;; It was likely invisible text, do a normal end of line
+           (end-of-line)
+           )
+          ((= original-point visual-line-end)
            (goto-char true-line-end)
            )
-          ;; Default behaviour
-          (t (goto-char visual-line-end))
+          (:default (goto-char visual-line-end))
           ))
   )
 (defun cemacs-forward-whitespace (&optional traverse-newlines)
