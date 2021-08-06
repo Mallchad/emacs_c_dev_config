@@ -134,7 +134,6 @@ configuration see `cemacs-init-local-frame'"
   ;; Here we try to keep as many standard editor bindings as possible, to
   ;; make it less jarring if a non-emacs user needs to use it for any reason
   ;; Navigation
-  (global-set-key (kbd "C-a") #'cemacs-natural-beginning-of-line)
   (global-set-key (kbd "C-e") #'cemacs-natural-end-of-line)
   (global-set-key (kbd "<home>") #'cemacs-natural-beginning-of-line)
   (global-set-key (kbd "<end>") #'cemacs-natural-end-of-line)
@@ -153,6 +152,7 @@ configuration see `cemacs-init-local-frame'"
   ;; Other
   (global-set-key (kbd "C-x k") #'cemacs-buffer-kill-volatile)
   (global-set-key (kbd "M-o") #'ff-find-other-file)
+  (global-set-key (kbd "C-x e") 'cemacs-find-user-init-file)
   ;; Unbind Keys
   (unbind-key (kbd "<insert>"))         ; 'overwrite-mode
   (unbind-key (kbd "<insertchar>"))     ; 'overwrite-mode
@@ -524,7 +524,10 @@ configuration see `cemacs-init-local-frame'"
   )
 (req-package crux
   :config
-  (global-set-key (kbd "C-x e") 'cemacs-find-user-init-file)
+  ;; Fix crux not honouring visual lines
+  (setq crux-move-visually t
+        )
+  (global-set-key (kbd "C-a") 'crux-move-beginning-of-line)
   (global-set-key (kbd "C-j") 'crux-top-join-line)
   (global-set-key (kbd "C-x C-o") 'crux-swap-windows)
   (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
