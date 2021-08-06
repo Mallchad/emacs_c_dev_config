@@ -1044,8 +1044,8 @@ configuration see `cemacs-init-local-frame'"
   :config
   (ws-butler-global-mode)
   (setq ws-butler-convert-leading-tabs-or-spaces t)
-  (add-hook 'org-mode-hook '(lambda ()
-                              (setq-local ws-butler-mode nil)))
+  (add-hook 'org-mode-hook #'(lambda ()
+                               (setq-local ws-butler-mode nil)))
   )
 (req-package which-key
   :config
