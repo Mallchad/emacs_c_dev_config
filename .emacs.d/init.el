@@ -288,25 +288,27 @@ configuration see `cemacs-init-local-frame'"
       ;; `a == 0 + 97` and  `a == 0 + 122`
       ;; Which leads values closer to a being considered "lower" and being sorted
       ;; closer to the numerically lower buffer position 0, the very top left
-      (cond ((member org-archive-tag comp-left)
-             (set 'less-than nil)
+      (cond ((member (downcase org-archive-tag) comp-left)
+             (setq less-than nil)
              )
-            ((member org-archive-tag comp-right)
-             (set 'less-than t)
-             ))
-      ;; Blindly comapre tags alphanumerically
-      (while (car comp-left)
-        (setq comp-left-tag-string
-              (concat comp-left-tag-string (pop comp-left)
-                      )))
-      (while (car comp-right)
-        (setq comp-right-tag-string
-              (concat comp-right-tag-string (pop comp-right)
-                      )))
-      (if (eq less-than 'no-priority)
-          (setq less-than
-                (string-collate-lessp comp-left-tag-string comp-right-tag-string))
-        )
+            ((member (downcase org-archive-tag) comp-right)
+             (setq less-than t)
+             )
+            ;; Blindly comapre tags alphanumerically
+            (:default 
+             (while (car comp-left)
+               (setq comp-left-tag-string
+                     (concat comp-left-tag-string (pop comp-left)
+                             )))
+             (while (car comp-right)
+               (setq comp-right-tag-string
+                     (concat comp-right-tag-string (pop comp-right)
+                             )))
+             (if (eq less-than 'no-priority)
+                 (setq less-than
+                       (string-collate-lessp comp-left-tag-string comp-right-tag-string))
+               ))
+            )
       less-than
       )
     )
