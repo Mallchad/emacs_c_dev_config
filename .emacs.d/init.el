@@ -242,6 +242,9 @@ configuration see `cemacs-init-local-frame'"
     '(("* *" "top")
       ("ARCHIVE" "bottom")
       ))
+  ;; Prevent newlines from seperating headings
+  (setq org-cycle-separator-lines 0
+        )
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
   ;; `org-return' is infuriating, so disable it until something better is found
   (define-key org-mode-map (kbd "RET") 'nil)
