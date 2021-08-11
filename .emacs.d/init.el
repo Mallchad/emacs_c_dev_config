@@ -352,6 +352,13 @@ configuration see `cemacs-init-local-frame'"
     (org-todo)
     (org-toggle-archive-tag)
     )
+  (defun cemacs-org-folded-p ()
+    "Returns non-nil if point is on a folded headline or plain list item."
+    (interactive)
+    (and (or (org-at-heading-p)
+             (org-at-item-p))
+         (invisible-p (point-at-eol)))
+    )
   (defun cemacs-org-mode ()
     "Hook function for `org-mode'"
     (interactive)
