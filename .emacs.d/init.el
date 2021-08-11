@@ -679,7 +679,8 @@ configuration see `cemacs-init-local-frame'"
   (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action)
-  ;; TODO(mallchad) need to find more elegant keybinds
+  ;; Use backward delete word instead of invoking some auto-expansion toggle
+  (define-key helm-find-files-map (kbd "<C-backspace>") nil)
   ;;Query
   (defhydra hydra-query (:color blue)
     "query for"
