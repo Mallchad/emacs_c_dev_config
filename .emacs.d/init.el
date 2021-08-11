@@ -789,6 +789,30 @@ configuration see `cemacs-init-local-frame'"
 (req-package multiple-cursors
   :after hydra
   :config
+  ;; Mark defualt behaviour for commands
+
+  (cemacs-add-multiple-to-list 'mc/cmds-to-run-for-all
+                               #'cemacs-delete-word
+                               #'cemacs-delete-word-backwards
+                               #'cemacs-natural-delete-word-backward
+                               #'cemacs-natural-delete-word-backwards
+                               #'cemacs-natural-forward-word
+                               #'cemacs-natural-beginning-of-line
+                               #'cemacs-natural-end-of-line
+                               #'crux-move-beginning-of-line
+                               #'hungry-delete-forward
+                               #'indent-for-tab-command
+                               #'kill-region
+                               #'org-delete-char
+                               #'org-self-insert-command
+                               #'tab-to-tab-stop
+                               )
+
+  (cemacs-add-multiple-to-list 'mc/cmds-to-run-once
+                               #'helm-M-x
+                               #'helm-confirm-and-exit-minibuffer
+                               )
+  ;; Bindings
   (global-set-key (kbd "M-m") 'mc/edit-lines)
   ;; (defhydra hydra-multicurses (global-map "C-m" :color red)
   ;;   "Multiple Cursors"
