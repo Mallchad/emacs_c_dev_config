@@ -437,7 +437,17 @@ configuration see `cemacs-init-local-frame'"
   (global-set-key (kbd "M-z") 'avy-zap-to-char-dwim)
   (setq avy-highlight-first t
         avy-background t
+        ;; Use 2 key combos instead of only single home row
+        avy-style 'words
+        avy-words nil
         )
+  ;; Use all keys for avy instead of just home row
+  (loop for char-left from ?a to ?z do
+        (loop for char-right from ?a to ?z do
+              (add-to-list 'avy-words
+                           (concat (string char-left) (string char-right))
+                           :append)
+              ))
   ;; The colours picked here are designed to maximize readabiltiy
   ;;
   ;; This is achieved by reducing 'glare' or 'eye-catching' colours
