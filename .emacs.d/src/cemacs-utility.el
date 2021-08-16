@@ -65,6 +65,10 @@ This is just a shorthand function."
     `(eval ,@body)
     (point))
   )
+(defun cemacs-startup-time ()
+  (float-time
+   (time-subtract after-init-time before-init-time))
+  )
 ;; End of helper only functions
 (defun cemacs-natural-delete-whitespace ()
   "An alternative to `delete-whitespace-horizontally' which traverses lines."
