@@ -2,10 +2,12 @@
 ;; Copyright (c) 2021 Mallchad
 ;; This source is provided with no limitations or warrent whatsoever.
 
-;;; Commentary:
+;; Hack to speed up package loading time
+(setq gc-cons-threshold 64000000
+      ;; package-enable-at-startup nil
+      )
 ;; Extra Load Paths
 (add-to-list 'load-path '"~/.emacs.d/etc/")
-;;; Code:
 ;; Macros
 (defmacro WITH_SYSTEM(type &rest body)
   "Evaluate BODY if `system-type' equals TYPE."
@@ -194,7 +196,8 @@ configuration see `cemacs-init-local-frame'"
   ;; Run Functions
   (cemacs-configure-session-decorations)
   (cemacs-vanilla-keys-configure)
-  (run-hooks 'cemacs-init-setup-hook)
+  ;; Defer init setup hooks
+  (run-at-time "1sec" nil 'run-hooks 'cemacs-init-setup-hook)
   )
 ;; Run early setup to prettify the session
 (defun cemacs-early-init ()
@@ -224,7 +227,8 @@ configuration see `cemacs-init-local-frame'"
   (package-install 'req-package)
   )
 (require 'req-package)
-(setq use-package-always-ensure t)
+(setq use-package-always-ensure t
+      )
 ;; Built in Packages
 (req-package flyspell
   :config
@@ -299,7 +303,7 @@ configuration see `cemacs-init-local-frame'"
              (setq less-than t)
              )
             ;; Blindly comapre tags alphanumerically
-            (:default 
+            (:default
              (while (car comp-left)
                (setq comp-left-tag-string
                      (concat comp-left-tag-string (pop comp-left)
@@ -432,7 +436,6 @@ configuration see `cemacs-init-local-frame'"
                                )
   )
 (req-package all-the-icons
-  :require async
   :config
   (when (not (boundp 'cemacs-all-the-icons-fonts-installed))
     (all-the-icons-install-fonts 'skip)
@@ -440,6 +443,11 @@ configuration see `cemacs-init-local-frame'"
   )
 (req-package avy
   :require avy-zap
+  :commands
+  (avy-goto-char
+   avy-pop-mark
+   avy-zap-to-char-dwim
+   )
   :config
   (global-set-key (kbd "C-r") 'avy-goto-char)
   (global-set-key (kbd "M-r") 'avy-pop-mark)
@@ -474,9 +482,12 @@ configuration see `cemacs-init-local-frame'"
   (set-face-attribute 'avy-lead-face-2 nil :background "#2a3418" :foreground "white")
   )
 (req-package backup-each-save
+  :commands
+  (backup-each-save)
   :config
   ;; TODO Stop being lazy and turn this is into a custom function
   (defun backup-each-save ()
+    (interactive)
     (if (and (buffer-file-name)
              (file-exists-p (buffer-file-name)
                             ))
@@ -506,14 +517,17 @@ configuration see `cemacs-init-local-frame'"
 ;;; A robust, prettified calender framework
 (req-package calfw
   :require calfw-org
+  :commands
+  (cfw:open-calendar-buffer)
   )
 (req-package centaur-tabs
   :hook
   (cemacs-init-setup . centaur-tabs-mode)
   :bind
-  ("<C-tab>" . centaur-tabs-forward)
-  ("<C-S-tab>" . centaur-tabs-backward)
-  ("<C-iso-lefttab>" . centaur-tabs-backward)
+  (("<C-tab>" . centaur-tabs-forward)
+   ("<C-S-tab>" . centaur-tabs-backward)
+   ("<C-iso-lefttab>" . centaur-tabs-backward)
+   )
   :config
   ;;Misc Settings
   (setq centaur-tabs-set-icons t
@@ -547,14 +561,22 @@ configuration see `cemacs-init-local-frame'"
     )
   )
 (req-package crux
+  :commands
+  (crux-move-beginning-of-line
+   crux-top-join-line
+   crux-swap-windows
+   crux-smart-open-line-above
+   )
+  :bind
+  (("C-a" . crux-move-beginning-of-line)
+   ("C-j" . crux-top-join-line)
+   ("C-x C-o" . crux-swap-windows)
+   ("C-o" . crux-smart-open-line-above)
+   )
   :config
   ;; Fix crux not honouring visual lines
   (setq crux-move-visually t
         )
-  (global-set-key (kbd "C-a") 'crux-move-beginning-of-line)
-  (global-set-key (kbd "C-j") 'crux-top-join-line)
-  (global-set-key (kbd "C-x C-o") 'crux-swap-windows)
-  (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
   )
 (req-package cmake-mode
   )
@@ -576,6 +598,8 @@ configuration see `cemacs-init-local-frame'"
   (dashboard-setup-startup-hook)
   )
 (req-package fireplace
+  :commands
+  (fireplace)
   :config
   ;; Variable Config
   (setq fireplace-smoke-on t)
@@ -644,17 +668,51 @@ configuration see `cemacs-init-local-frame'"
   (setq flycheck-emacs-lisp-load-path 'inherit)
   )
 (req-package free-keys
+  :commands
+  (free-keys
+   free-keys-set-prefix
+   free-keys-change-buffer)
   )
 (req-package god-mode
   :config
   )
+
 (req-package helm
-  :after hydra
+  :after
+  (hydra)
   :require
   helm-flycheck
   helm-projectile
   helm-rg
   helm-swoop
+  :commands
+  (helm-M-x
+   helm-find-files
+   helm-buffers-list
+   helm-execute-persistent-action
+   helm-select-action
+   helm-swoop-without-pre-input
+   helm-mini
+   helm-bookmarks
+   helm-projectile
+   helm-flycheck
+   helm-rg
+   helm-projectile-rg
+   hydra-query/body
+   )
+  :bind
+  (("M-x" . helm-M-x)
+   ("C-x C-f" . helm-find-files)
+   ("C-x b" . helm-buffers-list)
+   ("C-q" . hydra-query/body)
+   ;; Swap Action and Completion Buttons
+   :map helm-map
+   ("TAB" . helm-execute-persistent-action)
+   ("<tab>" . helm-execute-persistent-action)
+   ("C-z" . helm-select-action)
+   ;; Use backward delete word instead of invoking some auto-expansion toggle
+   :map helm-find-files-map ("<C-backspace>" . nil)
+   )
   :init
   ;; Completley hide helm header
   (fset 'helm-display-mode-line #'ignore)
@@ -669,9 +727,10 @@ configuration see `cemacs-init-local-frame'"
                 )
               )
             )
+  :hook
+  (cemacs-init-setup . helm-mode)
   :config
   (require 'helm-config)
-  (helm-mode)
   ;;Helm minibuffer config
   (setq helm-autoresize-mode t
         helm-display-header-line nil
@@ -690,16 +749,6 @@ configuration see `cemacs-init-local-frame'"
                       :height 1.1
                       :foreground "dark cyan"
                       )
-  ;; Keybinds
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (global-set-key (kbd "C-x b") 'helm-buffers-list)
-  ;; Swap Action and Completion Buttons
-  (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
-  (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
-  (define-key helm-map (kbd "C-z") #'helm-select-action)
-  ;; Use backward delete word instead of invoking some auto-expansion toggle
-  (define-key helm-find-files-map (kbd "<C-backspace>") nil)
   ;;Query
   (defhydra hydra-query (:color blue)
     "query for"
@@ -711,7 +760,6 @@ configuration see `cemacs-init-local-frame'"
     ("r" helm-rg "Ripgrep")
     ("C-p" helm-projectile-rg "Projectile rg")
     )
-  (global-set-key (kbd "C-q") 'hydra-query/body)
   )
 (req-package highlight-parentheses
   :hook
@@ -737,6 +785,9 @@ configuration see `cemacs-init-local-frame'"
   (setq hungry-delete-join-reluctantly t)
   )
 (req-package hydra
+  :bind
+  (("C-s" . hydra-slayer/body)
+   )
   :config
   (defhydra hydra-slayer (:color blue)
     "kill shortcuts"
@@ -744,7 +795,6 @@ configuration see `cemacs-init-local-frame'"
     ("l" kill-whole-line "whole line" :color red)
     ("b" slay-whole-buffer "whole buffer")
     )
-  (global-set-key (kbd "C-s") 'hydra-slayer/body)
   ;; (defhydra hydra-emacs (:color blue :hint nil))
   )
 (req-package lsp-mode
@@ -757,6 +807,10 @@ configuration see `cemacs-init-local-frame'"
   (c++-mode . lsp)
   (c-mode . lsp)
   (csharp-mode . lsp)
+  :bind
+  (:map lsp-mode-map
+        ("M-#" . lsp-ui-doc-show)
+        )
   :config
   ;; Fixes
   (defalias 'yas-expand-snippet 'ignore)        ; Prevent company-capf from erroring
@@ -798,6 +852,8 @@ configuration see `cemacs-init-local-frame'"
   (define-key lsp-mode-map (kbd "M-o") #'lsp-clangd-find-other-file)
   )
 (req-package magit
+  :commands
+  (magit-status)
   :config
   )
 (req-package lua-mode
@@ -807,6 +863,9 @@ configuration see `cemacs-init-local-frame'"
   )
 (req-package multiple-cursors
   :after hydra
+  :bind
+  (("M-m" . mc/edit-lines)
+   )
   :config
   ;; Mark defualt behaviour for commands
 
@@ -831,15 +890,6 @@ configuration see `cemacs-init-local-frame'"
                                #'helm-M-x
                                #'helm-confirm-and-exit-minibuffer
                                )
-  ;; Bindings
-  (global-set-key (kbd "M-m") 'mc/edit-lines)
-  ;; (defhydra hydra-multicurses (global-map "C-m" :color red)
-  ;;   "Multiple Cursors"
-  ;;   ("q" hydra--body-exit "quit")
-  ;;   ("e" mc-edit-lines "edit lines")
-  ;;   ("a" mc/mark-all-like-this "mark all")
-  ;;   ("r" mc/mark-all-in-region "mark in region")
-  ;;   )
   )
 (req-package json-mode
   ;; A minor mode to aid with json editing
@@ -847,28 +897,34 @@ configuration see `cemacs-init-local-frame'"
 (req-package omnisharp
   ;; :hook
   ;; (csharp-mode . omnisharp-mode)
+  :commands
+  (omnisharp-mode)
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   )
-(req-package org-noter
-  :config
-  )
 (req-package org-super-agenda
   :config
+  (org-super-agenda-mode 1)
   )
 (req-package origami
   :require lsp-origami
+  :commands
+  (origami-mode)
   :config
   ;; TODO(mallchad) need to setup keybinds for this package
   )
 (req-package projectile
   :require
   flycheck-projectile
+  :commands
+  (projectile-mode)
   :hook
   (cemacs-init-setup . projectile-mode)
   :config
   )
 (req-package rainbow-blocks
+  :commands
+  (rainbow-blocks-mode)
   :config
   (set-face-attribute 'rainbow-blocks-depth-1-face nil :foreground "white")
   (set-face-attribute 'rainbow-blocks-depth-2-face nil :foreground "dark orange")
@@ -881,6 +937,8 @@ configuration see `cemacs-init-local-frame'"
   (set-face-attribute 'rainbow-blocks-depth-9-face nil :foreground "sienna1")
   )
 (req-package rainbow-delimiters
+  :commands
+  (rainbow-delimiters-mode)
   :hook
   (prog-mode . rainbow-delimiters-mode)
   :config
@@ -895,18 +953,34 @@ configuration see `cemacs-init-local-frame'"
   (set-face-attribute 'rainbow-delimiters-depth-9-face nil :foreground "sienna1")
   )
 (req-package rainbow-mode
+  :commands
+  (rainbow-mode)
   :hook
   (prog-mode . rainbow-mode)
   )
 (req-package restart-emacs
+  :commands
+  (restart-emacs)
+  :bind
+  (("C-x M-a" . restart-emacs)
+   )
   :config
-  (global-set-key (kbd "C-x M-a") 'restart-emacs)
   )
 (req-package smartparens
   :after aggressive-indent
+  :commands
+  (smartparens-global-mode
+   smartparens-mode
+   cemacs-smartparens-enforcer-mode
+   cemacs-smartparens-global-enforcer-mode
+   sp-kill-whole-line
+   cemacs-sp-natural-delete-word
+   cemacs-sp-natural-delete-word-backwards
+   sp-kill-region
+   )
   :config
   ;; Defualt Configuration
-  (require 'smartparens-config) 
+  (require 'smartparens-config)
   ;; smartparens Custom Adapted Logic
   (defun cemacs-sp-natural-delete-word (&optional arg)
     "Modified version of `cemacs-natural-delete-word' for smartparens"
@@ -1043,9 +1117,15 @@ configuration see `cemacs-init-local-frame'"
   (setq scroll-conservatively 0)
   )
 (req-package smart-yank
+  :commands
+  (smart-yank-mode
+   smart-yank-pop
+   )
   :config
   )
 (req-package sublimity
+  :commands
+  (sublimity-mode)
   ;; :hook
   ;; (cemacs-init-setup . sublimity-mode)
   ;; :config
@@ -1074,6 +1154,10 @@ configuration see `cemacs-init-local-frame'"
   (define-key undo-tree-map (kbd "C-x r") nil)
   )
 (req-package visible-mark
+  :commands
+  (visible-mark-mode
+   global-visible-mark-mode
+   )
   ;; A minor mode to show you where the mark is current
   )
 (req-package vlf
