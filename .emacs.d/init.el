@@ -149,6 +149,7 @@ configuration see `cemacs-init-local-frame'"
   (global-set-key (kbd "M-\\") #'cemacs-natural-delete-whitespace)
   (global-set-key (kbd "M-SPC") #'cemacs-natural-one-space)
   (global-set-key (kbd "C-x r") #'revert-buffer)
+  (global-set-key (kbd "M-i") #'cemacs-natural-tab-to-tab-stop)
   ;; Other
   (global-set-key (kbd "C-x k") #'cemacs-buffer-kill-volatile)
   (global-set-key (kbd "M-o") #'ff-find-other-file)
@@ -427,6 +428,7 @@ configuration see `cemacs-init-local-frame'"
                                'tab-to-tab-stop
                                'just-one-space
                                'delete-horizontal-space
+                               'cemacs-natural-tab-to-tab-stop
                                )
   )
 (req-package all-the-icons

@@ -373,6 +373,26 @@ EMACS `backward-to-char' movement deleting everything between the new and
     (delete-region original-point (point))
     )
   )
+(defun cemacs-natural-tab-to-tab-stop ()
+  "Move following word block to the next tab stop.
+
+The original `tab-to-tab-stop' command has this confusing quirk where it might
+not actually land on a tab stop if there is already indentation in front of it,
+and it put the cursor on the tab stop, instead of the text following the whitespace.
+The reasoning for this was likely to move the cursor to the tab stop, rather than
+the following text.
+It might be far more desirable to move text to tab stops, rather than the cursor.
+
+The result is that the command will consistently move the beginning of the text
+immediately following the cursor, without the need to move the cursor to the
+beginning of the text you want to indent."
+  (interactive)
+  (and abbrev-mode (= (char-syntax (preceding-char)) ?w)
+       (expand-abbrev))
+  (cemacs-forward-whitespace)
+  (let ((nexttab (indent-next-tab-stop (current-column))))
+    (indent-to nexttab))
+  )
 (defun cemacs-warn (warning-message)
   "Create a warning event outputting WARNING-MESSAGE duplicate it to the minibuffer."
   (display-warning 'emacs
