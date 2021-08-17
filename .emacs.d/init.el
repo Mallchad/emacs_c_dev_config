@@ -18,7 +18,7 @@
   "Evalute BODY when the OS is Windows."
   (declare (indent defun))
   (when (eq system-type 'windows-nt)
-    (body)
+    `(eval ,@body)
     )
   )
 (defmacro WHEN_LINUX (&rest body)
