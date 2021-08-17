@@ -978,6 +978,11 @@ configuration see `cemacs-init-local-frame'"
    cemacs-sp-natural-delete-word-backwards
    sp-kill-region
    )
+  :hook
+  (cemacs-init-setup . smartparens-global-mode)
+  (prog-mode . cemacs-smartparens-enforcer-mode)
+  ;; Fix for *scratch* loading before this is hooked
+  (lisp-interaction-mode . cemacs-smartparens-enforcer-mode)
   :config
   ;; Defualt Configuration
   (require 'smartparens-config)
@@ -1105,10 +1110,6 @@ configuration see `cemacs-init-local-frame'"
     cemacs-smartparens-enforcer-mode
     ignore
     )
-  (eval-after-load 'init (smartparens-global-mode))
-  (add-hook 'prog-mode-hook 'cemacs-smartparens-enforcer-mode)
-  ;; Fix for *scratch* loading before this is hooked
-  (add-hook 'lisp-interaction-mode-hook 'cemacs-smartparens-enforcer-mode)
   )
 (req-package smooth-scrolling
   :hook
