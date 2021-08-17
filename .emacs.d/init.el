@@ -712,6 +712,7 @@ configuration see `cemacs-init-local-frame'"
    ("C-z" . helm-select-action)
    ;; Use backward delete word instead of invoking some auto-expansion toggle
    :map helm-find-files-map ("<C-backspace>" . nil)
+   :map helm-projectile-find-file-map ("<C-backspace>" . nil)
    )
   :init
   ;; Completley hide helm header
