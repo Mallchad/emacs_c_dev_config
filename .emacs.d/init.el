@@ -204,7 +204,7 @@ configuration see `cemacs-init-local-frame'"
   "An early setup function which must run be `cemacs-init-setup'."
   (interactive)
   ;; Variables
-  (setq warning-minimum-log-level :debug  ; Log warnings in a volatile buffer
+  (setq warning-minimum-log-level :warning ; Log warnings in a volatile buffer
         ;; Set early to prevent truncation of the recentf
         recentf-max-saved-items 1000
         )
@@ -505,14 +505,38 @@ configuration see `cemacs-init-local-frame'"
 (req-package beacon
   :hook
   (cemacs-init-setup . beacon-mode)
+  (beacon-before-blink . cemacs-beacon-truncate-to-line)
   :config
-  (setq beacon-color "gold"
+  (setq cemacs-beacon-size 40
+        cemacs-beacon-size-padding 10
+        beacon-size cemacs-beacon-size
+        beacon-color "gold"
         beacon-blink-when-point-moves-vertically 1    ;; blink if the line changes
         beacon-blink-when-point-moves-horizontally 20
-        beacon-size 40
         ;; Don't push the mark when the cursor moves a long distance
         beacon-push-mark nil
         )
+  ;; FIX: A placeholder fix to prevent beacon from pushng the text around near
+  ;; the end of lines
+  (defun cemacs-beacon-truncate-to-line ()
+    (let* ((point-along-line (- (point) (line-beginning-position)))
+           (buffer-width (window-width))
+           (point-window-end-distance (abs (- buffer-width point-along-line)))
+           (end-distance-padded (- point-window-end-distance
+                                   cemacs-beacon-size-padding))
+           )
+      (message (number-to-string end-distance-padded))
+      (setq beacon-size end-distance-padded)
+      (when (> end-distance-padded cemacs-beacon-size)
+        (setq beacon-size cemacs-beacon-size)
+        )
+      (when (< end-distance-padded 0)
+        ;; Oops, just set it to 0 and move on
+        (setq beacon-size 0)
+        (message "Failed to calculate a non-intrusive beacon-size, Refusing to blink")
+        )
+      )
+    )
   )
 ;;; A robust, prettified calender framework
 (req-package calfw
