@@ -525,7 +525,6 @@ configuration see `cemacs-init-local-frame'"
            (end-distance-padded (- point-window-end-distance
                                    cemacs-beacon-size-padding))
            )
-      (message (number-to-string end-distance-padded))
       (setq beacon-size end-distance-padded)
       (when (> end-distance-padded cemacs-beacon-size)
         (setq beacon-size cemacs-beacon-size)
