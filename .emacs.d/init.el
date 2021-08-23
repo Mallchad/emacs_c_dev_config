@@ -835,6 +835,8 @@ configuration see `cemacs-init-local-frame'"
   :bind
   (:map lsp-mode-map
         ("M-#" . lsp-ui-doc-show)
+        ;; Visual Studio Like Bindings
+        ("<f12>" . lsp-find-definition)
         )
   :config
   ;; Fixes
