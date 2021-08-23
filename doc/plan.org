@@ -22,7 +22,7 @@ it will insert ~()~ instead if realizing that the sexp is already balanced out.
 
 ** TODO [#B] Fix undo tree randomly exiting when reaching a branch root
 
-** TODO Create a system to open up a bunch of files when one of them is visited
+** DONE Create a system to open up a bunch of files when one of them is visited
 The point of this is to open up many files in one go when you visit files in a
 user-specified file "group".
 
