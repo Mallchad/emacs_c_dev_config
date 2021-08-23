@@ -30,22 +30,53 @@ This primarily targets files in `cemacs-custom-directory-list' but
   "A list of buffers that is safe to semi-clean up at any point.
 This helps with cleaning up a bunch of buffers in bulk, particularly
 scratch buffers.")
+(defvar cemacs-personal-config-file (concat user-emacs-directory "src/personal.el")
+  "A custom file that applies personal or situation dependant configuration.
+
+This is applied late in the init process, or can manually be reloaded.
+If you do not want to polluted by upstream changes in personal.el you might
+want to change this variable.
+
+Due to the nature of when this file is loaded, it is limited to configuration
+is safe to be applied after everything else has laoded."
+  )
 ;; Custom Functions
-(defun cemacs-add-multiple-to-list (list-symbol &rest entries)
-  "Add ecah item in ENTRIES to LIST-SYMBOL, skipping duplicates.
+(defun cemacs-add-multiple (list-symbol &rest entries)
+  "Add each item from ENTRIES to LIST-SYMBOL, skipping duplicates.
+
+The returned value is the modified list.
 
 This is just a shorthand function"
   (interactive)
   (dolist (x-entry entries)
     (add-to-list list-symbol x-entry))
+  (symbol-value list-symbol)
   )
-(defun cemacs-append-multiple-to-list (list-symbol &rest entries)
+(defalias 'cemacs-add-multiple-to-list 'cemacs-add-multiple
+  "Obsolete functin, use the shorthand instead.")
+(defun cemacs-append-multiple (list-symbol &rest entries)
   "Append each item in ENTRIES to LIST-SYMBOL, skipping duplicates.
 
 This is just a shorthand function."
   (interactive)
   (dolist (x-entry entries)
     (add-to-list list-symbol x-entry :append))
+  )
+(defalias 'cemacs-append-multiple-to-list 'cemacs-append-multiple
+  "Obsolete function, use the shorthand instead."
+  )
+(defun cemacs-add-multiple-splicing (list-symbol &rest lists)
+  "Add each entry in each list from LISTS to LIST-SYMBOL, skipping duplicates.
+
+The returned value is the modified list.
+
+This is just a shorthand function."
+  (interactive)
+  (dolist (x-list lists)
+    (dolist (x-entry x-list)
+      (add-to-list list-symbol x-entry)
+      ))
+  (symbol-value list-symbol)
   )
 (defun cemacs-char-at-pos (&optional pos)
   "Return the char at POS without properties."
@@ -514,6 +545,11 @@ relatively safe."
   (while (car cemacs-buffer-tmp-list)
     ;; Just have to deal with prompts for saved files here
     (kill-buffer (pop cemacs-buffer-tmp-list)))
+  )
+(defun cemacs-personal-reload-config ()
+  "Reload the bindings found in personal.el"
+  (interactive)
+  (load cemacs-personal-config-file)
   )
 (provide 'cemacs-utility)
 ;;; cemacs-utility.el ends here

@@ -198,6 +198,7 @@ configuration see `cemacs-init-local-frame'"
   (cemacs-vanilla-keys-configure)
   ;; Defer init setup hooks
   (run-at-time "1sec" nil 'run-hooks 'cemacs-init-setup-hook)
+  (load cemacs-personal-config-file)
   )
 ;; Run early setup to prettify the session
 (defun cemacs-early-init ()
@@ -938,13 +939,86 @@ configuration see `cemacs-init-local-frame'"
   ;; TODO(mallchad) need to setup keybinds for this package
   )
 (req-package projectile
+  :after flycheck
   :require
+  projectile-variable
   flycheck-projectile
-  :commands
-  (projectile-mode)
+  :commands (projectile-mode)
   :hook
   (cemacs-init-setup . projectile-mode)
+  (projectile-find-file . cemacs-projectile-project-hook)
+  (after-revert . cemacs-projectile-project-hook) ; redo with buffer revert
   :config
+  (defun cemacs-projectile-unreal ()
+    (interactive)
+    (flycheck-mode -1)
+    (setq-local flycheck-highlighting-mode nil)
+    (flycheck-mode 1)
+    )
+  (defvar cemacs-projectile-project-functions
+    '(("unreal" cemacs-projectile-unreal))
+    )
+  (defvar cemacs-projectile-project-locals '(())
+    "Sets read-only config variables for a project.
+
+This is for setting variables for other functions, and is not
+meant to be used to store information for any amount of time.
+
+The expected value is an associative list, where the car of
+each con cells is the project in question, and the cdr is
+a list of symbols and values.
+
+For example
+((unreal (tab-width 4)
+         (indent-tabs-mode t)
+(cemacs (fill-column 80))
+)
+"
+    )
+  (defvar cemacs-projectile-grouping '(())
+    "This variable contains what groups projects are associated with.
+
+The underlying system does not actually have a concept of what a group is,
+a group is simply a generic 'project' designed to be used for other projects,
+as oppose to on their own.
+
+The expected value of the variable is an associative list,
+ specificly using cons cells,
+where, the expected car of each cons cell is the name of the project,
+and the cdr is a list of groups to be 'bound' to the project.
+
+For example
+((UnrealTournament unreal)
+(cemacs elisp)
+)
+"
+    )
+  (defvar c-projectile-group-detect-functions ())
+  (defun cemacs-projectile-project-hook ()
+    (let* ((current-project (projectile-project-name))
+           (current-project-root (projectile-project-name))
+           (current-project-function (cdr
+                                      (assoc
+                                       current-project
+                                       cemacs-projectile-project-functions)))
+           (current-group-functions '())
+           (current-project-groups (cdr (assoc current-project cemacs-projectile-grouping)))
+           (current-project-locals (cadr (assoc
+                                          current-project
+                                          cemacs-projectile-project-locals)))
+           )
+      (dolist (x-group current-project-groups)
+        (cemacs-add-multiple-splicing 'current-group-functions
+                                      (cdr (assoc x-group cemacs-projectile-project-functions)))
+        )
+      (dolist (x-function current-group-functions)
+        (funcall x-function))
+      (dolist (x-local current-project-locals)
+        (eval `(setq-local ,(car current-project-locals)
+                           (cadr current-project-locals)))
+        )
+      )
+    )
   )
 (req-package rainbow-blocks
   :commands
