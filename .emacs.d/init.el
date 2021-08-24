@@ -916,6 +916,9 @@ configuration see `cemacs-init-local-frame'"
   (magit-status)
   :config
   )
+;; Allows for quick insertion of licenses from github
+(req-package license-templates
+  )
 (req-package lua-mode
   :hook
   (lua-mode . lsp)
