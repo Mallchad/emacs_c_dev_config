@@ -43,8 +43,12 @@
 (defun cemacs-cc-mode()
   "Hook function for cc derived modes."
   (interactive)
-  (setq tab-width 4)
-  (setq-default c-basic-offset 4)
+  (setq-default c-basic-offset 4
+                c-electric-flag nil
+                )
+  (setq tab-width 4
+        c-electric-flag nil             ; Disable problematic electric behaviour
+        )
   )
 (add-hook 'c-mode-common-hook 'cemacs-cc-mode)
 (defun cemacs-cpp-mode()
@@ -145,6 +149,7 @@ configuration see `cemacs-init-local-frame'"
   (global-set-key (kbd "<C-left>")      #'natural-backward-word)
   (global-set-key (kbd "<C-right>")     #'natural-forward-word)
   (global-set-key (kbd "C-,")           #'pop-to-mark-command)
+
   ;; Editing Commands
   (global-set-key (kbd "<C-backspace>") #'natural-delete-word-backwards)
   (global-set-key (kbd "M-d")           #'natural-delete-word)
@@ -153,13 +158,31 @@ configuration see `cemacs-init-local-frame'"
   (global-set-key (kbd "M-SPC")         #'natural-one-space)
   (global-set-key (kbd "C-x r")         #'revert-buffer)
   (global-set-key (kbd "M-i")           #'natural-tab-to-tab-stop)
+
   ;; Other
   (global-set-key (kbd "C-x k")         #'cemacs-buffer-kill-volatile)
   (global-set-key (kbd "M-o")           #'ff-find-other-file)
   (global-set-key (kbd "C-x e")         #'cemacs-find-user-init-file)
+
   ;; Unbind Keys
   (unbind-key (kbd "<insert>"))         ; 'overwrite-mode
   (unbind-key (kbd "<insertchar>"))     ; 'overwrite-mode
+  (unbind-key (kbd "<backspace>") c++-mode-map)
+  ;; Get rid of conflicting electric bindings
+  (define-key c++-mode-map (kbd "DEL") nil)
+  (define-key c++-mode-map (kbd "C-d") nil)
+  (define-key c++-mode-map (kbd "#") nil)
+  (define-key c++-mode-map (kbd "*") nil)
+  (define-key c++-mode-map (kbd "/") nil)
+  (define-key c++-mode-map (kbd "<") nil)
+  (define-key c++-mode-map (kbd ">") nil)
+  (define-key c++-mode-map (kbd "(") nil)
+  (define-key c++-mode-map (kbd ")") nil)
+  (define-key c++-mode-map (kbd "{") nil)
+  (define-key c++-mode-map (kbd "}") nil)
+  (define-key c++-mode-map (kbd ":") nil)
+  (define-key c++-mode-map (kbd ";") nil)
+  (define-key c++-mode-map (kbd ",") nil)
   )
 (defun cemacs-init-setup()
   "Run after-initilization setup."
@@ -167,11 +190,14 @@ configuration see `cemacs-init-local-frame'"
   ;;Misc Setup
   (delete-other-windows)
   (setq-default indent-tabs-mode nil
+                c-basic-offset 4
+                c-electric-flag nil     ; Disable useless and problematic electric
                 )
   (setq
    ;; Performance improvements
    inhibit-compacting-font-caches t
    jit-lock-chunk-size 6000
+
    ;; Mode Setting
    indent-tabs-mode nil               ;use spaces for indendation
    transient-mark-mode nil
@@ -421,7 +447,10 @@ configuration see `cemacs-init-local-frame'"
   ;; This essentially makes the behaviour less "aggressive" and offers
   ;; the user some freedom to move the cursor, before reverting to normal
   ;; behaviour
-  (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands 'cemacs-delete-word
+  (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
+                               'backward-delete-char
+                               'c-electric-backspace
+                               'cemacs-delete-word
                                'backward-kill-word
                                'natural-delete-word
                                'natural-delete-word-backwards
@@ -436,6 +465,9 @@ configuration see `cemacs-init-local-frame'"
                                'delete-horizontal-space
                                'natural-tab-to-tab-stop
                                )
+  ;; Reduce the chance of impacting performance by increasing idle time
+  (setq aggressive-indent-sit-for-time 0.2
+        )
   )
 (req-package all-the-icons
   :config
