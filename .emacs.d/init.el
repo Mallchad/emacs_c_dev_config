@@ -813,7 +813,7 @@ configuration see `cemacs-init-local-frame'"
     ("s" helm-swoop-without-pre-input "String")
     ("m" helm-mini "Mini")
     ("b" helm-bookmarks "Bookmarks")
-    ("p" helm-projectile "Projectile")
+    ("p" projectile-find-file "Projectile")
     ("f" helm-flycheck "Flycheck")
     ("r" helm-rg "Ripgrep")
     ("C-p" helm-projectile-rg "Projectile rg")
