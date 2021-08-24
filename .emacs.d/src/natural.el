@@ -1,3 +1,42 @@
+;; MIT License
+;; Copyright (c) 2021 Mallchad
+;; This source is provided with no limitations or warrent whatsoever.
+
+;;; natural.el --- Alternative more intuitive functions for common emacs operations
+
+;;; Commentary:
+
+;; Emacs has a lot of amazingly useful functions that can supercharge your
+;; productivity.
+;; However, due to the long an drawn out evolution of emacs, a lot of basic
+;; commands have been left with the same quirky behaviour that can be very
+;; unintuitive or cumbersome to use, especially for a new-ish emacs user.
+;; Or at least, not as intuitive as it could be.
+;;
+;; natural.el tries to provide slightly alternative of slightly modified,
+;; more intuitive behaviour for some native emacs functions, and maybe even
+;; in the future non-native functions.
+;;
+;; The focus of the provided functions is optimizing for determinism,
+;; the highest probability and frequency use case.
+;;
+;; What this means in practice is that behaviour should be consistent.
+;; If you have an indentation function, the most useful version would be
+;; the one that can initiate the indentation with the cursor anywhere  in
+;; the current line, and have have the same behaviour (default behaviour).
+;;
+;; If the command is expected to have many, situation-dependent behaviours,
+;; then the ones that are the most used should be prioritised.
+;; For example, with a newline or indent command, in code files, its safe to
+;; assume, and more useful, to indent every non-comment line.
+;; So the behaviour should lean towards indenting with newlines.
+
+;; Note, currently this file depends on helper functions defined in
+;; cemacs-utility,
+;; however, this might change in the future.
+
+;;; Code:
+
 (defun natural-delete-whitespace ()
   "An alternative to `delete-whitespace-horizontally' which traverses lines."
   (interactive)
@@ -7,7 +46,7 @@
     (delete-region whitespace-start whitespace-end)
     )
   )
-(defun cemacs-natural-one-space ()
+(defun natural-one-space ()
   "An alternative to `just-one-space' which traverses lines."
   (interactive)
   (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))

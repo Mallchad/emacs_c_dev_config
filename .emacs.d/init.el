@@ -38,6 +38,7 @@
 ;; Custom Functions
 (add-to-list 'load-path (concat user-emacs-directory "src"))
 (require 'cemacs-utility)
+(require 'natural)
 ;; Configuration
 (defun cemacs-cc-mode()
   "Hook function for cc derived modes."
@@ -136,26 +137,26 @@ configuration see `cemacs-init-local-frame'"
   ;; Here we try to keep as many standard editor bindings as possible, to
   ;; make it less jarring if a non-emacs user needs to use it for any reason
   ;; Navigation
-  (global-set-key (kbd "C-e") #'cemacs-natural-end-of-line)
-  (global-set-key (kbd "<home>") #'cemacs-natural-beginning-of-line)
-  (global-set-key (kbd "<end>") #'cemacs-natural-end-of-line)
-  (global-set-key (kbd "M-b") #'cemacs-natural-backward-word)
-  (global-set-key (kbd "M-f") #'cemacs-natural-forward-word)
-  (global-set-key (kbd "<C-left>") #'cemacs-natural-backward-word)
-  (global-set-key (kbd "<C-right>") #'cemacs-natural-forward-word)
-  (global-set-key (kbd "C-,") #'pop-to-mark-command)
+  (global-set-key (kbd "C-e")           #'natural-end-of-line)
+  (global-set-key (kbd "<home>")        #'natural-beginning-of-line)
+  (global-set-key (kbd "<end>")         #'natural-end-of-line)
+  (global-set-key (kbd "M-b")           #'natural-backward-word)
+  (global-set-key (kbd "M-f")           #'natural-forward-word)
+  (global-set-key (kbd "<C-left>")      #'natural-backward-word)
+  (global-set-key (kbd "<C-right>")     #'natural-forward-word)
+  (global-set-key (kbd "C-,")           #'pop-to-mark-command)
   ;; Editing Commands
-  (global-set-key (kbd "<C-backspace>") #'cemacs-natural-delete-word-backwards)
-  (global-set-key (kbd "M-d") #'cemacs-natural-delete-word)
-  (global-set-key (kbd "<C-delete>") #'cemacs-natural-delete-word)
-  (global-set-key (kbd "M-\\") #'cemacs-natural-delete-whitespace)
-  (global-set-key (kbd "M-SPC") #'cemacs-natural-one-space)
-  (global-set-key (kbd "C-x r") #'revert-buffer)
-  (global-set-key (kbd "M-i") #'cemacs-natural-tab-to-tab-stop)
+  (global-set-key (kbd "<C-backspace>") #'natural-delete-word-backwards)
+  (global-set-key (kbd "M-d")           #'natural-delete-word)
+  (global-set-key (kbd "<C-delete>")    #'natural-delete-word)
+  (global-set-key (kbd "M-\\")          #'natural-delete-whitespace)
+  (global-set-key (kbd "M-SPC")         #'natural-one-space)
+  (global-set-key (kbd "C-x r")         #'revert-buffer)
+  (global-set-key (kbd "M-i")           #'natural-tab-to-tab-stop)
   ;; Other
-  (global-set-key (kbd "C-x k") #'cemacs-buffer-kill-volatile)
-  (global-set-key (kbd "M-o") #'ff-find-other-file)
-  (global-set-key (kbd "C-x e") 'cemacs-find-user-init-file)
+  (global-set-key (kbd "C-x k")         #'cemacs-buffer-kill-volatile)
+  (global-set-key (kbd "M-o")           #'ff-find-other-file)
+  (global-set-key (kbd "C-x e")         #'cemacs-find-user-init-file)
   ;; Unbind Keys
   (unbind-key (kbd "<insert>"))         ; 'overwrite-mode
   (unbind-key (kbd "<insertchar>"))     ; 'overwrite-mode
@@ -422,10 +423,10 @@ configuration see `cemacs-init-local-frame'"
   ;; behaviour
   (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands 'cemacs-delete-word
                                'backward-kill-word
-                               'cemacs-natural-delete-word
-                               'cemacs-natural-delete-word-backwards
-                               'cemacs-natural-delete-whitespace
-                               'cemacs-natural-one-space
+                               'natural-delete-word
+                               'natural-delete-word-backwards
+                               'natural-delete-whitespace
+                               'natural-one-space
                                'delete-char
                                'backward-delete-char
                                'backward-delete-char
@@ -433,7 +434,7 @@ configuration see `cemacs-init-local-frame'"
                                'tab-to-tab-stop
                                'just-one-space
                                'delete-horizontal-space
-                               'cemacs-natural-tab-to-tab-stop
+                               'natural-tab-to-tab-stop
                                )
   )
 (req-package all-the-icons
@@ -899,11 +900,11 @@ configuration see `cemacs-init-local-frame'"
   (cemacs-add-multiple-to-list 'mc/cmds-to-run-for-all
                                #'cemacs-delete-word
                                #'cemacs-delete-word-backwards
-                               #'cemacs-natural-delete-word-backward
-                               #'cemacs-natural-delete-word-backwards
-                               #'cemacs-natural-forward-word
-                               #'cemacs-natural-beginning-of-line
-                               #'cemacs-natural-end-of-line
+                               #'natural-delete-word-backward
+                               #'natural-delete-word-backwards
+                               #'natural-forward-word
+                               #'natural-beginning-of-line
+                               #'natural-end-of-line
                                #'crux-move-beginning-of-line
                                #'hungry-delete-forward
                                #'indent-for-tab-command
@@ -1068,8 +1069,8 @@ For example
    cemacs-smartparens-enforcer-mode
    cemacs-smartparens-global-enforcer-mode
    sp-kill-whole-line
-   cemacs-sp-natural-delete-word
-   cemacs-sp-natural-delete-word-backwards
+   c-sp-natural-delete-word
+   c-sp-natural-delete-word-backwards
    sp-kill-region
    )
   :hook
@@ -1081,8 +1082,8 @@ For example
   ;; Defualt Configuration
   (require 'smartparens-config)
   ;; smartparens Custom Adapted Logic
-  (defun cemacs-sp-natural-delete-word (&optional arg)
-    "Modified version of `cemacs-natural-delete-word' for smartparens"
+  (defun c-sp-natural-delete-word (&optional arg)
+    "Modified version of `natural-delete-word' for smartparens"
     (interactive)
     (let ((original-point (point)))
       ;; Following two characters are whitespace/blank or end of line
@@ -1105,8 +1106,8 @@ For example
       (constrain-to-field nil (point))
       )
     )
-  (defun cemacs-sp-natural-delete-word-backwards ()
-    "Modified version of `cemacs-natural-delete-word-backwards' for smartparens"
+  (defun c-sp-natural-delete-word-backwards ()
+    "Modified version of `natural-delete-word-backwards' for smartparens"
     (interactive)
     (let ((original-point (point))
           (original-line (line-number-at-pos (point)))
@@ -1148,23 +1149,23 @@ For example
           (define-key map [remap kill-region] 'sp-kill-region)
           (define-key map [remap delete-region] 'sp-delete-region)
           (define-key map [remap kill-whole-line] 'sp-kill-whole-line)
-          (define-key map (kbd "<C-backspace>") 'cemacs-sp-natural-delete-word-backwards)
-          (define-key map (kbd "M-d") 'cemacs-sp-natural-delete-word)
+          (define-key map (kbd "<C-backspace>") #'c-sp-natural-delete-word-backwards)
+          (define-key map (kbd "M-d") #'c-sp-natural-delete-word)
           map
           ))
   (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
-                               'cemacs-sp-natural-delete-word
-                               'cemacs-sp-natural-delete-word-backwards
-                               'sp-delete-char
-                               'sp-backward-delete-char
-                               'sp-kill-word
-                               'sp-backward-kill-word
-                               'sp-kill-symbol
-                               'sp-backward-kill-symbol
-                               'sp-delete-symbol
-                               'sp-backward-delete-symbol
-                               'sp-delete-region
-                               'delete-region
+                               #'c-sp-natural-delete-word
+                               #'c-sp-natural-delete-word-backwards
+                               #'sp-delete-char
+                               #'sp-backward-delete-char
+                               #'sp-kill-word
+                               #'sp-backward-kill-word
+                               #'sp-kill-symbol
+                               #'sp-backward-kill-symbol
+                               #'sp-delete-symbol
+                               #'sp-backward-delete-symbol
+                               #'sp-delete-region
+                               #'delete-region
                                )
   ;; Pair management bindings which are required for strict-mode
   (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
