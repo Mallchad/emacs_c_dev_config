@@ -332,6 +332,4 @@ beginning of the text you want to indent."
   (let ((nexttab (indent-next-tab-stop (current-column))))
     (indent-to nexttab))
   )
-(defun natural-replace-string ()
-  "TODO: buff out")
 (provide 'natural)
