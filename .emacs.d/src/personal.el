@@ -4,10 +4,19 @@
 
 ;;; personal.el --- A file dedicated to highly opinionated, situation dependent, or personal-to-user configuation
 
-(cemacs-add-multipe-splicing 'cemacs-projectile-grouping
-                             '(("test_project" "unreal")
-                               ("UnrealEngine" "unreal")
-                               ))
+;; The values for this variables was defined here since spltting the places for
+;; setting the value required re-evaluating in two plces.
+;; At least here you can evaluate the file,
+;; or use the provided `cemacs-personal-reload-config'.
+(cemacs-add-multiple-splicing 'cemacs-projectile-grouping
+                              '(("test_project" "unreal")
+                                ("UnrealEngine" "unreal")
+                                ))
+(cemacs-add-multiple-splicing 'cemacs-projectile-project-locals
+                              '(("test_project"
+                                 (flycheck-highlighting-mode nil)
+                                 )
+                                ))
 
 (provide 'personal.el)
 ;;; cemacs-utility.el ends here

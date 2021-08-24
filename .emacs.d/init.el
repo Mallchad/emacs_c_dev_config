@@ -951,14 +951,8 @@ configuration see `cemacs-init-local-frame'"
   (projectile-find-file . cemacs-projectile-project-hook)
   (after-revert . cemacs-projectile-project-hook) ; redo with buffer revert
   :config
-  (defun cemacs-projectile-unreal ()
-    (interactive)
-    (flycheck-mode -1)
-    (setq-local flycheck-highlighting-mode nil)
-    (flycheck-mode 1)
-    )
   (defvar cemacs-projectile-project-functions
-    '(("unreal" cemacs-projectile-unreal))
+    '(())
     )
   (defvar cemacs-projectile-project-locals '(())
     "Sets read-only config variables for a project.
