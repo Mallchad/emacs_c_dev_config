@@ -54,22 +54,22 @@
 (defun cemacs-cpp-mode()
   "Hook function for `c++-mode'."
   (interactive)
-  ;; Partially based on stroustrup
-  (c-add-style '("cemacs-cpp"
-                 (c-basic-offset . 4)
-                 (c-comment-only-line-offset . 0)
-                 (c-offsets-alist
-                  (statement-block-intro . +)
-                  (substatement-open . 0)
-                  (substatement-label . 0)
-                  (label . 0)
-                  (brace-list-intro first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
-                  (statement-cont . +)
-                  (inline-open . 0)
+  (c-add-style  "stroustrup"
+                '((c-basic-offset . 4)
+                  (c-comment-only-line-offset . 0)
+                  (c-offsets-alist
+                   (statement-block-intro . +)
+                   (substatement-open . 0)
+                   (substatement-label . 0)
+                   (label . 0)
+                   (brace-list-open . 0)
+                   (brace-list-intro
+                    first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
+                   (statement-cont . +)
+                   (inline-open . 0)
+                   )
                   )
-                 )
-               nil
-               :use-style)
+                :use-style)
   )
 (add-hook 'c++-mode-hook 'cemacs-cpp-mode)
 (defun cemacs-c-mode()
