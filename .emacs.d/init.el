@@ -369,9 +369,13 @@ configuration see `cemacs-init-local-frame'"
     (interactive)
     (or (org-get-tags) (list ""))
     )
-  (defun cemacs-org-sort-by-tag ()
-    "Sort top level org headings by tag alphanumerically, grouping archive tags."
-    (interactive)
+  (defun cemacs-org-sort-by-tag (&optional reverse)
+    "Sort top level org headings by tag alphanumerically, grouping archive tags.
+
+With REVERSE non-nil or with a prefix argument, reverse the sorting order.
+This function makes a point of forcing the `org-archive-tag' towards the extreme
+top or bottom of the file."
+    (interactive "P")
     ;; Can't function by original point, get line and match it again
     (let ((position-along-original-line (- (point) (line-beginning-position)))
           (original-line-contents
@@ -379,7 +383,13 @@ configuration see `cemacs-init-local-frame'"
           )
       (mark-whole-buffer)
       (org-global-cycle 1)                ; Hide all subtrees
-      (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func)
+      (if reverse
+          (org-sort-entries
+           nil ?f 'cemacs-org-sort-taglist-get
+           '(lambda (taglist-left taglist-right)
+              (not (cemacs-org-tagwise-comp-func taglist-left taglist-right))))
+        ;; Else
+        (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func))
       ;; Try return to the line the command was invoked on
       (search-forward original-line-contents)
       (goto-char (+ position-along-original-line (line-beginning-position)))
