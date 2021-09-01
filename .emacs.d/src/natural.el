@@ -1,6 +1,6 @@
 ;; MIT License
 ;; Copyright (c) 2021 Mallchad
-;; This source is provided with no limitations or warrent whatsoever.
+;; This source is provided with no limitations or warrenty whatsoever.
 
 ;;; natural.el --- Alternative more intuitive functions for common emacs operations
 

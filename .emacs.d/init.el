@@ -1,6 +1,6 @@
 ;; MIT License
 ;; Copyright (c) 2021 Mallchad
-;; This source is provided with no limitations or warrent whatsoever.
+;; This source is provided with no limitations or warrenty whatsoever.
 
 ;; Hack to speed up package loading time
 (setq gc-cons-threshold 64000000

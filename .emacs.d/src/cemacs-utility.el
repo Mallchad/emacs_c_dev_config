@@ -1,6 +1,6 @@
 ;; MIT License
 ;; Copyright (c) 2021 Mallchad
-;; This source is provided with no limitations or warrent whatsoever.
+;; This source is provided with no limitations or warrenty whatsoever.
 
 ;;; cemacs-utility.el --- A collection of useful helper and interactive functions in one tidy package
 
