@@ -173,6 +173,7 @@ configuration see `cemacs-init-local-frame'"
   (global-set-key (kbd "M-SPC")         #'natural-one-space)
   (global-set-key (kbd "C-x r")         #'revert-buffer)
   (global-set-key (kbd "M-i")           #'natural-tab-to-tab-stop)
+  (global-set-key (kbd "M-p") 'kill-whole-line)
 
   ;; Other
   (global-set-key (kbd "C-x k")         #'cemacs-buffer-kill-volatile)
@@ -1127,7 +1128,7 @@ For example
    )
   :hook
   (cemacs-init-setup . smartparens-global-mode)
-  (prog-mode . cemacs-smartparens-enforcer-mode)
+  ;; (prog-mode . cemacs-smartparens-enforcer-mode)
   ;; Fix for *scratch* loading before this is hooked
   (lisp-interaction-mode . cemacs-smartparens-enforcer-mode)
   :config
@@ -1227,14 +1228,20 @@ For example
   (define-key smartparens-mode-map (kbd "M-[") 'sp-forward-barf-sexp)
   (define-key smartparens-mode-map (kbd "M-]") 'sp-backward-barf-sexp)
   (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
-  (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp) ; Allow killing by pair
+
+  ;; General Pair Manamagent and Navigation
+  (define-key smartparens-mode-map (kbd "C-M-k") #'sp-kill-sexp) ; Allow killing by pair
+  (define-key smartparens-mode-map (kbd "C-M-f") #'sp-forward-sexp)
+  (define-key smartparens-mode-map (kbd "C-M-b") #'sp-backward-sexp)
+  (define-key smartparens-mode-map (kbd "M-n") #'sp-kill-hybrid-sexp)
 
   ;; Disable Emacs Lisp Quote Pairs
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
 
   ;; Pair angled brackets in c-modes
-  (sp-local-pair sp-c-modes "<" ">")
+  ;; (sp-local-pair sp-c-modes "<" ">")
+
   (define-minor-mode cemacs-smartparens-enforcer-mode
     "Toggle smartparens mode but enforce balancing of sexps more.
 
