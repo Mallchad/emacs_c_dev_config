@@ -208,6 +208,7 @@ configuration see `cemacs-init-local-frame'"
   (setq-default indent-tabs-mode nil
                 c-basic-offset 4
                 c-electric-flag nil     ; Disable useless and problematic electric
+                parens-require-spaces nil ; Don't insert space before parenthesis
                 )
   (setq
    ;; Performance improvements
@@ -1145,6 +1146,11 @@ For example
   :config
   ;; Defualt Configuration
   (require 'smartparens-config)
+
+  ;; Variables
+  (setq sp-autoinsert-pair nil          ; More trouble than it's worth
+        )
+
   ;; smartparens Custom Adapted Logic
   (defun c-sp-natural-delete-word (&optional arg)
     "Modified version of `natural-delete-word' for smartparens"
@@ -1238,7 +1244,7 @@ For example
   (define-key smartparens-mode-map (kbd "M-a") 'sp-backward-slurp-sexp)
   (define-key smartparens-mode-map (kbd "M-[") 'sp-forward-barf-sexp)
   (define-key smartparens-mode-map (kbd "M-]") 'sp-backward-barf-sexp)
-  (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
+  ;; (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
 
   ;; General Pair Manamagent and Navigation
   (define-key smartparens-mode-map (kbd "C-M-k") #'sp-kill-sexp) ; Allow killing by pair
