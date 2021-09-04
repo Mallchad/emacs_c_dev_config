@@ -213,6 +213,7 @@ configuration see `cemacs-init-local-frame'"
    ;; Performance improvements
    inhibit-compacting-font-caches t
    jit-lock-chunk-size 6000
+   jit-lock-defer-time 0                ; Defer fontification when pending input
 
    ;; Mode Setting
    indent-tabs-mode nil               ;use spaces for indendation
