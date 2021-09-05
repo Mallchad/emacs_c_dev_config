@@ -471,6 +471,17 @@ top or bottom of the file."
   :hook
   (prog-mode . aggressive-indent-mode)
   :config
+  (defvar c-aggressive-indent-line-end-prevention-distance 2
+    "The distance in characters away from the end of the line
+you should be before aggressively auto-indenting"
+    )
+  (defun c-aggressive-indent-near-line-end ()
+    (if (< (- (line-end-position) (point))
+           c-aggressive-indent-line-end-prevention-distance)
+        :dont-indent
+      nil
+      )
+    )
   ;; Prevent aggressive indentation after some commands
   ;; This essentially makes the behaviour less "aggressive" and offers
   ;; the user some freedom to move the cursor, before reverting to normal
@@ -493,6 +504,8 @@ top or bottom of the file."
                                'delete-horizontal-space
                                'natural-tab-to-tab-stop
                                )
+  (cemacs-add-multiple-to-list 'aggressive-indent-dont-indent-if
+                               `(c-aggressive-indent-near-line-end))
   ;; Reduce the chance of impacting performance by increasing idle time
   (setq aggressive-indent-sit-for-time 0.2
         )
