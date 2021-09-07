@@ -471,7 +471,7 @@ top or bottom of the file."
   :hook
   (prog-mode . aggressive-indent-mode)
   :config
-  (defvar c-aggressive-indent-line-end-prevention-distance 2
+  (defvar c-aggressive-indent-line-end-prevention-distance 3
     "The distance in characters away from the end of the line
 you should be before aggressively auto-indenting"
     )
