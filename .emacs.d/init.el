@@ -1029,6 +1029,9 @@ you should be before aggressively auto-indenting"
   (cemacs-init-setup . projectile-mode)
   (projectile-find-file . cemacs-projectile-project-hook)
   (after-revert . cemacs-projectile-project-hook) ; redo with buffer revert
+  :bind
+  (:map projectile-mode-map
+        (("C-x p" . projectile-command-map)))
   :config
   (defvar cemacs-projectile-project-functions
     '(())
