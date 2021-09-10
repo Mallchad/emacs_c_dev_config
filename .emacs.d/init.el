@@ -1342,11 +1342,15 @@ For example
   (define-key undo-tree-map (kbd "C-x r") nil)
   )
 (req-package visible-mark
+  ;; A minor mode to show you where the mark is current
   :commands
   (visible-mark-mode
-   global-visible-mark-mode
-   )
-  ;; A minor mode to show you where the mark is current
+   global-visible-mark-mode)
+  :hook
+  (cemacs-init-setup . visible-mark-mode)
+  :config
+  (set-face-attribute 'visible-mark-active nil
+                      :background "#006F00" :foreground "white")
   )
 (req-package vlf
   :config
