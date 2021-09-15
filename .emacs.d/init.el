@@ -576,6 +576,15 @@ you should be before aggressively auto-indenting"
   :hook
   (after-save . backup-each-save)
   (cemacs-kill-volatile-buffer-pre . backup-each-save)
+  (cemacs-init-setup . c-backup-recentf)
+  :config
+  (defun c-backup-recentf ()
+    (let* ((recentf-path (file-truename recentf-save-file))
+           (recentf-backup-path (backup-each-save-compute-location recentf-path)))
+      (file-truename recentf-backup-path)
+      (copy-file recentf-path recentf-backup-path
+                 :overwrite :perserve-time :preserve-id :preserve-permission)
+      ))
   )
 (req-package beacon
   :hook
