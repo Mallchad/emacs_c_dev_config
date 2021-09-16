@@ -90,11 +90,15 @@ This is just a shorthand function."
   (interactive)
   (org-global-cycle 1)
   )
-(defun cemacs-excursion (&rest body)
+(defmacro cemacs-excursion (&rest form)
   "Do a `save-excursion' and return the point."
-  (save-excursion
-    `(eval ,@body)
-    (point))
+  `(let* ((original-point (make-symbol "original-point"))
+          (excursion-point (make-symbol "excursion-point")))
+     (setq original-point (point))
+     ,@form
+     (setq excursion-point (point))
+     (goto-char original-point)
+     excursion-point)
   )
 (defun cemacs-startup-time ()
   (float-time

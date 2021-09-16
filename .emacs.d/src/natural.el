@@ -315,21 +315,38 @@ EMACS `backward-to-char' movement deleting everything between the new and
 (defun natural-tab-to-tab-stop ()
   "Move following word block to the next tab stop.
 
-The original `tab-to-tab-stop' command has this confusing quirk where it might
-not actually land on a tab stop if there is already indentation in front of it,
-and it put the cursor on the tab stop, instead of the text following the whitespace.
-The reasoning for this was likely to move the cursor to the tab stop, rather than
-the following text.
-It might be far more desirable to move text to tab stops, rather than the cursor.
+The original  `tab-to-tab-stop' command has this  confusing quirk
+where  it might  not actually  land  on a  tab stop  if there  is
+already indentation in front of it,  and it put the cursor on the
+tab stop,  instead of  the text  following the  whitespace.  This
+behaviour might have intended to move the cursor to the tab stop.
+Although, it  might be  far more  desirable to  move text  to tab
+stops, rather than the cursor.
 
-The result is that the command will consistently move the beginning of the text
-immediately following the cursor, without the need to move the cursor to the
-beginning of the text you want to indent."
+The result is that the command will consistently move the text
+immediately following the cursor to the next tab stop without
+needing to move to the text beginning."
   (interactive)
-  (and abbrev-mode (= (char-syntax (preceding-char)) ?w)
-       (expand-abbrev))
   (cemacs-forward-whitespace)
-  (let ((nexttab (indent-next-tab-stop (current-column))))
-    (indent-to nexttab))
+  (let* ((last-tab-stop
+          (or (car (last (indent-accumulate-tab-stops
+                          (current-column))))
+              0))
+         (next-tab-stop (indent-next-tab-stop (current-column)))
+         (last-stop-pos (+ (line-beginning-position) last-tab-stop))
+         (whitespace-left-extent (cemacs-excursion (cemacs-backward-whitespace)))
+         (last-stop-contiguous-whitespace (> last-stop-pos whitespace-left-extent))
+         (line-first-char-pos (cemacs-excursion (beginning-of-line-text)))
+         (text-before-point (< line-first-char-pos (point)))
+         (indent-tabs-mode indent-tabs-mode)
+         )
+    ;; Reset whitespace
+    (delete-horizontal-space)
+    (and abbrev-mode (= (char-syntax (preceding-char)) ?w)
+         (expand-abbrev))
+    ;; Don't use tabs in the middle of lines
+    (when (and text-before-point indent-tabs-mode)
+      (setq indent-tabs-mode nil))
+    (indent-to next-tab-stop))
   )
 (provide 'natural)
