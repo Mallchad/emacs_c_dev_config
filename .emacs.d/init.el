@@ -658,14 +658,11 @@ you should be before aggressively auto-indenting"
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay 0
+        ;; Slow down company-idle-delay input blocking is reduced
+        company-idle-delay 0.2
         )
   (define-key company-tng-map (kbd "C-p") nil)
   (define-key company-tng-map (kbd "C-n") nil)
-  (WHEN_WINDOWS
-    ;; Slow down company-idle-delay so it doesn't choke emacs
-    (setq company-idle-delay 0.02)
-    )
   )
 (req-package crux
   :commands
