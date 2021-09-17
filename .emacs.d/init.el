@@ -205,6 +205,7 @@ configuration see `cemacs-init-local-frame'"
   ;;Misc Setup
   (delete-other-windows)
   (setq-default indent-tabs-mode nil
+                tab-width 4
                 c-basic-offset 4
                 c-electric-flag nil     ; Disable useless and problematic electric
                 parens-require-spaces nil ; Don't insert space before parenthesis
