@@ -1354,7 +1354,7 @@ For example
   (visible-mark-mode
    global-visible-mark-mode)
   :hook
-  (cemacs-init-setup . visible-mark-mode)
+  (cemacs-init-setup . global-visible-mark-mode)
   :config
   (set-face-attribute 'visible-mark-active nil
                       :background "#006F00" :foreground "white")
