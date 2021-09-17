@@ -1262,8 +1262,8 @@ For example
   ;; Pair management bindings which are required for strict-mode
   (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
   (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
-  (define-key smartparens-mode-map (kbd "M-e") 'sp-forward-slurp-sexp)
-  (define-key smartparens-mode-map (kbd "M-a") 'sp-backward-slurp-sexp)
+  ;; (define-key smartparens-mode-map (kbd "M-e") 'sp-forward-slurp-sexp)
+  ;; (define-key smartparens-mode-map (kbd "M-a") 'sp-backward-slurp-sexp)
   (define-key smartparens-mode-map (kbd "M-[") 'sp-forward-barf-sexp)
   (define-key smartparens-mode-map (kbd "M-]") 'sp-backward-barf-sexp)
   ;; (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
