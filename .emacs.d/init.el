@@ -1171,6 +1171,7 @@ For example
 
   ;; Variables
   (setq sp-autoinsert-pair nil          ; More trouble than it's worth
+        sp-autoskip-closing-pair nil
         )
 
   ;; smartparens Custom Adapted Logic
