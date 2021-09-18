@@ -13,20 +13,19 @@
   "Evaluate BODY if `system-type' equals TYPE."
   (declare (indent defun))
   `(when (eq system-type ',type)
-     ,@body))
+     ,@body)
+  )
 (defmacro WHEN_WINDOWS (&rest body)
   "Evalute BODY when the OS is Windows."
   (declare (indent defun))
   (when (eq system-type 'windows-nt)
-    `(eval ,@body)
-    )
+    `(eval ,@body))
   )
 (defmacro WHEN_LINUX (&rest body)
   "Evalute BODY when the OS is Linux."
   (declare (indent defun))
   (when (eq system-type 'gnu/linux)
-    `(eval ,@body)
-    )
+    `(eval ,@body))
   )
 ;; Enable Package Repositories
 (require 'package)
@@ -47,9 +46,8 @@
                 c-electric-flag nil
                 )
   (setq tab-width 4
-        c-electric-flag nil             ; Disable problematic electric behaviour
-        )
-  )
+        c-electric-flag nil     ; Disable problematic electric
+        ))
 (add-hook 'c-mode-common-hook 'cemacs-cc-mode)
 (defun cemacs-cpp-mode()
   "Hook function for `c++-mode'."
@@ -66,9 +64,7 @@
                    (brace-list-intro
                     first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
                    (statement-cont . +)
-                   (inline-open . 0)
-                   )
-                  )
+                   (inline-open . 0)))
                 :use-style)
   )
 (add-hook 'c++-mode-hook 'cemacs-cpp-mode)
@@ -126,18 +122,15 @@ configuration see `cemacs-init-local-frame'"
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
-                 '(font . "MesloLGS NF-13:style=Regular")
-                 ))
+                 '(font . "MesloLGS NF-13:style=Regular")))
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
-                 '(font . "Consolas-13:style=Regular")
-                 ))
+                 '(font . "Consolas-13:style=Regular")))
   ;;Enable built-in modes
   (global-hl-line-mode)
   ;; Disable Window Decorations
   (if (display-graphic-p)  ; Resolve inital frame configuration
-      (cemacs-init-local-frame (selected-frame))
-    )
+      (cemacs-init-local-frame (selected-frame)))
   (setq-default mode-line-format nil
                 vertical-scroll-bar nil
                 horizontal-scroll-bar nil
@@ -204,12 +197,13 @@ configuration see `cemacs-init-local-frame'"
   (interactive)
   ;;Misc Setup
   (delete-other-windows)
-  (setq-default indent-tabs-mode nil
-                tab-width 4
-                c-basic-offset 4
-                c-electric-flag nil     ; Disable useless and problematic electric
-                parens-require-spaces nil ; Don't insert space before parenthesis
-                )
+  (setq-default
+   indent-tabs-mode nil
+   tab-width 4
+   c-basic-offset 4
+   c-electric-flag nil         ; Disable useless and problematic electric
+   parens-require-spaces nil   ; Don't insert space before parenthesis
+   )
   (setq
    ;; Performance improvements
    inhibit-compacting-font-caches t
@@ -217,7 +211,7 @@ configuration see `cemacs-init-local-frame'"
    jit-lock-defer-time 0                ; Defer fontification when pending input
 
    ;; Mode Setting
-   indent-tabs-mode nil               ;use spaces for indendation
+   indent-tabs-mode nil                 ; use spaces for indendation
    transient-mark-mode nil
    global-hl-line-mode t
    )
@@ -229,12 +223,11 @@ configuration see `cemacs-init-local-frame'"
   (setq make-backup-files nil
         backup-by-copying t
         auto-save-default nil)
-  (setq-default fill-column 80        ; Change where auto-line wrap fill modes trigger
-                )
+  (setq-default fill-column 80)         ; Change where auto-line wrap fill modes trigger
   ;; Save recentf on every file open
   (add-hook 'find-file-hook 'recentf-save-list)
-  (fset 'yes-or-no-p 'y-or-n-p ) ; Make all yes or no prompts consistent
-  (fset 'overwrite-mode 'ignore) ; Disable pain in the arse insert mode
+  (fset 'yes-or-no-p 'y-or-n-p )    ; Make all yes or no prompts consistent
+  (fset 'overwrite-mode 'ignore)    ; Disable pain in the arse insert mode
   ;; Re-enable disabled functions
   (put 'downcase-region 'disabled nil)
   (put 'upcase-region 'disabled nil)
@@ -261,19 +254,18 @@ configuration see `cemacs-init-local-frame'"
                  'recentf-save-file :local-only)
   ;; Just prettify the frame whilst waiting for loading
   (if (display-graphic-p)  ; Resolve inital frame configuration
-      (cemacs-init-local-frame (selected-frame))
-    )
+      (cemacs-init-local-frame (selected-frame)))
   (load custom-file)
   )
 (cemacs-early-init)
-;;Req Package Setup
+;; Req Package Setup
 ;; Attempt to install req-package if it's not alread loaded
 (when (not (require 'req-package nil 'noerror))
   (package-refresh-contents)
   (package-install 'req-package)
   )
 (require 'req-package)
-(setq use-package-always-ensure t
+(setq use-package-always-ensure t       ; Automatically fetch packages
       )
 ;; Built in Packages
 (req-package flyspell
@@ -294,8 +286,7 @@ configuration see `cemacs-init-local-frame'"
       ("ARCHIVE" "bottom")
       ))
   ;; Prevent newlines from seperating headings
-  (setq org-cycle-separator-lines 0
-        )
+  (setq org-cycle-separator-lines 0)
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
   ;; `org-return' is infuriating, so disable it until something better is found
   (define-key org-mode-map (kbd "RET") 'nil)
@@ -308,8 +299,7 @@ configuration see `cemacs-init-local-frame'"
              '("~/org"
                "~/notes"
                "~/userdata/org"
-               "~/userdata/notes"
-               )
+               "~/userdata/notes")
              do (cemacs-open-files-in-directory x-folder)
              ))
   (defun cemacs-org-tagwise-comp-func (taglist-left taglist-right)
@@ -322,18 +312,15 @@ configuration see `cemacs-init-local-frame'"
           (comp-left-tag-string "")
           (comp-right-tag-string "")
           (left-tag "")
-          (right-tag "")
-          )
+          (right-tag ""))
       ;; Normalize tag strings
       (while (or (car taglist-left) (car taglist-right))
         (setq left-tag (or (pop taglist-left) ""))
         (setq right-tag (or (pop taglist-right) ""))
         (when (stringp left-tag)
-          (push (downcase left-tag) comp-left)
-          )
+          (push (downcase left-tag) comp-left))
         (when (stringp right-tag)
-          (push (downcase right-tag) comp-right)
-          ))
+          (push (downcase right-tag) comp-right)))
       ;; This currently only pushes the ARCHIVE tag to the bottom
       ;; Whilst this does the job for general todo lists it is far from ideal
       ;; Here `less-than` actually counter-intuitively means the beginning of the
@@ -352,19 +339,15 @@ configuration see `cemacs-init-local-frame'"
             (:default
              (while (car comp-left)
                (setq comp-left-tag-string
-                     (concat comp-left-tag-string (pop comp-left)
-                             )))
+                     (concat comp-left-tag-string (pop comp-left))))
              (while (car comp-right)
                (setq comp-right-tag-string
-                     (concat comp-right-tag-string (pop comp-right)
-                             )))
+                     (concat comp-right-tag-string (pop comp-right))))
              (if (eq less-than 'no-priority)
-                 (setq less-than
-                       (string-collate-lessp comp-left-tag-string comp-right-tag-string))
-               ))
+                 (setq less-than (string-collate-lessp comp-left-tag-string
+                                                       comp-right-tag-string))))
             )
-      less-than
-      )
+      less-than)
     )
   (defun cemacs-org-sort-taglist-get ()
     "Get a list of tags for the heading under point."
@@ -381,21 +364,18 @@ top or bottom of the file."
     ;; Can't function by original point, get line and match it again
     (let ((position-along-original-line (- (point) (line-beginning-position)))
           (original-line-contents
-           (buffer-substring (line-beginning-position) (line-end-position)))
-          )
+           (buffer-substring (line-beginning-position) (line-end-position))))
       (mark-whole-buffer)
       (org-global-cycle 1)                ; Hide all subtrees
       (if reverse
-          (org-sort-entries
-           nil ?f 'cemacs-org-sort-taglist-get
-           '(lambda (taglist-left taglist-right)
-              (not (cemacs-org-tagwise-comp-func taglist-left taglist-right))))
+          (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get
+                            '(lambda (taglist-left taglist-right)
+                               (not (cemacs-org-tagwise-comp-func taglist-left taglist-right))))
         ;; Else
         (org-sort-entries nil ?f 'cemacs-org-sort-taglist-get 'cemacs-org-tagwise-comp-func))
       ;; Try return to the line the command was invoked on
       (search-forward original-line-contents)
-      (goto-char (+ position-along-original-line (line-beginning-position)))
-      )
+      (goto-char (+ position-along-original-line (line-beginning-position))))
     )
   (defun cemacs-org-stamp-date ()
     (interactive)
@@ -427,6 +407,7 @@ top or bottom of the file."
     (setq-local org-hide-leading-stars nil)
     )
   (add-hook 'org-mode-hook 'cemacs-org-mode)
+
   ;; Colour org checkboxes based on state
   ;; This is an absolutely disgusting hack I found online and it needs to go.
   (custom-set-faces '(org-checkbox ((t (:foreground nil :inherit org-todo)))))
@@ -445,15 +426,18 @@ top or bottom of the file."
    'org-mode
    `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
    'append)
+
   ;; Only cycle node under cursor
   (add-hook 'org-cycle-hook
             (lambda (state)
               (when (eq state 'children)
                 (setq org-cycle-subtree-status 'subtree))))
+
   ;; Bindings
   (global-set-key (kbd "C-M-#") #'cemacs-org-stamp-time)
   (define-key org-mode-map (kbd "C-c C-x C-s") #'cemacs-org-archive-and-done)
   )
+
 ;; External Packages
 (req-package async
   :config
@@ -464,8 +448,7 @@ top or bottom of the file."
   (if (and (boundp 'cemacs-selected-sanityinc-theme)
            (symbol-value 'cemacs-selected-sanityinc-theme))
       (load-theme cemacs-selected-sanityinc-theme)
-    (load-theme 'sanityinc-tomorrow-bright t)
-    )
+    (load-theme 'sanityinc-tomorrow-bright t))
   )
 (req-package aggressive-indent
   :hook
@@ -473,42 +456,39 @@ top or bottom of the file."
   :config
   (defvar c-aggressive-indent-line-end-prevention-distance 3
     "The distance in characters away from the end of the line
-you should be before aggressively auto-indenting"
-    )
+you should be before aggressively auto-indenting")
   (defun c-aggressive-indent-near-line-end ()
     (if (< (- (line-end-position) (point))
            c-aggressive-indent-line-end-prevention-distance)
         :dont-indent
-      nil
-      )
+      nil)
     )
   ;; Prevent aggressive indentation after some commands
   ;; This essentially makes the behaviour less "aggressive" and offers
   ;; the user some freedom to move the cursor, before reverting to normal
   ;; behaviour
-  (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
-                               'backward-delete-char
-                               'c-electric-backspace
-                               'cemacs-delete-word
-                               'backward-kill-word
-                               'natural-delete-word
-                               'natural-delete-word-backwards
-                               'natural-delete-whitespace
-                               'natural-one-space
-                               'delete-char
-                               'backward-delete-char
-                               'backward-delete-char
-                               'hungry-delete-forward
-                               'tab-to-tab-stop
-                               'just-one-space
-                               'delete-horizontal-space
-                               'natural-tab-to-tab-stop
-                               )
+  (cemacs-add-multiple-to-list
+   'aggressive-indent-protected-commands
+   'backward-delete-char
+   'c-electric-backspace
+   'cemacs-delete-word
+   'backward-kill-word
+   'natural-delete-word
+   'natural-delete-word-backwards
+   'natural-delete-whitespace
+   'natural-one-space
+   'delete-char
+   'backward-delete-char
+   'backward-delete-char
+   'hungry-delete-forward
+   'tab-to-tab-stop
+   'just-one-space
+   'delete-horizontal-space
+   'natural-tab-to-tab-stop)
   (cemacs-add-multiple-to-list 'aggressive-indent-dont-indent-if
                                `(c-aggressive-indent-near-line-end))
   ;; Reduce the chance of impacting performance by increasing idle time
-  (setq aggressive-indent-sit-for-time 0.2
-        )
+  (setq aggressive-indent-sit-for-time 0.2)
   )
 (req-package all-the-icons
   :config
@@ -521,8 +501,7 @@ you should be before aggressively auto-indenting"
   :commands
   (avy-goto-char
    avy-pop-mark
-   avy-zap-to-char-dwim
-   )
+   avy-zap-to-char-dwim)
   :config
   (global-set-key (kbd "C-r") 'avy-goto-char)
   (global-set-key (kbd "M-r") 'avy-pop-mark)
@@ -538,20 +517,13 @@ you should be before aggressively auto-indenting"
         (loop for char-right from ?a to ?z do
               (add-to-list 'avy-words
                            (concat (string char-left) (string char-right))
-                           :append)
-              ))
+                           :append)))
   ;; The colours picked here are designed to maximize readabiltiy
   ;;
-  ;; This is achieved by reducing 'glare' or 'eye-catching' colours
-  ;; of the background by using dark and slightly desatured colours
-  ;; The resulting effect is that the actual character part is the
-  ;; most attenting grabbing part, which is exactly the pint of avy -
-  ;; going where you're looking
-  ;;
-  ;; However rather annoyingly the text / boxes are spaced closed together,
-  ;; making them bleed into each other
-  ;; This is likely impossible to fix in GNU emacs fonts aside
-  ;; Increasing font size works. But is not optimal
+  ;; Glaring/agressive and eye-catching are avoided to prevent distraction.
+  ;; This makes dark and desaturated colours at the best fit for this, with
+  ;; the characters being bright and high contrast, since the character is the
+  ;; part meant to be read.
   (set-face-attribute 'avy-lead-face nil :background '"dark red" :foreground "white")
   (set-face-attribute 'avy-lead-face-0 nil :background "#1d1d62" :foreground "white")
   (set-face-attribute 'avy-lead-face-2 nil :background "#2a3418" :foreground "white")
@@ -564,8 +536,7 @@ you should be before aggressively auto-indenting"
   (defun backup-each-save ()
     (interactive)
     (if (and (buffer-file-name)
-             (file-exists-p (buffer-file-name)
-                            ))
+             (file-exists-p (buffer-file-name)))
         (let ((bfn (buffer-file-name)))
           (when (and (or backup-each-save-remote-files
                          (not (file-remote-p bfn)))
@@ -583,8 +554,8 @@ you should be before aggressively auto-indenting"
            (recentf-backup-path (backup-each-save-compute-location recentf-path)))
       (file-truename recentf-backup-path)
       (copy-file recentf-path recentf-backup-path
-                 :overwrite :perserve-time :preserve-id :preserve-permission)
-      ))
+                 :overwrite :perserve-time :preserve-id :preserve-permission))
+    )
   )
 (req-package beacon
   :hook
@@ -607,19 +578,15 @@ you should be before aggressively auto-indenting"
            (buffer-width (window-width))
            (point-window-end-distance (abs (- buffer-width point-along-line)))
            (end-distance-padded (- point-window-end-distance
-                                   cemacs-beacon-size-padding))
-           )
+                                   cemacs-beacon-size-padding)))
       (setq beacon-size end-distance-padded)
       (when (> end-distance-padded cemacs-beacon-size)
-        (setq beacon-size cemacs-beacon-size)
-        )
+        (setq beacon-size cemacs-beacon-size))
       (when (< end-distance-padded 0)
         ;; Oops, just set it to 0 and move on
         (setq beacon-size 0)
-        (message "Failed to calculate a non-intrusive beacon-size, Refusing to blink")
-        )
-      )
-    )
+        (message "Failed to calculate a non-intrusive beacon-size, Refusing to blink"))
+      ))
   )
 ;;; A robust, prettified calender framework
 (req-package calfw
@@ -633,8 +600,7 @@ you should be before aggressively auto-indenting"
   :bind
   (("<C-tab>" . centaur-tabs-forward)
    ("<C-S-tab>" . centaur-tabs-backward)
-   ("<C-iso-lefttab>" . centaur-tabs-backward)
-   )
+   ("<C-iso-lefttab>" . centaur-tabs-backward))
   :config
   ;;Misc Settings
   (setq centaur-tabs-set-icons t
@@ -658,8 +624,7 @@ you should be before aggressively auto-indenting"
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        ;; Slow down company-idle-delay input blocking is reduced
-        company-idle-delay 0.2
+        company-idle-delay 0.2      ;; Slow down popup so input blocking is reduced
         )
   (define-key company-tng-map (kbd "C-p") nil)
   (define-key company-tng-map (kbd "C-n") nil)
@@ -669,18 +634,15 @@ you should be before aggressively auto-indenting"
   (crux-move-beginning-of-line
    crux-top-join-line
    crux-swap-windows
-   crux-smart-open-line-above
-   )
+   crux-smart-open-line-above)
   :bind
   (("C-a" . crux-move-beginning-of-line)
    ("C-j" . crux-top-join-line)
    ("C-x C-o" . crux-swap-windows)
-   ("C-o" . crux-smart-open-line-above)
-   )
+   ("C-o" . crux-smart-open-line-above))
   :config
   ;; Fix crux not honouring visual lines
-  (setq crux-move-visually t
-        )
+  (setq crux-move-visually t)
   )
 (req-package cmake-mode
   )
@@ -693,8 +655,7 @@ you should be before aggressively auto-indenting"
     (interactive)
     (setq tab-width 4)
     (setq-default c-basic-offset 4)
-    (c-set-style "c#")
-    )
+    (c-set-style "c#"))
   (add-hook 'csharp-mode-hook 'cemacs-csharp-mode)
   )
 (req-package dashboard
@@ -739,11 +700,9 @@ you should be before aggressively auto-indenting"
     (interactive)
     (if (windowp window)
         (select-window window)
-      (set 'window (selected-window))
-      )
+      (set 'window (selected-window)))
     (unless (get-buffer "*fireplace*")
-      (fireplace)
-      )
+      (fireplace))
     (set-window-buffer window (get-buffer "*fireplace*"))
     )
   (defun cemacs-fireplace-split-window-right ()
@@ -780,7 +739,6 @@ you should be before aggressively auto-indenting"
 (req-package god-mode
   :config
   )
-
 (req-package helm
   :after
   (hydra)
@@ -802,8 +760,7 @@ you should be before aggressively auto-indenting"
    helm-flycheck
    helm-rg
    helm-projectile-rg
-   hydra-query/body
-   )
+   hydra-query/body)
   :bind
   (("M-x" . helm-M-x)
    ("C-x C-f" . helm-find-files)
@@ -822,16 +779,13 @@ you should be before aggressively auto-indenting"
   ;; Completley hide helm header
   (fset 'helm-display-mode-line #'ignore)
   (defadvice helm-display-mode-line (after undisplay-header activate)
-    (setq header-line-format nil)
-    )
+    (setq header-line-format nil))
   (add-hook 'helm-after-initialize-hook
             (defun hide-mode-line-in-helm-buffer ()
               "Hide mode line in `helm-buffer'."
               (with-helm-buffer
-                (setq-local mode-line-format nil)
-                )
-              )
-            )
+                (setq-local mode-line-format nil))
+              ))
   :hook
   (cemacs-init-setup . helm-mode)
   :config
@@ -865,8 +819,7 @@ you should be before aggressively auto-indenting"
     ;; Projectile and lsp specific
     ("p" projectile-find-file "Projectile")
     ("C-p" helm-projectile-rg "Projectile ripgrep")
-    ("d" helm-lsp-diagnostics "LSP Diagnostics")
-    )
+    ("d" helm-lsp-diagnostics "LSP Diagnostics"))
   )
 (req-package highlight-parentheses
   :hook
@@ -900,8 +853,7 @@ you should be before aggressively auto-indenting"
     "kill shortcuts"
     ("x" slay-function "function(x)" :color red)
     ("l" kill-whole-line "whole line" :color red)
-    ("b" slay-whole-buffer "whole buffer")
-    )
+    ("b" slay-whole-buffer "whole buffer"))
   ;; (defhydra hydra-emacs (:color blue :hint nil))
   )
 (req-package lsp-mode
@@ -918,8 +870,7 @@ you should be before aggressively auto-indenting"
   (:map lsp-mode-map
         ("M-#" . lsp-ui-doc-show)
         ;; Visual Studio Like Bindings
-        ("<f12>" . lsp-find-definition)
-        )
+        ("<f12>" . lsp-find-definition))
   :config
   ;; Fixes
   (defalias 'yas-expand-snippet 'ignore)        ; Prevent company-capf from erroring
@@ -1078,31 +1029,27 @@ For example
 "
     )
   (defvar c-projectile-group-detect-functions ())
+  ;; TODO Detect projcet type base on uproj / function
   (defun cemacs-projectile-project-hook ()
     (let* ((current-project (projectile-project-name))
            (current-project-root (projectile-project-name))
-           (current-project-function (cdr
-                                      (assoc
-                                       current-project
-                                       cemacs-projectile-project-functions)))
+           (current-project-function
+            (cdr (assoc current-project
+                        cemacs-projectile-project-functions)))
            (current-group-functions '())
            (current-project-groups (cdr (assoc current-project cemacs-projectile-grouping)))
            (current-project-locals (cadr (assoc
                                           current-project
-                                          cemacs-projectile-project-locals)))
-           )
+                                          cemacs-projectile-project-locals))))
       (dolist (x-group current-project-groups)
         (cemacs-add-multiple-splicing 'current-group-functions
-                                      (cdr (assoc x-group cemacs-projectile-project-functions)))
-        )
+                                      (cdr (assoc x-group cemacs-projectile-project-functions))))
       (dolist (x-function current-group-functions)
         (funcall x-function))
       (dolist (x-local current-project-locals)
         (eval `(setq-local ,(car current-project-locals)
                            (cadr current-project-locals)))
-        )
-      )
-    )
+        )))
   )
 (req-package rainbow-blocks
   :commands
@@ -1144,8 +1091,7 @@ For example
   :commands
   (restart-emacs)
   :bind
-  (("C-x M-a" . restart-emacs)
-   )
+  (("C-x M-a" . restart-emacs))
   :config
   )
 (req-package smartparens
@@ -1158,8 +1104,7 @@ For example
    sp-kill-whole-line
    c-sp-natural-delete-word
    c-sp-natural-delete-word-backwards
-   sp-kill-region
-   )
+   sp-kill-region)
   :hook
   (cemacs-init-setup . smartparens-global-mode)
   ;; (prog-mode . cemacs-smartparens-enforcer-mode)
@@ -1182,22 +1127,16 @@ For example
       ;; Following two characters are whitespace/blank or end of line
       (cond ((= (line-end-position) (point))
              (cemacs-forward-whitespace :traverse-newlines)
-             (sp-delete-region original-point (point))
-             )
+             (sp-delete-region original-point (point)))
             ;; Following two characters are whitespace/blank
             ((and (string-match "[[:blank:]]" (string (char-after)))
-                  (string-match "[[:blank:]]" (string (char-after
-                                                       (+ (point) 1))
-                                                      )))
+                  (string-match "[[:blank:]]" (string
+                                               (char-after (+ (point) 1)))))
              ;; traverse all whitespace upto line beginning
              (cemacs-forward-whitespace)
-             (sp-delete-region original-point (point))
-             )
-            (:default (sp-kill-word 1)
-                      )
-            )
-      (constrain-to-field nil (point))
-      )
+             (sp-delete-region original-point (point)))
+            (:default (sp-kill-word 1)))
+      (constrain-to-field nil (point)))
     )
   (defun c-sp-natural-delete-word-backwards ()
     "Modified version of `natural-delete-word-backwards' for smartparens"
@@ -1223,12 +1162,11 @@ For example
              (sp-backward-kill-word 1)
              (if (not (= original-line (line-number-at-pos (point))))
                  ;; Try not to move the cursor too far
-                 (end-of-line)
-               ))
+                 (end-of-line))
+             )
             )
       (constrain-to-field nil original-point)
-      (point)
-      )
+      (point))
     )
   ;; Keybinds
   ;; Enforce smartparens-strict-mode with keybinds
@@ -1244,8 +1182,8 @@ For example
           (define-key map [remap kill-whole-line] 'sp-kill-whole-line)
           (define-key map (kbd "<C-backspace>") #'c-sp-natural-delete-word-backwards)
           (define-key map (kbd "M-d") #'c-sp-natural-delete-word)
-          map
-          ))
+          map)
+        )
   (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
                                #'c-sp-natural-delete-word
                                #'c-sp-natural-delete-word-backwards
@@ -1258,8 +1196,7 @@ For example
                                #'sp-delete-symbol
                                #'sp-backward-delete-symbol
                                #'sp-delete-region
-                               #'delete-region
-                               )
+                               #'delete-region)
   ;; Pair management bindings which are required for strict-mode
   (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
   (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
@@ -1387,6 +1324,7 @@ For example
         )
   )
 (req-package yasnippet
+  :require auto-yasnippet
   )
 (req-package zoom
   ;; A window rebalancing minor mode

@@ -41,20 +41,16 @@
   "An alternative to `delete-whitespace-horizontally' which traverses lines."
   (interactive)
   (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
-        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines)))
-        )
-    (delete-region whitespace-start whitespace-end)
-    )
+        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines))))
+    (delete-region whitespace-start whitespace-end))
   )
 (defun natural-one-space ()
   "An alternative to `just-one-space' which traverses lines."
   (interactive)
   (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
-        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines)))
-        )
+        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines))))
     (delete-region whitespace-start whitespace-end)
-    (insert-char ?\s)
-    )
+    (insert-char ?\s))
   )
 (defun natural-beginning-of-line ()
   "A version of `beginning-of-line' that acknowledges significant stops.
@@ -80,10 +76,13 @@ This fixes that problem and visits the beginning of the visual line first."
   (let ((original-point (point))
         (original-line (line-number-at-pos (point)))
         ;; Aparent line wrapped line beginning
-        (visual-line-beginning (save-excursion (beginning-of-visual-line) (point)))
+        (visual-line-beginning
+         (save-excursion (beginning-of-visual-line) (point)))
         ;; First significant character of the true line
-        (logical-line-beginning (save-excursion (beginning-of-line)
-                                                (cemacs-forward-whitespace) (point)))
+        (logical-line-beginning
+         (save-excursion (beginning-of-line)
+                         (cemacs-forward-whitespace)
+                         (point)))
         (true-line-beginning (line-beginning-position))
         )
     (cond ((= original-point visual-line-beginning)
@@ -96,9 +95,8 @@ This fixes that problem and visits the beginning of the visual line first."
           ((= original-point true-line-beginning)
            (goto-char logical-line-beginning)
            )
-          ;; Default behaviour
-          (t (goto-char visual-line-beginning)
-             (cemacs-forward-whitespace))
+          (:default (goto-char visual-line-beginning)
+                    (cemacs-forward-whitespace))
           ))
   )
 (defun natural-end-of-line ()
@@ -117,8 +115,7 @@ pressing twice will always ensure you end up at the end of the real line."
                                       (line-number-at-pos)))
         ;; Aparent line wrapped line end
         (visual-line-end (save-excursion (end-of-visual-line) (point)))
-        (true-line-end (line-end-position))
-        )
+        (true-line-end (line-end-position)))
     (cond ((not (= aparent-visual-line-number (line-number-at-pos)))
            ;; Something went wrong and we changed lines
            ;; It was likely invisible text, do a normal end of line
@@ -139,8 +136,7 @@ If TRAVERSE-NEWLINES is non-nil, allow travelling to a new line."
   (interactive)
   (if (bound-and-true-p traverse-newlines)
       (skip-chars-forward " \t\n")
-    (skip-chars-forward " \t")
-    )
+    (skip-chars-forward " \t"))
   )
 (defun cemacs-backward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
@@ -151,8 +147,7 @@ If TRAVERSE-NEWLINES is non-nil, allow travelling to an new line."
   (interactive)
   (if (bound-and-true-p traverse-newlines)
       (skip-chars-backward " \t\n")
-    (skip-chars-backward " \t")
-    )
+    (skip-chars-backward " \t"))
   )
 (defun slay-function ()
   "Kill the function surrounding the point.
@@ -206,8 +201,7 @@ kill ring."
           )
     ;; Keep the point inside an input field where applicable
     (constrain-to-field nil (point))
-    (point)
-    )
+    (point))
   )
 
 (defun natural-backward-word ()
@@ -238,8 +232,7 @@ This will also move the cursor to the beginning of the line if travesing
 lines."
   (interactive)
   (let ((original-point (point))
-        (original-line (line-number-at-pos (point)))
-        )
+        (original-line (line-number-at-pos (point))))
     ;; Delete whitespace hungrily if at line beginning across lines
     (cond ((= (line-beginning-position) (point))
            (cemacs-backward-whitespace :traverse-newlines)
@@ -257,9 +250,8 @@ lines."
            (backward-word 1)
            (if (not (= original-line (line-number-at-pos (point))))
                ;; Try not to move the cursor too far
-               (end-of-line)
-             ))
-          )
+               (end-of-line))
+           ))
     ;; Keep the point inside an input field where applicable
     (constrain-to-field nil original-point)
     (point)
@@ -292,8 +284,7 @@ kill ring."
   (let ((original-point (point)))
     ;; Following two characters are whitespace/blank or end of line
     (natural-forward-word)
-    (delete-region original-point (point))
-    )
+    (delete-region original-point (point)))
   )
 (defun natural-delete-word-backwards ()
   "Delete a word block backwards, treating whitespace blocks as words.
@@ -309,8 +300,7 @@ EMACS `backward-to-char' movement deleting everything between the new and
   (interactive)
   (let ((original-point (point)))
     (natural-backward-word)
-    (delete-region original-point (point))
-    )
+    (delete-region original-point (point)))
   )
 (defun natural-tab-to-tab-stop ()
   "Move following word block to the next tab stop.
@@ -346,12 +336,13 @@ in-line indentaiton as it goes."
          (last-stop-contiguous-whitespace (> last-stop-pos whitespace-left-extent))
          (line-first-char-pos (cemacs-excursion (beginning-of-line-text)))
          (text-before-point (< line-first-char-pos (point)))
-         (indent-tabs-mode indent-tabs-mode)
-         )
+         (indent-tabs-mode indent-tabs-mode))
     ;; Reset whitespace
     (delete-horizontal-space)
+
     (and abbrev-mode (= (char-syntax (preceding-char)) ?w)
          (expand-abbrev))
+
     ;; Don't use tabs in the middle of lines
     (when (and text-before-point indent-tabs-mode)
       (setq indent-tabs-mode nil))

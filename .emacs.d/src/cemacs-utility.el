@@ -82,8 +82,7 @@ This is just a shorthand function."
   "Return the char at POS without properties."
   (interactive)
   (let ((position (or pos (point))))
-    (buffer-substring-no-properties (point) (+ 1 (point)))
-    )
+    (buffer-substring-no-properties (point) (+ 1 (point))))
   )
 (defun cemacs-org-hide-all-subtrees ()
   "Hide all global subtrees in orgmode."
@@ -114,8 +113,7 @@ If TRAVERSE-NEWLINES is non-nil, allow travelling to a new line."
   (interactive)
   (if (bound-and-true-p traverse-newlines)
       (skip-chars-forward " \t\n")
-    (skip-chars-forward " \t")
-    )
+    (skip-chars-forward " \t"))
   )
 (defun cemacs-backward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
@@ -126,8 +124,7 @@ If TRAVERSE-NEWLINES is non-nil, allow travelling to an new line."
   (interactive)
   (if (bound-and-true-p traverse-newlines)
       (skip-chars-backward " \t\n")
-    (skip-chars-backward " \t")
-    )
+    (skip-chars-backward " \t"))
   )
 (defun slay-function ()
   "Kill the function surrounding the point.
@@ -163,7 +160,8 @@ This command does not push text to `kill-ring'."
    (point)
    (progn
      (forward-word (or mult 1))
-     (point))))
+     (point)))
+  )
 (defun cemacs-delete-word-backwards (&optional mult)
   "Delete characters backward until encountering the beginning of a word.
 With argument MULT, repeat this many times.
@@ -189,8 +187,9 @@ This command is a reverse of `cemacs-delete-word'"
   "Open all files in FILELIST in offscreen buffers."
   (dolist (x-file filelist)
     (if (and (file-exists-p x-file ) (file-regular-p x-file))
-           (find-file-noselect x-file)
-         )))
+        (ignore-errors (find-file-noselect x-file))
+      ))
+  )
 (defun cemacs-open-files-in-directory (directory-path)
   "Opens all files in a DIRECTORY-PATH in offscreen buffers."
   (if (file-directory-p directory-path)
@@ -212,14 +211,13 @@ too important if they are lost between computers when LOCAL-ONLY is non-nil"
   ;; A value is supplied to associated-var
   (when (and (boundp 'associated-var)
              (symbol-value 'associated-var))
-    (set associated-var new-dir)
-    )
+    (set associated-var new-dir))
   ;; Directory does not already exist
   (if (not (file-exists-p new-dir))
       (make-directory new-dir :recursive)
-    (cemacs-warn (concat new-dir " has a special file or directory already present!"))
-    )
-  )
+    (cemacs-warn
+     (concat new-dir " has a special file or directory already present!"))
+    ))
 (defun cemacs-deffile (var-name new-dir &optional associated-var local-only)
   "Define VAR-NAME equal to NEW-DIR a path which is then automatically created.
 
@@ -234,13 +232,12 @@ too important if they are lost between computers when LOCAL-ONLY is non-nil"
   ;; A value supplied to associated-var
   (when (and (boundp 'associated-var)
              (symbol-value 'associated-var))
-    (set associated-var new-dir)
-    )
+    (set associated-var new-dir))
   (if (not (file-exists-p new-dir))
       (make-empty-file new-dir :recursive)
-    (cemacs-warn (concat new-dir " has a special file or directory already present!"))
-    )
-  )
+    (cemacs-warn
+     (concat new-dir " has a special file or directory already present!"))
+    ))
 (defvar cemacs-kill-volatile-buffer-pre-hook nil)
 (defun cemacs-buffer-kill-volatile ()
   "Kill the current buffer unconditionally.
@@ -264,13 +261,12 @@ relatively safe."
                                  new-major-mode
                                'emacs-lisp))
          (new-buffer (generate-new-buffer
-                      (concat "*scratch-" (symbol-name scratch-major-mode) "*")
-                      )))
+                      (concat "*scratch-" (symbol-name scratch-major-mode) "*"))
+                     ))
     (switch-to-buffer new-buffer)
     (add-to-list 'cemacs-buffer-tmp-list new-buffer)
     (setq-local major-mode 'c++-mode)
-    (funcall major-mode)
-    )
+    (funcall major-mode))
   )
 (defun cemacs-scratch-buffer-create-cpp ()
   "Create a new scratch buffer optionally with the mode 'c++-mode'."
