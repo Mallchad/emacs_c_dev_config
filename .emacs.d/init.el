@@ -141,57 +141,6 @@ configuration see `cemacs-init-local-frame'"
   ;; Visualize Whitespace
   (setq whitespace-style '(trailing tabs tab-mark))
   )
-(defun cemacs-vanilla-keys-configure()
-  "Set up personal keybinds after initilization."
-  (interactive)
-  ;; Emacs Control Bindings
-  ;; Here we try to keep as many standard editor bindings as possible, to
-  ;; make it less jarring if a non-emacs user needs to use it for any reason
-  ;; Navigation
-  (global-set-key (kbd "C-e")           #'natural-end-of-line)
-  (global-set-key (kbd "<home>")        #'natural-beginning-of-line)
-  (global-set-key (kbd "<end>")         #'natural-end-of-line)
-  (global-set-key (kbd "M-b")           #'natural-backward-word)
-  (global-set-key (kbd "M-f")           #'natural-forward-word)
-  (global-set-key (kbd "<C-left>")      #'natural-backward-word)
-  (global-set-key (kbd "<C-right>")     #'natural-forward-word)
-  (global-set-key (kbd "C-,")           #'pop-to-mark-command)
-
-  ;; Editing Commands
-  (global-set-key (kbd "<C-backspace>") #'natural-delete-word-backwards)
-  (global-set-key (kbd "M-d")           #'natural-delete-word)
-  (global-set-key (kbd "<C-delete>")    #'natural-delete-word)
-  (global-set-key (kbd "M-\\")          #'natural-delete-whitespace)
-  (global-set-key (kbd "M-SPC")         #'natural-one-space)
-  (global-set-key (kbd "C-x r")         #'revert-buffer)
-  (global-set-key (kbd "M-i")           #'natural-tab-to-tab-stop)
-  (global-set-key (kbd "M-p") 'kill-whole-line)
-
-  ;; Other
-  (global-set-key (kbd "C-x k")         #'cemacs-buffer-kill-volatile)
-  (global-set-key (kbd "M-o")           #'ff-find-other-file)
-  (global-set-key (kbd "C-x e")         #'cemacs-find-user-init-file)
-
-  ;; Unbind Keys
-  (unbind-key (kbd "<insert>"))         ; 'overwrite-mode
-  (unbind-key (kbd "<insertchar>"))     ; 'overwrite-mode
-  (unbind-key (kbd "<backspace>") c++-mode-map)
-  ;; Get rid of conflicting electric bindings
-  (define-key c++-mode-map (kbd "DEL") nil)
-  (define-key c++-mode-map (kbd "C-d") nil)
-  (define-key c++-mode-map (kbd "#") nil)
-  (define-key c++-mode-map (kbd "*") nil)
-  (define-key c++-mode-map (kbd "/") nil)
-  (define-key c++-mode-map (kbd "<") nil)
-  (define-key c++-mode-map (kbd ">") nil)
-  (define-key c++-mode-map (kbd "(") nil)
-  (define-key c++-mode-map (kbd ")") nil)
-  (define-key c++-mode-map (kbd "{") nil)
-  (define-key c++-mode-map (kbd "}") nil)
-  (define-key c++-mode-map (kbd ":") nil)
-  (define-key c++-mode-map (kbd ";") nil)
-  (define-key c++-mode-map (kbd ",") nil)
-  )
 (defun cemacs-init-setup()
   "Run after-initilization setup."
   (interactive)
@@ -591,6 +540,67 @@ you should be before aggressively auto-indenting")
         (message "Failed to calculate a non-intrusive beacon-size, Refusing to blink"))
       ))
   )
+(req-package bind-key
+  :config
+  (defun cemacs-bind-vanilla-keys()
+    "Set up personal keybinds after initilization."
+    (interactive)
+    ;; Emacs Control Bindings
+    ;; Here we try to keep as many standard editor bindings as possible, to
+    ;; make it less jarring if a non-emacs user needs to use it for any reason.
+    ;;
+    ;; Equally, we try to keep as many vanilla emacs bindings as possible,
+    ;; to make unmodified distributions more accessible.
+    (bind-keys
+     ;; Navigation
+     ("C-e" .           natural-end-of-line)
+     ("<home>" .        natural-beginning-of-line)
+     ("<end>" .         natural-end-of-line)
+     ("M-b" .           natural-backward-word)
+     ("M-f" .           natural-forward-word)
+     ("<C-left>" .      natural-backward-word)
+     ("<C-right>" .     natural-forward-word)
+     ("C-," .           pop-to-mark-command)
+
+     ;; Editing Commands
+     ("<C-backspace>" . natural-delete-word-backwards)
+     ("M-d" .           natural-delete-word)
+     ("<C-delete>" .    natural-delete-word)
+     ("M-\\" .          natural-delete-whitespace)
+     ("M-SPC" .         natural-one-space)
+     ("C-x r" .         revert-buffer)
+     ("M-i" .           natural-tab-to-tab-stop)
+     ("M-p" .           kill-whole-line)
+     ("M-#" .           cemacs-activate-mark)
+
+     ;; Other
+     ("C-x k" .         cemacs-buffer-kill-volatile)
+     ("M-o" .           ff-find-other-file)
+     ("C-x e" .         cemacs-find-user-init-file)
+
+     ;; Unbind Keys
+     ("<insert>" .      nil)         ; 'overwrite-mode
+     ("<backspace>" .   nil)
+     ("C-j" .           join-line)         ; 'electric-newline-and-maybe-indent'
+     ;; Get rid of conflicting electric bindings
+     :map c++-mode-map
+     ("<insertchar>" .  nil)     ; 'overwrite-mode
+     ("DEL" .           nil)
+     ("C-d" .           nil)
+     ("#"   .           nil)
+     ("*"   .           nil)
+     ("/"   .           nil)
+     ("<"   .           nil)
+     (">"   .           nil)
+     ("("   .           nil)
+     (")"   .           nil)
+     ("{"   .           nil)
+     ("}"   .           nil)
+     (":"   .           nil)
+     (";"   .           nil)
+     (","   .           nil)
+     )
+    ))
 ;;; A robust, prettified calender framework
 (req-package calfw
   :require calfw-org
@@ -640,7 +650,7 @@ you should be before aggressively auto-indenting")
    crux-smart-open-line-above)
   :bind
   (("C-a" . crux-move-beginning-of-line)
-   ("C-j" . crux-top-join-line)
+   ;; ("C-j" . crux-top-join-line)
    ("C-x C-o" . crux-swap-windows)
    ("C-o" . crux-smart-open-line-above))
   :config
