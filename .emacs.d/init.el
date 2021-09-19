@@ -214,6 +214,9 @@ configuration see `cemacs-init-local-frame'"
    indent-tabs-mode nil                 ; use spaces for indendation
    transient-mark-mode nil
    global-hl-line-mode t
+
+   ;; Misc
+   kill-whole-line t                    ; makes kill-line remove empty lines
    )
   (delete-selection-mode t)             ; delete activated region on typing
   (global-subword-mode t)               ; treat delimited words seperately
