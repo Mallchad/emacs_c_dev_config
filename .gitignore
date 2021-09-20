@@ -1,3 +1,7 @@
+MIT License
+Copyright (c) 2021 Mallchad
+This source is provided with no limitations or warrenty whatsoever.
+
 # Ignore everything in root
 /*
 
@@ -10,5 +14,6 @@
 !.emacs.d/src/*.el
 !.emacs.d/resources
 !README.md
+!*.md
 !doc/
 !doc/plan.org
