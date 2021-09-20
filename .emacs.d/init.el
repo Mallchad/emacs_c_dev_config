@@ -1170,9 +1170,9 @@ For example
   (require 'smartparens-config)
 
   ;; Variables
-  (setq sp-autoinsert-pair nil          ; More trouble than it's worth
-        sp-autoskip-closing-pair nil
-        )
+  (setq-default sp-autoinsert-pair nil          ; More trouble than it's worth
+                sp-autoskip-closing-pair nil
+                )
 
   ;; smartparens Custom Adapted Logic
   (defun c-sp-natural-delete-word (&optional arg)
