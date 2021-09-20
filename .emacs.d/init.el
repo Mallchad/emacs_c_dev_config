@@ -1353,7 +1353,11 @@ For example
         )
   )
 (req-package yasnippet
-  :require auto-yasnippet
+  :require
+  auto-yasnippet
+  )
+(req-package auto-yasnippet
+  :config
   )
 (req-package zoom
   ;; A window rebalancing minor mode
