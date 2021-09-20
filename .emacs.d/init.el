@@ -185,7 +185,7 @@ configuration see `cemacs-init-local-frame'"
   (put 'upcase-region 'disabled nil)
   ;; Run Functions
   (cemacs-configure-session-decorations)
-  (cemacs-vanilla-keys-configure)
+  (ignore-errors (cemacs-bind-vanilla-keys)) ; Protected from req-package error
   ;; Defer init setup hooks
   (run-at-time "1sec" nil 'run-hooks 'cemacs-init-setup-hook)
   (load cemacs-personal-config-file)
@@ -221,10 +221,16 @@ configuration see `cemacs-init-local-frame'"
       )
 ;; Built in Packages
 (req-package flyspell
-  :config
+  :after org
+  :bind
   ;; Unbind Default keys
-  (define-key flyspell-mode-map [(control ?\,)] nil)
-  (define-key flyspell-mode-map [(control ?\.)] nil)
+  (:map flyspell-mode-map
+        ([(control ?\,)] .  nil)
+        ([(control ?\.)] .  nil)
+        ;; `org-return' is infuriating, so disable it until something better is found
+        :map org-mode-map
+        ("RET" .            nil))
+  :config
   )
 (req-package org
   :require
@@ -232,6 +238,10 @@ configuration see `cemacs-init-local-frame'"
   org-cliplink
   :hook
   (org-mode . cemacs-text-mode)
+  :bind
+  (("C-M-#" . cemacs-org-stamp-time)
+   :map org-mode-map
+   ("C-c C-x C-s" . cemacs-org-archive-and-done))
   :config
   (defvar cemacs-org-priority-list
     '(("* *" "top")
@@ -240,8 +250,7 @@ configuration see `cemacs-init-local-frame'"
   ;; Prevent newlines from seperating headings
   (setq org-cycle-separator-lines 0)
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
-  ;; `org-return' is infuriating, so disable it until something better is found
-  (define-key org-mode-map (kbd "RET") 'nil)
+
   ;; Functions
   ;; NOTE(mallchad): Hardcoded section for personal setup, feel free to
   ;; change.
@@ -384,12 +393,7 @@ top or bottom of the file."
             (lambda (state)
               (when (eq state 'children)
                 (setq org-cycle-subtree-status 'subtree))))
-
-  ;; Bindings
-  (global-set-key (kbd "C-M-#") #'cemacs-org-stamp-time)
-  (define-key org-mode-map (kbd "C-c C-x C-s") #'cemacs-org-archive-and-done)
   )
-
 ;; External Packages
 (req-package async
   :config
@@ -454,10 +458,11 @@ you should be before aggressively auto-indenting")
   (avy-goto-char
    avy-pop-mark
    avy-zap-to-char-dwim)
+  :bind
+  (("C-r" . avy-goto-char)
+   ("M-r" . avy-pop-mark)
+   ("M-z" . avy-zap-to-char-dwim))
   :config
-  (global-set-key (kbd "C-r") 'avy-goto-char)
-  (global-set-key (kbd "M-r") 'avy-pop-mark)
-  (global-set-key (kbd "M-z") 'avy-zap-to-char-dwim)
   (setq avy-highlight-first t
         avy-background t
         ;; Use 2 key combos instead of only single home row
@@ -465,11 +470,11 @@ you should be before aggressively auto-indenting")
         avy-words nil
         )
   ;; Use all keys for avy instead of just home row
-  (loop for char-left from ?a to ?z do
-        (loop for char-right from ?a to ?z do
-              (add-to-list 'avy-words
-                           (concat (string char-left) (string char-right))
-                           :append)))
+  (cl-loop for char-left from ?a to ?z do
+           (cl-loop for char-right from ?a to ?z do
+                    (add-to-list 'avy-words
+                                 (concat (string char-left) (string char-right))
+                                 :append)))
   ;; The colours picked here are designed to maximize readabiltiy
   ;;
   ;; Glaring/agressive and eye-catching are avoided to prevent distraction.
@@ -633,14 +638,22 @@ you should be before aggressively auto-indenting")
 (req-package company
   :hook
   (prog-mode . company-mode)
+  :bind
+  (:map company-active-map
+        ("M-p" . company-select-previous)
+        ("M-n" . company-select-next)
+        ;; Make company less disruptive to general editing
+        ("C-p" . nil)
+        ("C-n" . nil)
+        :map company-tng-map
+        ("C-p" . nil)
+        ("C-n" . nil))
   :config
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
         company-idle-delay 0.2      ;; Slow down popup so input blocking is reduced
         )
-  (define-key company-tng-map (kbd "C-p") nil)
-  (define-key company-tng-map (kbd "C-n") nil)
   )
 (req-package crux
   :commands
@@ -678,6 +691,9 @@ you should be before aggressively auto-indenting")
 (req-package fireplace
   :commands
   (fireplace)
+  :bind
+  (("C-x 3" . cemacs-fireplace-split-window-right)
+   ("C-x 2" . cemacs-fireplace-split-window-below))
   :config
   ;; Variable Config
   (setq fireplace-smoke-on t)
@@ -726,8 +742,6 @@ you should be before aggressively auto-indenting")
     (interactive)
     (cemacs-fireplace-visit (split-window-below))
     )
-  (global-set-key (kbd "C-x 3") 'cemacs-fireplace-split-window-right)
-  (global-set-key (kbd "C-x 2") 'cemacs-fireplace-split-window-below)
   (add-hook 'after-make-frame-functions 'cemacs-fireplace-visit)
   )
 (req-package flycheck
@@ -859,8 +873,8 @@ you should be before aggressively auto-indenting")
   )
 (req-package hydra
   :bind
-  (("C-s" . hydra-slayer/body)
-   )
+  ;; (("C-s" . hydra-slayer/body)
+  ;; )
   :config
   (defhydra hydra-slayer (:color blue)
     "kill shortcuts"
@@ -882,13 +896,13 @@ you should be before aggressively auto-indenting")
   :bind
   (:map lsp-mode-map
         ("M-#" . lsp-ui-doc-show)
+        ("M-o" . lsp-clangd-find-other-file)
+
         ;; Visual Studio Like Bindings
         ("<f12>" . lsp-find-definition))
   :config
   ;; Fixes
   (defalias 'yas-expand-snippet 'ignore)        ; Prevent company-capf from erroring
-  ;; Keybindings
-  (define-key lsp-mode-map (kbd "M-#") 'lsp-ui-doc-show)
   ;; Configuration
   (setq lsp-enable-snippet nil
         lsp-prefer-flymake nil
@@ -922,7 +936,9 @@ you should be before aggressively auto-indenting")
    ;; language server responses are in 800k - 3M range.
    read-process-output-max (* 1024 1024) ;; 1mb
    )
-  (define-key lsp-mode-map (kbd "M-o") #'lsp-clangd-find-other-file)
+  )
+(req-package lsp-ui
+  :config
   )
 (req-package magit
   :commands
@@ -1123,6 +1139,32 @@ For example
   ;; (prog-mode . cemacs-smartparens-enforcer-mode)
   ;; Fix for *scratch* loading before this is hooked
   (lisp-interaction-mode . cemacs-smartparens-enforcer-mode)
+  :bind
+  (:map smartparens-mode-map
+        ;; Pair management bindings which are required for strict-mode
+        ("S-<backspace>" .              sp-backward-unwrap-sexp)
+        ;; ("M-e" .                     sp-forward-slurp-sexp)
+        ;; ("M-a" .                     sp-backward-slurp-sexp)
+        ;; ("M-[" .                     sp-forward-barf-sexp)
+        ;; ("M-]" .                     sp-backward-barf-sexp)
+
+        ;; General Pair Manamagent and Navigation
+        ("C-M-k" .                      sp-kill-sexp)       ; Allow killing by pair
+        ("C-M-f" .                      sp-forward-sexp)
+        ("C-M-b" .                      sp-backward-sexp)
+        ("M-n" .                        sp-kill-hybrid-sexp)
+        :map cemacs-smartparens-enforcer-mode-map
+        ([remap kill-word] .            sp-kill-word)
+        ([remap kill-line] .            sp-kill-hybrid-sexp)
+        ([remap backward-kill-word] .   sp-backward-kill-word)
+        ([remap kill-region] .          sp-kill-region)
+        ([remap delete-region] .        sp-delete-region)
+        ([remap kill-whole-line] .      sp-kill-whole-line)
+        ("<C-backspace>" .          c-sp-natural-delete-word-backwards)
+        ("M-d" .                    c-sp-natural-delete-word))
+  :init
+  (defvar cemacs-smartparens-enforcer-mode-map nil
+    "Keymap used for `cemacs-smartparens-enforcer-mode'.")
   :config
   ;; Defualt Configuration
   (require 'smartparens-config)
@@ -1183,20 +1225,7 @@ For example
     )
   ;; Keybinds
   ;; Enforce smartparens-strict-mode with keybinds
-  (defvar cemacs-smartparens-enforcer-mode-map nil
-    "Keymap used for `cemacs-smartparens-enforcer-mode'.")
-  (setq cemacs-smartparens-enforcer-mode-map
-        (let ((map (make-sparse-keymap)))
-          (define-key map [remap kill-word] 'sp-kill-word)
-          (define-key map [remap kill-line] 'sp-kill-hybrid-sexp)
-          (define-key map [remap backward-kill-word] 'sp-backward-kill-word)
-          (define-key map [remap kill-region] 'sp-kill-region)
-          (define-key map [remap delete-region] 'sp-delete-region)
-          (define-key map [remap kill-whole-line] 'sp-kill-whole-line)
-          (define-key map (kbd "<C-backspace>") #'c-sp-natural-delete-word-backwards)
-          (define-key map (kbd "M-d") #'c-sp-natural-delete-word)
-          map)
-        )
+
   (cemacs-add-multiple-to-list 'aggressive-indent-protected-commands
                                #'c-sp-natural-delete-word
                                #'c-sp-natural-delete-word-backwards
@@ -1210,21 +1239,6 @@ For example
                                #'sp-backward-delete-symbol
                                #'sp-delete-region
                                #'delete-region)
-  ;; Pair management bindings which are required for strict-mode
-  (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
-  (define-key smartparens-mode-map (kbd "C-S-d") 'sp-unwrap-sexp)
-  ;; (define-key smartparens-mode-map (kbd "M-e") 'sp-forward-slurp-sexp)
-  ;; (define-key smartparens-mode-map (kbd "M-a") 'sp-backward-slurp-sexp)
-  (define-key smartparens-mode-map (kbd "M-[") 'sp-forward-barf-sexp)
-  (define-key smartparens-mode-map (kbd "M-]") 'sp-backward-barf-sexp)
-  ;; (define-key smartparens-mode-map (kbd "M-(") 'sp-wrap-round)
-
-  ;; General Pair Manamagent and Navigation
-  (define-key smartparens-mode-map (kbd "C-M-k") #'sp-kill-sexp) ; Allow killing by pair
-  (define-key smartparens-mode-map (kbd "C-M-f") #'sp-forward-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-b") #'sp-backward-sexp)
-  (define-key smartparens-mode-map (kbd "M-n") #'sp-kill-hybrid-sexp)
-
   ;; Disable Emacs Lisp Quote Pairs
   (sp-local-pair sp-lisp-modes  "'" 'nil :actions 'nil)
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
@@ -1286,17 +1300,19 @@ For example
   ;; )
   )
 (req-package undo-tree
+  :bind
+  (("C-z" . undo-tree-undo)
+   ("C-S-z" . undo-tree-redo)
+   ;; Unbind Included Keymaps
+   :map undo-tree-map
+   ("C-x r u".  nil)
+   ("C-x r U".  nil)
+   ("C-x r".  nil))
   :config
   (global-undo-tree-mode)
-  (global-set-key (kbd "C-z") 'undo-tree-undo)
-  (global-set-key (kbd "C-S-z") 'undo-tree-redo)
   (setq undo-tree-enable-undo-in-region nil  ; brings performance enhancement
         undo-tree-history-directory-alist backup-directory-alist
         )
-  ;; Unbind Included Keymaps
-  (define-key undo-tree-map (kbd "C-x r u") nil)
-  (define-key undo-tree-map (kbd "C-x r U") nil)
-  (define-key undo-tree-map (kbd "C-x r") nil)
   )
 (req-package visible-mark
   ;; A minor mode to show you where the mark is current
@@ -1346,7 +1362,9 @@ For example
   ;; Tweak tweak rebalancing ratios
   (setq zoom-size '(70 . 30))
   )
-;;Solve Dependencies and Load in Correct Order
+
+;; Finalize Initialization
+;; Solve Dependencies and Load in Correct Order
 ;; Order here doesn't matter
 (req-package-finish)
 (cemacs-init-setup)
