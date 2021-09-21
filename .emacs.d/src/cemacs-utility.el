@@ -5,6 +5,7 @@
 ;;; cemacs-utility.el --- A collection of useful helper and interactive functions in one tidy package
 
 ;;; Code:
+(require 'cl-lib)
 
 ;; Constants
 (defconst cemacs-universal-argument  '(4)
@@ -78,6 +79,24 @@ This is just a shorthand function."
       ))
   (symbol-value list-symbol)
   )
+(defun cemacs-or-point (&optional pos)
+  "Return POS if an integer, or the point
+
+Useful as a tidier version for (or pos (point))
+with added integer checking"
+  (if (integerp pos)
+      pos
+    (point))
+  )
+(defun cemacs-or-line (&optional line)
+  "Return LINE if an integer, or the current line
+
+Useful as a tidier version for '(or line (line-number-at-pos))'
+with added integer checking"
+  (if (integerp line)
+      line
+    (line-number-at-pos))
+  )
 (defun cemacs-char-at-pos (&optional pos)
   "Return the char at POS without properties."
   (interactive)
@@ -102,6 +121,74 @@ This is just a shorthand function."
 (defun cemacs-startup-time ()
   (float-time
    (time-subtract after-init-time before-init-time))
+  )
+(defun cemacs-column-at-position (&optional pos)
+  "Return the column at POS.
+
+If POS is nil, the point is used instead."
+  (save-excursion (goto-char (cemacs-or-point pos)) (current-column))
+  )
+(defun cemacs-next-tab-stop (&optional pos)
+  "Return the column of the next tab stop after POS."
+  (indent-next-tab-stop (cemacs-column-at-position (cemacs-or-point pos)))
+  )
+(defun cemacs-last-tab-stop (&optional pos)
+  "Return the column of the last tab stop just before POS."
+  (let* ((pos-column (cemacs-column-at-position (cemacs-or-point pos)))
+         (preceding-stops (indent-accumulate-tab-stops pos-column))
+         (last-stop (or (car (last preceding-stops)) 0)))
+    last-stop)
+  )
+(defun cemacs-whitespace-backward-extent (&optional pos)
+  "Return the position of the end of contigious whitespace from POS.
+
+If pos is not an integer or nil, the point is used."
+  (cemacs-excursion (goto-char (cemacs-or-point pos)) (cemacs-backward-whitespace))
+  )
+(defun cemacs-whitespace-forward-extent (&optional pos)
+  "Return the position of the end of contigious whitespace from POS
+
+If pos is not an integer or nil, the point is used."
+  (cemacs-excursion (goto-char (cemacs-or-point pos)) (cemacs-forward-whitespace))
+  )
+(defun cemacs-contigious-whitespace-p (pos-1 &optional pos-2)
+  "Return t if there is only whitespace chars between POS-1 and POS-2.
+
+POS-2 must be a point after POS-1."
+  (cl-assert (> pos-2 pos-1) :show-args "pos-2 does not come after pos-1")
+  (>= (cemacs-whitespace-forward-extent pos-1) pos-2)
+  )
+(defun cemacs-line-first-char-position (&optional pos)
+  "Return the position of the first significant character on the line at POS.
+
+If POS is unbound or not an integer, the point will be used instead."
+  (cemacs-excursion (goto-char (cemacs-or-point pos)) (beginning-of-line-text))
+  )
+(defun cemacs-line-last-char-position (&optional pos)
+  "Return the position of the last significant character on the line at POS.
+
+If POS is unbound or not an integer, the point will be used instead."
+  (cemacs-excursion (goto-char (cemacs-or-point pos))
+                    (end-of-line)
+                    (cemacs-backward-whitespace))
+  )
+(defun cemacs-first-char-position-at-line (&optional line)
+  "Return the first significant character's position on LINE.
+
+If LINE is unbound or not an integer, the line at point will be used instead."
+  (cemacs-excursion (goto-line (cemacs-or-line line)) (beginning-of-line-text))
+  )
+(defun cemacs-line-text-before-position-p (&optional pos)
+  "Returns t if there is non-whitespace text before POS on the same line.
+
+If POS is unbound or or not an integer, the point will be used instead."
+  (< (cemacs-line-first-char-position) (cemacs-or-point pos))
+  )
+(defun cemacs-line-text-after-position-p (&optional pos)
+  "Returns t if there is non-whitespace text after POS on the same line.
+
+If POS is unbound or or not an integer, the point will be used instead."
+  (> (cemacs-line-first-char-position) (cemacs-or-point pos))
   )
 ;; End of helper only functions
 (defun cemacs-forward-whitespace (&optional traverse-newlines)

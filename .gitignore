@@ -5,7 +5,8 @@ This source is provided with no limitations or warrenty whatsoever.
 # Ignore everything in root
 /*
 
-#Whitelsit
+# Whitelsit
+# Main Project
 !.emacs.d
 !.emacs.d/*.el
 !.emacs.d/init.el
@@ -13,7 +14,12 @@ This source is provided with no limitations or warrenty whatsoever.
 !.emacs.d/src
 !.emacs.d/src/*.el
 !.emacs.d/resources
+
+# Project Root
 !README.md
 !*.md
+!*.lua
+
+# Documentation
 !doc/
 !doc/plan.org
