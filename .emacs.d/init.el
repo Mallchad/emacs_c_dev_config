@@ -942,8 +942,13 @@ you should be before aggressively auto-indenting")
   )
 (req-package magit
   :commands
-  (magit-status)
+  (magit-status
+   magit-stage
+   magit-stage-file
+   magit-unstage-file)
   :config
+  (setq magit-diff-refine-hunk 'always      ; Show in-hunk differences
+        )
   )
 ;; Allows for quick insertion of licenses from github
 (req-package license-templates
@@ -1152,22 +1157,30 @@ For example
         ("C-M-k" .                      sp-kill-sexp)       ; Allow killing by pair
         ("C-M-f" .                      sp-forward-sexp)
         ("C-M-b" .                      sp-backward-sexp)
-        ("M-n" .                        sp-kill-hybrid-sexp)
-        :map cemacs-smartparens-enforcer-mode-map
-        ([remap kill-word] .            sp-kill-word)
-        ([remap kill-line] .            sp-kill-hybrid-sexp)
-        ([remap backward-kill-word] .   sp-backward-kill-word)
-        ([remap kill-region] .          sp-kill-region)
-        ([remap delete-region] .        sp-delete-region)
-        ([remap kill-whole-line] .      sp-kill-whole-line)
-        ("<C-backspace>" .          c-sp-natural-delete-word-backwards)
-        ("M-d" .                    c-sp-natural-delete-word))
+        ("M-n" .                        sp-kill-hybrid-sexp))
   :init
   (defvar cemacs-smartparens-enforcer-mode-map nil
     "Keymap used for `cemacs-smartparens-enforcer-mode'.")
   :config
   ;; Defualt Configuration
   (require 'smartparens-config)
+
+  ;; Keybinds
+  ;; Enforce smartparens-strict-mode with keybinds
+  (defvar cemacs-smartparens-enforcer-mode-map nil
+    "Keymap used for `cemacs-smartparens-enforcer-mode'.")
+  (setq cemacs-smartparens-enforcer-mode-map
+        (let ((map (make-sparse-keymap)))
+          (define-key map [remap kill-word] 'sp-kill-word)
+          (define-key map [remap kill-line] 'sp-kill-hybrid-sexp)
+          (define-key map [remap backward-kill-word] 'sp-backward-kill-word)
+          (define-key map [remap kill-region] 'sp-kill-region)
+          (define-key map [remap delete-region] 'sp-delete-region)
+          (define-key map [remap kill-whole-line] 'sp-kill-whole-line)
+          (define-key map (kbd "<C-backspace>") #'c-sp-natural-delete-word-backwards)
+          (define-key map (kbd "M-d") #'c-sp-natural-delete-word)
+          map)
+        )
 
   ;; Variables
   (setq-default sp-autoinsert-pair nil          ; More trouble than it's worth
