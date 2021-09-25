@@ -1010,10 +1010,11 @@ you should be before aggressively auto-indenting")
   :config
   ;; TODO(mallchad) need to setup keybinds for this package
   )
+(req-package flycheck-projectile)
 (req-package projectile
-  :after flycheck
+  :demand t                             ; Always loaded at startup
+  :force t
   :require
-  projectile-variable
   flycheck-projectile
   :commands (projectile-mode)
   :hook

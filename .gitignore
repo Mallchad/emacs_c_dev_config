@@ -14,6 +14,7 @@ This source is provided with no limitations or warrenty whatsoever.
 !.emacs.d/src
 !.emacs.d/src/*.el
 !.emacs.d/resources
+!tools/
 
 # Project Root
 !README.md
