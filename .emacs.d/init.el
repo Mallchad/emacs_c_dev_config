@@ -1063,7 +1063,7 @@ For example
 )
 "
     )
-  (defvar c-projectile-group-detect-functions ())
+  (defvar c-projectile-group-detect-functions '())
   ;; TODO Detect projcet type base on uproj / function
   (defun cemacs-projectile-project-hook ()
     (let* ((current-project (projectile-project-name))

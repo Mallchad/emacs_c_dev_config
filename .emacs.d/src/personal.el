@@ -8,6 +8,7 @@
 ;; setting the value required re-evaluating in two plces.
 ;; At least here you can evaluate the file,
 ;; or use the provided `cemacs-personal-reload-config'.
+
 (cemacs-add-multiple-splicing 'cemacs-projectile-grouping
                               '(("test_project" "unreal")
                                 ("UnrealEngine" "unreal")
