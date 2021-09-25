@@ -947,7 +947,7 @@ you should be before aggressively auto-indenting")
    magit-stage-file
    magit-unstage-file)
   :config
-  (setq magit-diff-refine-hunk 'always      ; Show in-hunk differences
+  (setq magit-diff-refine-hunk 'all         ; Show in-hunk differences
         )
   )
 ;; Allows for quick insertion of licenses from github
