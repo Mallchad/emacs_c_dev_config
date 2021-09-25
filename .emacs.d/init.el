@@ -1148,7 +1148,7 @@ For example
   :bind
   (:map smartparens-mode-map
         ;; Pair management bindings which are required for strict-mode
-        ("S-<backspace>" .              sp-backward-unwrap-sexp)
+        ("M-<backspace>" .              sp-backward-unwrap-sexp)
         ;; ("M-e" .                     sp-forward-slurp-sexp)
         ;; ("M-a" .                     sp-backward-slurp-sexp)
         ;; ("M-[" .                     sp-forward-barf-sexp)
