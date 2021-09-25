@@ -576,7 +576,7 @@ you should be before aggressively auto-indenting")
      ("C-x r" .         revert-buffer)
      ("M-i" .           natural-tab-to-tab-stop)
      ("M-p" .           kill-whole-line)
-     ("M-#" .           cemacs-activate-mark)
+     ("C-#" .           cemacs-activate-mark)
 
      ;; Other
      ("C-x k" .         cemacs-buffer-kill-volatile)
