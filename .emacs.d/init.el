@@ -579,6 +579,7 @@ you should be before aggressively auto-indenting")
      ("C-#" .           cemacs-activate-mark)
 
      ;; Other
+     ("C-x r" .         cemacs-revert-buffer)
      ("C-x k" .         cemacs-buffer-kill-volatile)
      ("M-o" .           ff-find-other-file)
      ("C-x e" .         cemacs-find-user-init-file)
