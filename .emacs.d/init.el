@@ -169,6 +169,7 @@ configuration see `cemacs-init-local-frame'"
    ;; Execute the 'compile-command' for 'project-compile by default
    ;; Can set a new command using the universal argument
    compilation-read-command nil
+   compile-command nil                  ; Don't use 'make -k' by default
    )
   (delete-selection-mode t)             ; delete activated region on typing
   (global-subword-mode t)               ; treat delimited words seperately
