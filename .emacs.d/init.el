@@ -166,6 +166,9 @@ configuration see `cemacs-init-local-frame'"
 
    ;; Misc
    kill-whole-line t                    ; makes kill-line remove empty lines
+   ;; Execute the 'compile-command' for 'project-compile by default
+   ;; Can set a new command using the universal argument
+   compilation-read-command nil
    )
   (delete-selection-mode t)             ; delete activated region on typing
   (global-subword-mode t)               ; treat delimited words seperately
