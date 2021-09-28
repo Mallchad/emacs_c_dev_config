@@ -1356,7 +1356,10 @@ For example
   ;; Unobtrusively clean up extrenuous whitespace and convert tabs to whitespace
   :config
   (ws-butler-global-mode)
-  (setq ws-butler-convert-leading-tabs-or-spaces t)
+  ;; Somebody though setting to 't' was a good idea, defeats the point and is
+  ;; aggressively follows 'indent-tabs-mode'.
+  (setq ws-butler-convert-leading-tabs-or-spaces nil
+        )
   (add-hook 'org-mode-hook #'(lambda ()
                                (setq-local ws-butler-mode nil)))
   )
