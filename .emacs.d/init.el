@@ -953,6 +953,7 @@ you should be before aggressively auto-indenting")
    magit-unstage-file)
   :config
   (setq magit-diff-refine-hunk 'all         ; Show in-hunk differences
+        magit-save-repository-buffers nil   ; Don't try to save before commit
         )
   )
 ;; Allows for quick insertion of licenses from github
