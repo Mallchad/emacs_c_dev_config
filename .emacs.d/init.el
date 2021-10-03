@@ -80,7 +80,9 @@
 (add-hook 'emacs-lisp-mode 'cemacs-elisp-mode)
 (defun cemacs-prog-mode()
   "Set up buffer for programming."
-  (setq electric-indent-mode t)              ; Auto-indent on newline
+  ;; Disable auto-indent, it is inconsistent with incomplete code
+  (setq electric-indent-mode nil
+        )
   (display-line-numbers-mode)
   )
 (add-hook 'prog-mode-hook 'cemacs-prog-mode)
