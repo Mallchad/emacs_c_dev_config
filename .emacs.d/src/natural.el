@@ -232,16 +232,17 @@ This will also move the cursor to the beginning of the line if travesing
 lines."
   (interactive)
   (let ((original-point (point))
-        (original-line (line-number-at-pos (point))))
+        (original-line (line-number-at-pos (point)))
+        (previous-two-chars-blank
+         (and (string-match "[[:blank:]]" (string (char-before)))
+              (string-match "[[:blank:]]" (string (char-before (- (point) 1))))))
+        )
     ;; Delete whitespace hungrily if at line beginning across lines
     (cond ((= (line-beginning-position) (point))
            (cemacs-backward-whitespace :traverse-newlines)
            )
           ;; Previous two characters are whitespace/blank
-          ((and (string-match "[[:blank:]]" (string (char-before)))
-                (string-match "[[:blank:]]" (string (char-before
-                                                     (- (point) 1))
-                                                    )))
+          ((or previous-two-chars-blank (= ?\t (preceding-char)))
            ;; traverse all whitespace upto line beginning
            (cemacs-backward-whitespace)
            )
@@ -255,8 +256,7 @@ lines."
     ;; Keep the point inside an input field where applicable
     (constrain-to-field nil original-point)
     (point)
-    )
-  )
+    ))
 (defun natural-delete-word ()
   "Delete a word block backwards, treating whitespace blocks as words.
 
