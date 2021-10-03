@@ -182,28 +182,24 @@ A call only 1 character away from a 'word' object  will result in 'normal' EMACS
 In fact, this uses a custom word deletion function, so as to not pollute the
 kill ring."
   (interactive)
-  (let ((original-point (point)))
-    ;; Following two characters are whitespace/blank or end of line
+  (let ((original-point (point))
+        (following-two-chars-blank
+         (and (string-match "[[:blank:]]" (string (char-after)))
+              (string-match "[[:blank:]]" (string (char-after (+ (point) 1)))))
+         ))
     (cond ((= (line-end-position) (point))
            (cemacs-forward-whitespace :traverse-newlines)
            )
-          ;; Following two characters are whitespace/blank
-          ((and (string-match "[[:blank:]]" (string (char-after)))
-                (string-match "[[:blank:]]" (string (char-after
-                                                     (+ (point) 1))
-                                                    )))
-           ;; traverse all whitespace upto line beginning
+          ((or following-two-chars-blank (= ?\t (following-char)))
            (cemacs-forward-whitespace)
            )
           ;; Normal backward word
-          (:default (forward-word 1)
-                    )
+          (:default (forward-word 1))
           )
     ;; Keep the point inside an input field where applicable
     (constrain-to-field nil (point))
     (point))
   )
-
 (defun natural-backward-word ()
   "Move the point 1 word block backwards, treating whitespace blocks as words.
 
