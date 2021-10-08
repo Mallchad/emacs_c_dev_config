@@ -805,6 +805,9 @@ you should be before aggressively auto-indenting")
    ("TAB" . helm-execute-persistent-action)
    ("<tab>" . helm-execute-persistent-action)
    ("C-z" . helm-select-action)
+   ;; unbind non-emacs conforming bindings
+   ("C-w" .     nil)                    ; append word at point
+   ("C-SPC" .   nil)                    ; confusing and not useful marking behavour
    ;; Use backward delete word instead of invoking some auto-expansion toggle
    :map helm-find-files-map ("<C-backspace>" . nil)
    :map helm-projectile-find-file-map ("<C-backspace>" . nil)
