@@ -18,14 +18,14 @@
 (defmacro WHEN_WINDOWS (&rest body)
   "Evalute BODY when the OS is Windows."
   (declare (indent defun))
-  (when (eq system-type 'windows-nt)
-    `(eval ,@body))
+  `(when (eq system-type 'windows-nt)
+     ,@body)
   )
 (defmacro WHEN_LINUX (&rest body)
   "Evalute BODY when the OS is Linux."
   (declare (indent defun))
   (when (eq system-type 'gnu/linux)
-    `(eval ,@body))
+    ,@body)
   )
 ;; Enable Package Repositories
 (require 'package)
@@ -494,8 +494,31 @@ you should be before aggressively auto-indenting")
 (req-package backup-each-save
   :commands
   (backup-each-save)
+
+  :hook
+  (after-save . backup-each-save)
+  (cemacs-kill-volatile-buffer-pre . backup-each-save)
+  (cemacs-init-setup . c-backup-recentf)
   :config
   ;; TODO Stop being lazy and turn this is into a custom function
+  ;; Deal with problematic windows drive path rules
+  (WHEN_WINDOWS
+    (defun backup-each-save-compute-location (filename)
+      (let* ((containing-dir
+              (replace-regexp-in-string ".:/"
+                                        "drive/"         ; Strip colon from drive path
+                                        (file-name-directory filename)))
+             (basename (file-name-nondirectory filename))
+             (backup-container
+              (format "%s/%s"
+                      backup-each-save-mirror-location
+                      containing-dir)))
+        (when (not (file-exists-p backup-container))
+          (make-directory backup-container t))
+        (format "%s/%s-%s" backup-container basename
+                (format-time-string backup-each-save-time-format)))
+      ))
+
   (defun backup-each-save ()
     (interactive)
     (if (and (buffer-file-name)
@@ -506,12 +529,9 @@ you should be before aggressively auto-indenting")
                      (funcall backup-each-save-filter-function bfn)
                      (or (not backup-each-save-size-limit)
                          (<= (buffer-size) backup-each-save-size-limit)))
-            (copy-file bfn (backup-each-save-compute-location bfn) t t t)))))
-  :hook
-  (after-save . backup-each-save)
-  (cemacs-kill-volatile-buffer-pre . backup-each-save)
-  (cemacs-init-setup . c-backup-recentf)
-  :config
+            (copy-file bfn (backup-each-save-compute-location bfn) t t t))))
+    )
+
   (defun c-backup-recentf ()
     (let* ((recentf-path (file-truename recentf-save-file))
            (recentf-backup-path (backup-each-save-compute-location recentf-path)))
