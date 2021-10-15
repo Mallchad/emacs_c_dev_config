@@ -778,6 +778,7 @@ you should be before aggressively auto-indenting")
   (flycheck-mode . flycheck-inline-mode)
   (global-flycheck-mode . global-flycheck-inline-mode)
   :config
+  (setq flycheck-highlighting-mode nil)
   ;; Disable annoying documentation warnings which are too strict
   ;; instead, use 'M-x checkdoc'
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
