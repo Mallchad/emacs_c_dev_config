@@ -609,6 +609,7 @@ you should be before aggressively auto-indenting")
      ("C-x k" .         cemacs-buffer-kill-volatile)
      ("M-o" .           ff-find-other-file)
      ("C-x e" .         cemacs-find-user-init-file)
+     ("C-x C-#" .        server-edit-abort)
 
      ;; Unbind Keys
      ("<insert>" .      nil)         ; 'overwrite-mode
