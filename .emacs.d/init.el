@@ -1190,7 +1190,7 @@ For example
   (cemacs-init-setup . smartparens-global-mode)
   ;; (prog-mode . cemacs-smartparens-enforcer-mode)
   ;; Fix for *scratch* loading before this is hooked
-  (lisp-interaction-mode . cemacs-smartparens-enforcer-mode)
+  ;; (lisp-interaction-mode . cemacs-smartparens-enforcer-mode)
   :bind
   (:map smartparens-mode-map
         ;; Pair management bindings which are required for strict-mode
