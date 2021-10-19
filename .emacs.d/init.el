@@ -103,7 +103,7 @@
 (defun cemacs-text-mode ()
   "Hook function for `text-mode'."
   (flyspell-mode)                       ; Spell checking
-  (auto-fill-mode)                      ; column
+  (auto-fill-mode -1)                      ; break lines automatically
   )
 (defvar cemacs-init-setup-hook nil
   "A normal hook that runs at the end of init setup."
