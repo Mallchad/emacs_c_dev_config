@@ -14,9 +14,8 @@
                                 ("UnrealEngine" "unreal")
                                 ))
 (cemacs-add-multiple-splicing 'cemacs-projectile-project-locals
-                              '(("test_project"
-                                 (flycheck-highlighting-mode nil))
-                                ))
+                              '()
+                              )
 
 (provide 'personal.el)
 ;;; cemacs-utility.el ends here
