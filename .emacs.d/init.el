@@ -175,7 +175,7 @@ configuration see `cemacs-init-local-frame'"
    global-hl-line-mode t
 
    ;; Misc
-   kill-whole-line t                    ; makes kill-line remove empty lines
+   kill-whole-line nil                   ; don't make 'kill-line' remove empty lines
    ;; Execute the 'compile-command' for 'project-compile by default
    ;; Can set a new command using the universal argument
    compilation-read-command nil
