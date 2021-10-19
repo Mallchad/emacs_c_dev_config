@@ -642,6 +642,11 @@ you should be before aggressively auto-indenting")
      (","   .           nil)
      )
     ))
+;;; Minor-mode which hides the compilaton buffer if successful
+(req-package bury-successful-compilation
+  :config
+  (bury-successful-compilation 1)
+)
 ;;; A robust, prettified calender framework
 (req-package calfw
   :require calfw-org
