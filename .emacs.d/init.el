@@ -27,6 +27,7 @@
   (when (eq system-type 'gnu/linux)
     ,@body)
   )
+
 ;; Enable Package Repositories
 (require 'package)
 ;; For important compatibility libraries like cl-lib
@@ -34,6 +35,7 @@
 ;; Melpa
 (add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 (package-initialize)
+
 ;; Custom Functions
 (add-to-list 'load-path (concat user-emacs-directory "src"))
 (require 'cemacs-utility)
@@ -86,6 +88,12 @@
   (display-line-numbers-mode)
   )
 (add-hook 'prog-mode-hook 'cemacs-prog-mode)
+
+(defun cemacs-python-mode ()
+  "Set up buffer for python-mode"
+  )
+(add-hook 'python-mode-hook 'cemacs-python-mode)
+
 (defun cemacs-markdown-mode()
   "Hook function for `markdown-mode'."
   (interactive)
