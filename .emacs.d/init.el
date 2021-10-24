@@ -132,10 +132,10 @@ configuration see `cemacs-init-local-frame'"
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
-                 '(font . "MesloLGS NF-13:style=Regular")))
+                 '(font . "MesloLGS NF-12:style=Regular")))
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
-                 '(font . "Consolas-13:style=Regular")))
+                 '(font . "Consolas-12:style=Regular")))
   ;;Enable built-in modes
   (global-hl-line-mode)
   ;; Disable Window Decorations
