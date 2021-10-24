@@ -180,6 +180,7 @@ configuration see `cemacs-init-local-frame'"
    ;; Can set a new command using the universal argument
    compilation-read-command nil
    compile-command nil                  ; Don't use 'make -k' by default
+   text-scale-mode-step 1.1             ; Allow more graduated  text scaling
    )
   (delete-selection-mode t)             ; delete activated region on typing
   (global-subword-mode t)               ; treat delimited words seperately
