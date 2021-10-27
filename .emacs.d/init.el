@@ -174,7 +174,7 @@ configuration see `cemacs-init-local-frame'"
    transient-mark-mode nil
    global-hl-line-mode t
 
-   ;; Misc
+   ;; Misc Config
    kill-whole-line nil                   ; don't make 'kill-line' remove empty lines
    ;; Execute the 'compile-command' for 'project-compile by default
    ;; Can set a new command using the universal argument
@@ -182,10 +182,11 @@ configuration see `cemacs-init-local-frame'"
    compile-command nil                  ; Don't use 'make -k' by default
    text-scale-mode-step 1.1             ; Allow more graduated  text scaling
    )
-  (delete-selection-mode t)             ; delete activated region on typing
-  (global-subword-mode t)               ; treat delimited words seperately
-  (global-whitespace-mode t)            ; visualize tab characters
-  (global-visual-line-mode t)           ; make some commands to operate on visual lines
+  (blink-cursor-mode -1)
+  (delete-selection-mode 1)             ; delete activated region on typing
+  (global-subword-mode 1)               ; treat delimited words seperately
+  (global-whitespace-mode 1)            ; visualize tab characters
+  (global-visual-line-mode 1)           ; make some commands to operate on visual lines
   ;; Backup
   (setq make-backup-files nil
         backup-by-copying t
