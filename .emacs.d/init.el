@@ -613,6 +613,8 @@ you should be before aggressively auto-indenting")
      ("M-i" .           natural-tab-to-tab-stop)
      ("M-p" .           kill-whole-line)
      ("C-#" .           cemacs-activate-mark)
+     ("M-[" .           insert-pair)
+     ("M-{" .           insert-pair)
 
      ;; Other
      ("C-x r" .         cemacs-revert-buffer)
