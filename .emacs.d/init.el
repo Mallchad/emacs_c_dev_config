@@ -1012,6 +1012,10 @@ you should be before aggressively auto-indenting")
   :after hydra
   :bind
   (("M-m" . mc/edit-lines)
+   :map mc/keymap
+   ;; Don't exit on newline
+   ("<return>" . nil)
+   ("RET" . nil)
    )
   :config
   ;; Mark defualt behaviour for commands
