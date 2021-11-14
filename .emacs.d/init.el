@@ -24,8 +24,8 @@
 (defmacro WHEN_LINUX (&rest body)
   "Evalute BODY when the OS is Linux."
   (declare (indent defun))
-  (when (eq system-type 'gnu/linux)
-    ,@body)
+  `(when (eq system-type 'gnu/linux)
+     ,@body)
   )
 
 ;; Enable Package Repositories
