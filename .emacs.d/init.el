@@ -180,6 +180,8 @@ configuration see `cemacs-init-local-frame'"
    ;; Can set a new command using the universal argument
    compilation-read-command nil
    compile-command nil                  ; Don't use 'make -k' by default
+   desktop-dirname cemacs-var-dir       ; Set a session save direction
+   desktop-path `(,cemacs-var-dir ,user-emacs-directory "~")
    text-scale-mode-step 1.1             ; Allow more graduated  text scaling
    )
   (blink-cursor-mode -1)
@@ -740,6 +742,29 @@ you should be before aggressively auto-indenting")
   :config
   (dashboard-setup-startup-hook)
   )
+
+(req-package desktop
+  :ensure nil
+  :config
+  (defun cemacs-desktop-owner-advice (original &rest args)
+    (let ((owner (apply original args)))
+      (if (and owner (/= owner (emacs-pid)))
+          (and (car (member owner (list-system-processes)))
+               (let (cmd (attrlist (process-attributes owner)))
+                 (if (not attrlist) owner
+                   (dolist (attr attrlist)
+                     (and (string= "comm" (car attr))
+                          (setq cmd (car attr))))
+                   (and cmd (string-match-p "[Ee]macs" cmd) owner))))
+        owner)))
+  ;; Ensure that dead system processes don't own it.
+  (advice-add #'desktop-owner :around #'cemacs-desktop-owner-advice)
+  )
+
+(req-package desktop+
+
+  )
+
 (req-package fireplace
   :commands
   (fireplace)
@@ -975,6 +1000,7 @@ you should be before aggressively auto-indenting")
         ivy-magic-tilde nil
         )
   )
+
 ;; A minor mode to aid with json editing
 (req-package json-mode
   :config
@@ -1416,15 +1442,22 @@ For example
   ;;      sublimity-map-set-delay 1
   ;; )
   )
+
+;; A utility for searching through results relative to point in buffer
+;; Happens to have more untuitive defaults and coloring than helm-swoop
+(req-package swiper
+  :config
+  )
 (req-package undo-tree
   :bind
   (("C-z" . undo-tree-undo)
    ("C-S-z" . undo-tree-redo)
+
    ;; Unbind Included Keymaps
    :map undo-tree-map
-   ("C-x r u".  nil)
-   ("C-x r U".  nil)
-   ("C-x r".  nil))
+   ("C-x r u" . nil)
+   ("C-x r U" . nil)
+   ("C-x r" .   nil))
   :config
   (global-undo-tree-mode)
   (setq undo-tree-enable-undo-in-region nil  ; brings performance enhancement
