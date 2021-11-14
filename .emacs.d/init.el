@@ -1320,6 +1320,9 @@ For example
   ;; Variables
   (setq-default sp-autoinsert-pair nil          ; More trouble than it's worth
                 sp-autoskip-closing-pair nil
+                ;; Don't insert escape characters
+                sp-escape-quotes-after-insert nil
+                sp-escape-wrapped-region nil
                 )
 
   ;; smartparens Custom Adapted Logic
