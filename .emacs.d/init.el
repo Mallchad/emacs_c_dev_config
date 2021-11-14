@@ -220,6 +220,12 @@ configuration see `cemacs-init-local-frame'"
                   'custom-file :local-only)
   (cemacs-defdir 'cemacs-recentf-save-file (concat cemacs-var-dir "recentf")
                  'recentf-save-file :local-only)
+
+  (defvar cemacs-query-prefix-map (make-sparse-keymap)
+    "A prefix-map for various inspection commands, like buffer regex search."
+    )
+  (define-prefix-command 'cemacs-query-prefix-map)
+
   ;; Just prettify the frame whilst waiting for loading
   (if (display-graphic-p)  ; Resolve inital frame configuration
       (cemacs-init-local-frame (selected-frame)))
@@ -820,6 +826,8 @@ you should be before aggressively auto-indenting")
   helm-projectile
   helm-rg
   helm-swoop
+  :hook
+  (cemacs-init-setup . cemacs-helm-mode)
   :commands
   (helm-M-x
    helm-find-files
@@ -832,26 +840,50 @@ you should be before aggressively auto-indenting")
    helm-projectile
    helm-flycheck
    helm-rg
-   helm-projectile-rg
-   hydra-query/body)
+   helm-projectile-rg)
+
   :bind
-  (("M-x" . helm-M-x)
-   ("C-x C-f" . helm-find-files)
-   ("C-x b" . helm-buffers-list)
-   ("C-q" . hydra-query/body)
+  (:map
+   cemacs-helm-map
+   ("M-x" .     helm-M-x)
+   ;; ("C-x b" . helm-buffers-list)
+   ("C-q" .     cemacs-query-prefix-map)
+
+   :map cemacs-query-prefix-map
+   ("C-q" .     quoted-insert)          ; Keep replaced binding easily availiable
+   ;; ("s" .       helm-swoop-without-pre-input)
+   ("m" .       helm-mini)
+   ("b" .       helm-bookmarks)
+   ("f" .       helm-flycheck)
+   ("r" .       helm-rg)
+   ;; Projectile and lsp specific
+   ("p" .       projectile-find-file)
+   ("C-p" .     helm-projectile-rg)
+   ("d" .       helm-lsp-diagnostics)
+
    ;; Swap Action and Completion Buttons
    :map helm-map
-   ("TAB" . helm-execute-persistent-action)
-   ("<tab>" . helm-execute-persistent-action)
-   ("C-z" . helm-select-action)
+   ("TAB" .     helm-execute-persistent-action)
+   ("<tab>" .   helm-execute-persistent-action)
+   ("C-z" .     helm-select-action)
    ;; unbind non-emacs conforming bindings
    ("C-w" .     nil)                    ; append word at point
    ("C-SPC" .   nil)                    ; confusing and not useful marking behavour
    ;; Use backward delete word instead of invoking some auto-expansion toggle
    :map helm-find-files-map ("<C-backspace>" . nil)
    :map helm-projectile-find-file-map ("<C-backspace>" . nil)
+   :map cemacs-helm-map ([remap find-file] . helm-find-files)
    )
   :init
+  ;; Custom keybinds
+  (defvar cemacs-helm-map (make-sparse-keymap)
+    "Custom mapping for cemacs-helm-mode")
+  (define-minor-mode cemacs-helm-mode
+    "Toggably custom functionality for helm-mode"
+    :global t
+    :keymap cemacs-helm-map
+    )
+
   ;; Completley hide helm header
   (fset 'helm-display-mode-line #'ignore)
   (defadvice helm-display-mode-line (after undisplay-header activate)
@@ -862,8 +894,6 @@ you should be before aggressively auto-indenting")
               (with-helm-buffer
                 (setq-local mode-line-format nil))
               ))
-  :hook
-  (cemacs-init-setup . helm-mode)
   :config
   (require 'helm-config)
   ;;Helm minibuffer config
@@ -884,18 +914,6 @@ you should be before aggressively auto-indenting")
                       :height 1.1
                       :foreground "dark cyan"
                       )
-  ;;Query
-  (defhydra hydra-query (:color blue)
-    "query for"
-    ("s" helm-swoop-without-pre-input "String")
-    ("m" helm-mini "Mini")
-    ("b" helm-bookmarks "Bookmarks")
-    ("f" helm-flycheck "Flycheck")
-    ("r" helm-rg "Ripgrep")
-    ;; Projectile and lsp specific
-    ("p" projectile-find-file "Projectile")
-    ("C-p" helm-projectile-rg "Projectile ripgrep")
-    ("d" helm-lsp-diagnostics "LSP Diagnostics"))
   )
 (req-package highlight-parentheses
   :hook
@@ -932,6 +950,35 @@ you should be before aggressively auto-indenting")
     ("b" slay-whole-buffer "whole buffer"))
   ;; (defhydra hydra-emacs (:color blue :hint nil))
   )
+
+;; Framework for fast, minimalistic searching
+;; It appers to be more simple and faster than helm
+;; helm-projectile can be unusable with large-projects, unlike ivy
+(req-package ivy
+  :hook
+  (cemacs-init-setup . ivy-mode)
+  :bind
+  (:map
+   cemacs-query-prefix-map
+   ("s" .       swiper)
+   :map ivy-minibuffer-map
+   ;; Make ivy use tab for candidate insertion
+   ("TAB" .     ivy-insert-current)
+   ("<tab>" .   ivy-insert-current)
+   )
+  :config
+  ;; Increase minimum lines bring the candidate to the screen center
+  (setq ivy-height 20
+        ivy-fixed-height-minibuffer t
+        ;; Disable ~ instantly sending you home
+        ivy-magic-tilde nil
+        )
+  )
+;; A minor mode to aid with json editing
+(req-package json-mode
+  :config
+  )
+
 (req-package lsp-mode
   :after
   company
@@ -1045,6 +1092,7 @@ you should be before aggressively auto-indenting")
 (req-package json-mode
   ;; A minor mode to aid with json editing
   )
+
 (req-package omnisharp
   ;; :hook
   ;; (csharp-mode . omnisharp-mode)
