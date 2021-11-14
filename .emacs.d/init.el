@@ -716,7 +716,8 @@ you should be before aggressively auto-indenting")
   (("C-a" . crux-move-beginning-of-line)
    ;; ("C-j" . crux-top-join-line)
    ("C-c C-o" . crux-swap-windows)
-   ("C-o" . crux-smart-open-line-above))
+   ;; ("C-o" . crux-smart-open-line-above)
+   )
   :config
   ;; Fix crux not honouring visual lines
   (setq crux-move-visually t)
