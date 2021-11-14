@@ -69,7 +69,7 @@ This is a hack responsible for the coloured checkbox lines in
 org-mode,  
 which is largely based on these posts  
 - [Fontify done checkbox items in org-mode](https://fuco1.github.io/2017-05-25-Fontify-done-checkbox-items-in-org-mode.html)  
--[Change color of org-mode checkboxes - Emacs Stack Exchange](https://emacs.stackexchange.com/questions/45291/change-color-of-org-mode-checkboxes)  
+- [Change color of org-mode checkboxes - Emacs Stack Exchange](https://emacs.stackexchange.com/questions/45291/change-color-of-org-mode-checkboxes)  
 
 A simple way of checking if an org heading under the point is folded
 [org-folded-p by dan](https://sourcehut.org/consultancy/)
