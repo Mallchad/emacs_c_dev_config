@@ -1154,6 +1154,11 @@ you should be before aggressively auto-indenting")
   (:map projectile-mode-map
         (("C-x p" . projectile-command-map)))
   :config
+
+  ;; Variables
+  (setq projectile-enable-caching t
+        )
+
   (defvar cemacs-projectile-project-functions
     '(())
     )
