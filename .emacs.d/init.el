@@ -757,6 +757,8 @@ you should be before aggressively auto-indenting")
                           (setq cmd (car attr))))
                    (and cmd (string-match-p "[Ee]macs" cmd) owner))))
         owner)))
+  ;; Shotgun advice fix for preventing killing emacs likely break desktop-mode
+  (remove-hook 'kill-emacs-query-functions 'desktop-kill)
   ;; Ensure that dead system processes don't own it.
   (advice-add #'desktop-owner :around #'cemacs-desktop-owner-advice)
   )
