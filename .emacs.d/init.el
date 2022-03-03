@@ -49,7 +49,11 @@
                 )
   (setq tab-width 4
         c-electric-flag nil     ; Disable problematic electric
-        ))
+        )
+  ;; Expand function body when using newline inside parentheses
+  ;; Element 't' signifies the global hook shall be run as well
+  (setq-local post-self-insert-hook '(t electric-pair-open-newline-between-pairs-psif))
+  )
 (add-hook 'c-mode-common-hook 'cemacs-cc-mode)
 (defun cemacs-cpp-mode()
   "Hook function for `c++-mode'."
@@ -58,7 +62,12 @@
                 '((c-basic-offset . 4)
                   (c-comment-only-line-offset . 0)
                   (c-offsets-alist
+
+                   ;; Correct Unreal prefix-macros
+                   (func-decl-cont)
+
                    (statement-block-intro . +)
+                   (substatement . 0)
                    (substatement-open . 0)
                    (substatement-label . 0)
                    (label . 0)
@@ -132,10 +141,10 @@ configuration see `cemacs-init-local-frame'"
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
-                 '(font . "MesloLGS NF-12:style=Regular")))
+                 '(font . "MesloLGS NF-11:style=Regular")))
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
-                 '(font . "Consolas-12:style=Regular")))
+                 '(font . "Consolas-11:style=Regular")))
   ;;Enable built-in modes
   (global-hl-line-mode)
   ;; Disable Window Decorations
