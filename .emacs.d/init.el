@@ -198,7 +198,8 @@ configuration see `cemacs-init-local-frame'"
   (global-subword-mode 1)               ; treat delimited words seperately
   (global-whitespace-mode 1)            ; visualize tab characters
   ;; Incurs a large performance penalty on long lines
-;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
+  ;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
+  (recentf-mode 1)                      ; Save recently visited files
   ;; Backup
   (setq make-backup-files nil
         backup-by-copying t
@@ -643,6 +644,7 @@ you should be before aggressively auto-indenting")
      ("M-{" .           insert-pair)
 
      ;; Other
+     ("C-q" .           cemacs-query-prefix-map)
      ("C-x r" .         cemacs-revert-buffer)
      ("C-x k" .         cemacs-buffer-kill-volatile)
      ("M-o" .           ff-find-other-file)
@@ -869,8 +871,6 @@ you should be before aggressively auto-indenting")
   :config
   )
 (req-package helm
-  :after
-  (hydra)
   :require
   helm-flycheck
   helm-projectile
@@ -897,7 +897,6 @@ you should be before aggressively auto-indenting")
    cemacs-helm-map
    ("M-x" .     helm-M-x)
    ;; ("C-x b" . helm-buffers-list)
-   ("C-q" .     cemacs-query-prefix-map)
 
    :map cemacs-query-prefix-map
    ("C-q" .     quoted-insert)          ; Keep replaced binding easily availiable
@@ -1552,13 +1551,13 @@ For example
         which-key-sort-order 'which-key-description-order
         )
   )
-(req-package yasnippet
-  :require
-  auto-yasnippet
-  )
-(req-package auto-yasnippet
-  :config
-  )
+;; (req-package yasnippet
+;;   :require
+;;   auto-yasnippet
+;;   )
+;; (req-package auto-yasnippet
+;;   :config
+;;   )
 (req-package zoom
   ;; A window rebalancing minor mode
   :config

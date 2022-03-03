@@ -282,6 +282,7 @@ This command is a reverse of `cemacs-delete-word'"
   )
 (defun cemacs-open-files-in-directory (directory-path)
   "Opens all files in a DIRECTORY-PATH in offscreen buffers."
+  (interactive "D")
   (if (file-directory-p directory-path)
       (cemacs-open-files-background
        (directory-files directory-path t)
