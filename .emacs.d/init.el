@@ -1514,13 +1514,13 @@ For example
         which-key-sort-order 'which-key-description-order
         )
   )
-(req-package yasnippet
-  :require
-  auto-yasnippet
-  )
-(req-package auto-yasnippet
-  :config
-  )
+;; (req-package yasnippet
+;;   :require
+;;   auto-yasnippet
+;;   )
+;; (req-package auto-yasnippet
+;;   :config
+;;   )
 (req-package zoom
   ;; A window rebalancing minor mode
   :config
