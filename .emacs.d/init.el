@@ -626,6 +626,7 @@ you should be before aggressively auto-indenting")
      ("M-{" .           insert-pair)
 
      ;; Other
+     ("C-q" .           cemacs-query-prefix-map)
      ("C-x r" .         cemacs-revert-buffer)
      ("C-x k" .         cemacs-buffer-kill-volatile)
      ("M-o" .           ff-find-other-file)
@@ -848,8 +849,6 @@ you should be before aggressively auto-indenting")
   :config
   )
 (req-package helm
-  :after
-  (hydra)
   :require
   helm-flycheck
   helm-projectile
@@ -876,7 +875,6 @@ you should be before aggressively auto-indenting")
    cemacs-helm-map
    ("M-x" .     helm-M-x)
    ;; ("C-x b" . helm-buffers-list)
-   ("C-q" .     cemacs-query-prefix-map)
 
    :map cemacs-query-prefix-map
    ("C-q" .     quoted-insert)          ; Keep replaced binding easily availiable
