@@ -189,6 +189,7 @@ configuration see `cemacs-init-local-frame'"
   (global-subword-mode 1)               ; treat delimited words seperately
   (global-whitespace-mode 1)            ; visualize tab characters
   (global-visual-line-mode 1)           ; make some commands to operate on visual lines
+  (recentf-mode 1)                      ; Save recently visited files
   ;; Backup
   (setq make-backup-files nil
         backup-by-copying t
