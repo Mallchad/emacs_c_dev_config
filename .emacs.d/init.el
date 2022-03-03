@@ -1287,6 +1287,14 @@ For example
   (("C-x M-a" . restart-emacs))
   :config
   )
+(req-package rtags-xref
+  :hook
+  (cemacs-init . (rtags-xref-enable))
+  :config
+  )
+(req-package rtags
+  :config
+  )
 (req-package smartparens
   :after aggressive-indent
   :commands
