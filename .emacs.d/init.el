@@ -428,7 +428,15 @@ top or bottom of the file."
               (when (eq state 'children)
                 (setq org-cycle-subtree-status 'subtree))))
   )
+
 ;; External Packages
+(req-package ansi-color
+  :config
+  (defun cemacs-colorize-compilation-buffer ()
+    (ansi-color-apply-on-region compilation-filter-start (point))
+    )
+  (add-hook 'compilation-filter-hook 'cemacs-colorize-compilation-buffer)
+  )
 (req-package async
   :config
   (async-bytecomp-package-mode t)
@@ -668,7 +676,7 @@ you should be before aggressively auto-indenting")
 (req-package bury-successful-compilation
   :config
   (bury-successful-compilation 1)
-)
+  )
 ;;; A robust, prettified calender framework
 (req-package calfw
   :require calfw-org
