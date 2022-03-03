@@ -781,8 +781,12 @@ you should be before aggressively auto-indenting")
   (advice-add #'desktop-owner :around #'cemacs-desktop-owner-advice)
   )
 
+;; desktop-plus
+;; Name based desktop saving
 (req-package desktop+
-
+  :config
+  (cemacs-defdir 'c-desktop-plus-base-dir (concat cemacs-var-dir "desktop-plus")
+                 'desktop+-base-dir :local-only)
   )
 
 (req-package fireplace
