@@ -1488,6 +1488,13 @@ For example
 (req-package swiper
   :config
   )
+
+;; Machine learning powered completion framework, free tier
+(req-package company-tabnine
+:config
+;; (add-to-list 'company-backends 'company-tabnine)
+)
+
 (req-package undo-tree
   :bind
   (("C-z" . undo-tree-undo)
