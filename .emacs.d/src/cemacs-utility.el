@@ -41,6 +41,9 @@ want to change this variable.
 Due to the nature of when this file is loaded, it is limited to configuration
 is safe to be applied after everything else has laoded."
   )
+(defvar cemacs-assets-directory (concat user-emacs-directory "assets/")
+  "A directory for persistent binary files and stored data for various purpsoes."
+  )
 ;; Custom Functions
 (defun cemacs-add-multiple (list-symbol &rest entries)
   "Add each item from ENTRIES to LIST-SYMBOL, skipping duplicates.

@@ -14,8 +14,11 @@
                                 ("UnrealEngine" "unreal")
                                 ))
 (cemacs-add-multiple-splicing 'cemacs-projectile-project-locals
-                              '()
-                              )
+                              '(("UnrealEngine" .
+                                 (indent-tabs-mode t))
+                                ("UnrealEngine4" .
+                                 (indent-tabs-mode t)
+                                 )))
 
 (provide 'personal.el)
 ;;; cemacs-utility.el ends here
