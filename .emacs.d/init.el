@@ -267,6 +267,12 @@ configuration see `cemacs-init-local-frame'"
         ("RET" .            nil))
   :config
   )
+
+;; Some nice clever behaviour and helpers for programming pair management
+(req-package elec-pair
+  :demand t
+)
+
 (req-package org
   :require
   ;; A cool new package which inserts links
