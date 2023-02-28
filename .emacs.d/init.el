@@ -1063,7 +1063,10 @@ you should be before aggressively auto-indenting")
         lsp-enable-on-type-formatting nil
         ;; Allow indexing in the background
         lsp-clients-clangd-args '("--header-insertion-decorators=0" "--background-index")
-        )
+        ;; Disable warning of too many files being watched
+        ;; TODO Make it look for projectile file
+        lsp-file-watch-threshold nil
+)
   (setq
    ;; Mode the doc position to the top of the frame
    lsp-ui-doc-position 'top
