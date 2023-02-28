@@ -1313,6 +1313,7 @@ For example
    sp-kill-region)
   :hook
   (cemacs-init-setup . smartparens-global-mode)
+  (smartparens-mode . cemacs-smartparens-mode)
   ;; (prog-mode . cemacs-smartparens-enforcer-mode)
   ;; Fix for *scratch* loading before this is hooked
   ;; (lisp-interaction-mode . cemacs-smartparens-enforcer-mode)
@@ -1357,10 +1358,16 @@ For example
   ;; Variables
   (setq-default sp-autoinsert-pair nil          ; More trouble than it's worth
                 sp-autoskip-closing-pair nil
-                ;; Don't insert escape characters
+                ;; Don't insert escape charsacters
                 sp-escape-quotes-after-insert nil
                 sp-escape-wrapped-region nil
                 )
+
+  ;; Mode Hook
+  (defun cemacs-smartparens-mode ()
+    ;; Disable automatic escape char insertion
+    (setq-local sp-escape-char "")
+    )
 
   ;; smartparens Custom Adapted Logic
   (defun c-sp-natural-delete-word (&optional arg)
