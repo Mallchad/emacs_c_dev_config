@@ -280,7 +280,7 @@ This command is a reverse of `cemacs-delete-word'"
         (ignore-errors (find-file-noselect x-file))
       ))
   )
-(defun cemacs-open-files-in-directory (directory-path)
+(defun cemacs-find-files-open-all (directory-path)
   "Opens all files in a DIRECTORY-PATH in offscreen buffers."
   (interactive "D")
   (if (file-directory-p directory-path)
@@ -288,6 +288,8 @@ This command is a reverse of `cemacs-delete-word'"
        (directory-files directory-path t)
        ))
   )
+(defalias 'cemacs-open-files-in-directory 'cemacs-find-files-open-all
+  "An alias for the original name after it was changed to mesh better with emacs-isms")
 (defun cemacs-defdir (var-name new-dir &optional associated-var local-only)
   "Define VAR-NAME equal to NEW-DIR a path which is then automatically created.
 
