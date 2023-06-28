@@ -200,10 +200,19 @@ configuration see `cemacs-init-local-frame'"
   ;; Incurs a large performance penalty on long lines
   ;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
   (recentf-mode 1)                      ; Save recently visited files
+
   ;; Backup
   (setq make-backup-files nil
         backup-by-copying t
         auto-save-default nil)
+
+  ;; Move file locks elsewhere to prevent polluting directories with danglng locks
+  (setq create-lockfiles t)
+  (WHEN_LINUX (setq lock-file-name-transforms
+            '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t))))
+  (WHEN_WINDOWS (setq lock-file-name-transforms
+      '(("\\`/.*/\\([^/]+\\)\\'" "~/.emacs.d/var/\\1" t))))
+
   (setq-default fill-column 80)         ; Change where auto-line wrap fill modes trigger
   ;; Save recentf on every file open
   (add-hook 'find-file-hook 'recentf-save-list)
