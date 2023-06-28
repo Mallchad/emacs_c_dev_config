@@ -1122,6 +1122,8 @@ you should be before aggressively auto-indenting")
   :hook
   (lua-mode . lsp)
   :config
+  (if (file-exists-p "/usr/bin/lua-language-server")
+      (setq lsp-clients-lua-language-server-bin "/usr/bin/lua-language-server"))
   )
 (req-package multiple-cursors
   :after hydra
