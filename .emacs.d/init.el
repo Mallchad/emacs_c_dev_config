@@ -118,10 +118,6 @@
   "A normal hook that runs at the end of init setup."
   )
 ;; Setup Functions
-;; TODO this *supposed* to clean up deprecated files and put them in a trash
-;; folder when the config fire replaces it with new ones
-;; Although some particular folders like recentf and custom might benefit from
-;; adopting the files instead of cleaning them
 (defun cemacs-init-local-frame(frame)
   "Set the frame paramaters for FRAME."
   ;; (split-window-horizontally)
@@ -138,6 +134,7 @@
 Note this assumes that a frame does not already exist, for frame
 configuration see `cemacs-init-local-frame'"
   (interactive)
+
   ;;Set Fonts
   (WITH_SYSTEM gnu/linux
     (add-to-list 'default-frame-alist
@@ -145,10 +142,12 @@ configuration see `cemacs-init-local-frame'"
   (WITH_SYSTEM windows-nt
     (add-to-list 'default-frame-alist
                  '(font . "Consolas-11:style=Regular")))
+
   ;;Enable built-in modes
   (global-hl-line-mode)
+
   ;; Disable Window Decorations
-  (if (display-graphic-p)  ; Resolve inital frame configuration
+  (if (display-graphic-p)               ; Resolve inital frame configuration
       (cemacs-init-local-frame (selected-frame)))
   (setq-default mode-line-format nil
                 vertical-scroll-bar nil
@@ -157,6 +156,7 @@ configuration see `cemacs-init-local-frame'"
                 menu-bar-mode nil
                 )
   (fringe-mode (cons 0 0))
+
   ;; Visualize Whitespace
   (setq whitespace-style '(trailing tabs tab-mark))
   )
@@ -169,8 +169,9 @@ configuration see `cemacs-init-local-frame'"
    indent-tabs-mode nil
    tab-width 4
    c-basic-offset 4
-   c-electric-flag nil         ; Disable useless and problematic electric
-   parens-require-spaces nil   ; Don't insert space before parenthesis
+   c-electric-flag nil                  ; Disable useless and problematic electric
+   parens-require-spaces nil            ; Don't insert space before parenthesis
+   fill-column 80                       ; Change where auto-line wrap fill modes trigger
    )
   (setq
    ;; Performance improvements
@@ -183,8 +184,11 @@ configuration see `cemacs-init-local-frame'"
    transient-mark-mode nil
    global-hl-line-mode t
 
-   ;; Misc Config
-   kill-whole-line nil                   ; don't make 'kill-line' remove empty lines
+   ;; Backup
+   make-backup-files nil
+   backup-by-copying t
+   auto-save-default nil
+
    ;; Execute the 'compile-command' for 'project-compile by default
    ;; Can set a new command using the universal argument
    compilation-read-command nil
@@ -192,38 +196,43 @@ configuration see `cemacs-init-local-frame'"
    desktop-dirname cemacs-var-dir       ; Set a session save direction
    desktop-path `(,cemacs-var-dir ,user-emacs-directory "~")
    text-scale-mode-step 1.1             ; Allow more graduated  text scaling
+
+   ;; Move file locks elsewhere to prevent polluting directories with danglng locks
+   create-lockfiles t
+
+   ;; Misc Config
+   kill-whole-line nil                   ; don't make 'kill-line' remove empty lines
+   create-lockfiles t                    ; mak sure lockfiles are enabled in newer versions
    )
-  (blink-cursor-mode -1)
+
+  ;; Move file locks elsewhere to prevent polluting directories with danglng locks
+  (WHEN_LINUX (setq lock-file-name-transforms
+                    '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t))))
+  (WHEN_WINDOWS (setq lock-file-name-transforms
+                      '(("\\`/.*/\\([^/]+\\)\\'" "~/.emacs.d/var/\\1" t))))
+
+  ;; Misc Config
+  (blink-cursor-mode -1)                ; don't
   (delete-selection-mode 1)             ; delete activated region on typing
   (global-subword-mode 1)               ; treat delimited words seperately
   (global-whitespace-mode 1)            ; visualize tab characters
-  ;; Incurs a large performance penalty on long lines
+  ;; Disabled visual-line because of a large performance penalty on long lines
   ;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
   (recentf-mode 1)                      ; Save recently visited files
 
-  ;; Backup
-  (setq make-backup-files nil
-        backup-by-copying t
-        auto-save-default nil)
-
-  ;; Move file locks elsewhere to prevent polluting directories with danglng locks
-  (setq create-lockfiles t)
-  (WHEN_LINUX (setq lock-file-name-transforms
-            '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t))))
-  (WHEN_WINDOWS (setq lock-file-name-transforms
-      '(("\\`/.*/\\([^/]+\\)\\'" "~/.emacs.d/var/\\1" t))))
-
-  (setq-default fill-column 80)         ; Change where auto-line wrap fill modes trigger
   ;; Save recentf on every file open
   (add-hook 'find-file-hook 'recentf-save-list)
-  (fset 'yes-or-no-p 'y-or-n-p )    ; Make all yes or no prompts consistent
-  (fset 'overwrite-mode 'ignore)    ; Disable pain in the arse insert mode
+  (fset 'yes-or-no-p 'y-or-n-p )        ; Make all yes or no prompts consistent
+  (fset 'overwrite-mode 'ignore)        ; Disable pain in the arse insert mode
+
   ;; Re-enable disabled functions
   (put 'downcase-region 'disabled nil)
   (put 'upcase-region 'disabled nil)
+
   ;; Run Functions
   (cemacs-configure-session-decorations)
   (ignore-errors (cemacs-bind-vanilla-keys)) ; Protected from req-package error
+
   ;; Defer init setup hooks
   (run-at-time "1sec" nil 'run-hooks 'cemacs-init-setup-hook)
   (load cemacs-personal-config-file)
@@ -316,8 +325,7 @@ configuration see `cemacs-init-local-frame'"
   (defun cemacs-org-tagwise-comp-func (taglist-left taglist-right)
     "Decide which tag should go above, biasing ARCHIVE tags to the bottom."
     (interactive)
-    (let ((less-than 'no-match)
-          (comp-left (list ""))
+    (let ((comp-left (list ""))
           (comp-right (list ""))
           (less-than 'no-priority)
           (comp-left-tag-string "")
@@ -368,9 +376,9 @@ configuration see `cemacs-init-local-frame'"
   (defun cemacs-org-sort-by-tag (&optional reverse)
     "Sort top level org headings by tag alphanumerically, grouping archive tags.
 
-With REVERSE non-nil or with a prefix argument, reverse the sorting order.
-This function makes a point of forcing the `org-archive-tag' towards the extreme
-top or bottom of the file."
+    With REVERSE non-nil or with a prefix argument, reverse the sorting order.
+    This function makes a point of forcing the `org-archive-tag' towards the extreme
+    top or bottom of the file."
     (interactive "P")
     ;; Can't function by original point, get line and match it again
     (let ((position-along-original-line (- (point) (line-beginning-position)))
@@ -470,7 +478,7 @@ top or bottom of the file."
   :config
   (defvar c-aggressive-indent-line-end-prevention-distance 3
     "The distance in characters away from the end of the line
-you should be before aggressively auto-indenting")
+  you should be before aggressively auto-indenting")
   (defun c-aggressive-indent-near-line-end ()
     (if (< (- (line-end-position) (point))
            c-aggressive-indent-line-end-prevention-distance)

@@ -295,7 +295,12 @@ If there is a direct, existing variable which the path is an intermediate for
 than then it can be spceified using ASSOCIATED-VAR.
 This also hooks into a directory creation and destruction list, it can be
 specified whether or not this directory contains LOCAL-ONLY files that aren't
-too important if they are lost between computers when LOCAL-ONLY is non-nil"
+too important if they are lost between computers when LOCAL-ONLY is non-nil
+
+TODO this *supposed* to clean up deprecated files and put them in a trash
+folder when the config fire replaces it with new ones
+Although some particular folders like recentf and custom might benefit from
+adopting the files instead of cleaning them"
   (interactive)
   (push new-dir cemacs-custom-directory-list)
   (set var-name new-dir)
@@ -316,7 +321,12 @@ If there is a direct, existing variable which the path is an intermediate for
 than then it can be spceified using ASSOCIATED-VAR.
 This also hooks into a directory creation and destruction list, it can be
 specified whether or not this directory contains LOCAL-ONLY files that aren't
-too important if they are lost between computers when LOCAL-ONLY is non-nil"
+too important if they are lost between computers when LOCAL-ONLY is non-nil
+
+TODO this *supposed* to clean up deprecated files and put them in a trash
+folder when the config fire replaces it with new ones
+Although some particular folders like recentf and custom might benefit from
+adopting the files instead of cleaning them"
   (interactive)
   (set var-name new-dir)
   (push new-dir cemacs-custom-directory-list)
