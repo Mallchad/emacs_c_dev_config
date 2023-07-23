@@ -79,6 +79,7 @@
                 :use-style)
   )
 (add-hook 'c++-mode-hook 'cemacs-cpp-mode)
+(add-hook 'c-mode-hook 'cemacs-cpp-mode)
 (defun cemacs-c-mode()
   "Hook function for `c-mode'."
   (interactive)
