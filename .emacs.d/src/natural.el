@@ -32,23 +32,32 @@
 ;; So the behaviour should lean towards indenting with newlines.
 
 ;; Note, currently this file depends on helper functions defined in
-;; cemacs-utility,
+;; natural-utility,
 ;; however, this might change in the future.
 
 ;;; Code:
-
+(defmacro natural-excursion (&rest form)
+  "Do a `save-excursion' and return the point."
+  `(let* ((original-point (make-symbol "original-point"))
+          (excursion-point (make-symbol "excursion-point")))
+     (setq original-point (point))
+     ,@form
+     (setq excursion-point (point))
+     (goto-char original-point)
+     excursion-point)
+  )
 (defun natural-delete-whitespace ()
   "An alternative to `delete-whitespace-horizontally' which traverses lines."
   (interactive)
-  (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
-        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines))))
+  (let ((whitespace-start (natural-excursion (natural-backward-whitespace :cross-lines)))
+        (whitespace-end (natural-excursion (natural-forward-whitespace :cross-lines))))
     (delete-region whitespace-start whitespace-end))
   )
 (defun natural-one-space ()
   "An alternative to `just-one-space' which traverses lines."
   (interactive)
-  (let ((whitespace-start (cemacs-excursion (cemacs-backward-whitespace :cross-lines)))
-        (whitespace-end (cemacs-excursion (cemacs-forward-whitespace :cross-lines))))
+  (let ((whitespace-start (natural-excursion (natural-backward-whitespace :cross-lines)))
+        (whitespace-end (natural-excursion (natural-forward-whitespace :cross-lines))))
     (delete-region whitespace-start whitespace-end)
     (insert-char ?\s))
   )
@@ -81,7 +90,7 @@ This fixes that problem and visits the beginning of the visual line first."
         ;; First significant character of the true line
         (logical-line-beginning
          (save-excursion (beginning-of-line)
-                         (cemacs-forward-whitespace)
+                         (natural-forward-whitespace)
                          (point)))
         (true-line-beginning (line-beginning-position))
         )
@@ -96,7 +105,7 @@ This fixes that problem and visits the beginning of the visual line first."
            (goto-char logical-line-beginning)
            )
           (:default (goto-char visual-line-beginning)
-                    (cemacs-forward-whitespace))
+                    (natural-forward-whitespace))
           ))
   )
 (defun natural-end-of-line ()
@@ -127,7 +136,7 @@ pressing twice will always ensure you end up at the end of the real line."
           (:default (goto-char visual-line-end))
           ))
   )
-(defun cemacs-forward-whitespace (&optional traverse-newlines)
+(defun natural-forward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
 Each such block may be a single newline, or a sequence of
 consecutive space and/or tab characters.
@@ -138,7 +147,8 @@ If TRAVERSE-NEWLINES is non-nil, allow travelling to a new line."
       (skip-chars-forward " \t\n")
     (skip-chars-forward " \t"))
   )
-(defun cemacs-backward-whitespace (&optional traverse-newlines)
+(define-obsolete-function-alias 'cemacs-forward-whitespace 'natural-forward-whitespace "cemacs naming culling")
+(defun natural-backward-whitespace (&optional traverse-newlines)
   "Move point backwards to the end of the preceding whitespace block.
 Each such block may be a single newline, or a sequence of
 consecutive space and/or tab characters.
@@ -149,6 +159,7 @@ If TRAVERSE-NEWLINES is non-nil, allow travelling to an new line."
       (skip-chars-backward " \t\n")
     (skip-chars-backward " \t"))
   )
+(define-obsolete-function-alias 'cemacs-backward-whitespace 'natural-backward-whitespace "cemacs name culling")
 (defun slay-function ()
   "Kill the function surrounding the point.
 Emacs' built in 'mark-defun' is used so that is what determines what is
@@ -188,10 +199,10 @@ kill ring."
               (string-match "[[:blank:]]" (string (char-after (+ (point) 1)))))
          ))
     (cond ((= (line-end-position) (point))
-           (cemacs-forward-whitespace :traverse-newlines)
+           (natural-forward-whitespace :traverse-newlines)
            )
           ((or following-two-chars-blank (= ?\t (following-char)))
-           (cemacs-forward-whitespace)
+           (natural-forward-whitespace)
            )
           ;; Normal backward word
           (:default (forward-word 1))
@@ -235,12 +246,12 @@ lines."
         )
     ;; Delete whitespace hungrily if at line beginning across lines
     (cond ((= (line-beginning-position) (point))
-           (cemacs-backward-whitespace :traverse-newlines)
+           (natural-backward-whitespace :traverse-newlines)
            )
           ;; Previous two characters are whitespace/blank
           ((or previous-two-chars-blank (= ?\t (preceding-char)))
            ;; traverse all whitespace upto line beginning
-           (cemacs-backward-whitespace)
+           (natural-backward-whitespace)
            )
           ;; Normal backward word
           (:default
@@ -321,16 +332,16 @@ If the point is in a line of text, it will ignore
 `indent-tabs-mode' and indent using text, correcting any previous
 in-line indentaiton as it goes."
   (interactive)
-  (cemacs-forward-whitespace)
+  (natural-forward-whitespace)
   (let* ((last-tab-stop
           (or (car (last (indent-accumulate-tab-stops
                           (current-column))))
               0))
          (next-tab-stop (indent-next-tab-stop (current-column)))
          (last-stop-pos (+ (line-beginning-position) last-tab-stop))
-         (whitespace-left-extent (cemacs-excursion (cemacs-backward-whitespace)))
+         (whitespace-left-extent (natural-excursion (natural-backward-whitespace)))
          (last-stop-contiguous-whitespace (> last-stop-pos whitespace-left-extent))
-         (line-first-char-pos (cemacs-excursion (beginning-of-line-text)))
+         (line-first-char-pos (natural-excursion (beginning-of-line-text)))
          (text-before-point (< line-first-char-pos (point)))
          (indent-tabs-mode indent-tabs-mode))
     ;; Reset whitespace
