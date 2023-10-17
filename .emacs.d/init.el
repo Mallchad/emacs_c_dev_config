@@ -52,7 +52,8 @@
         )
   ;; Expand function body when using newline inside parentheses
   ;; Element 't' signifies the global hook shall be run as well
-  (setq-local post-self-insert-hook '(t electric-pair-open-newline-between-pairs-psif))
+  ;; NOTE this wasn't as useful as I thought it would be and only really works well when the pair is already indented. and feels weird. and manually invoking indent or relying on aggressive-indent seems more useful. anyway.
+  ;; (setq-local post-self-insert-hook '(t electric-pair-open-newline-between-pairs-psif))
   )
 (add-hook 'c-mode-common-hook 'cemacs-cc-mode)
 (defun cemacs-cpp-mode()
@@ -220,6 +221,8 @@ configuration see `cemacs-init-local-frame'"
   ;; Disabled visual-line because of a large performance penalty on long lines
   ;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
   (recentf-mode 1)                      ; Save recently visited files
+
+  (fset 'electric-indent-post-self-insert-function 'ignore)
 
   ;; Save recentf on every file open
   (add-hook 'find-file-hook 'recentf-save-list)
