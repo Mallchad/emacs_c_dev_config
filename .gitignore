@@ -24,3 +24,10 @@ This source is provided with no limitations or warrenty whatsoever.
 # Documentation
 !doc/
 !doc/plan.org
+
+# Blacklist
+*.elc
+*~
+~*
+*#
+#*
