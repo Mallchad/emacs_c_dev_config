@@ -1220,6 +1220,11 @@ The table is not reset, so the values are appended to the table."
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   )
+;; Personal knowledge-base extensions for org-mode
+(req-package org-roam
+  )
+(req-package org-roam-ui
+  )
 (req-package org-super-agenda
   :config
   (org-super-agenda-mode 1)
