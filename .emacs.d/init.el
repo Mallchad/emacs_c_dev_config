@@ -607,7 +607,6 @@ configuration see `cemacs-init-local-frame'"
 (req-package beacon
   :hook
   (cemacs-init-setup . beacon-mode)
-  (beacon-before-blink . cemacs-beacon-truncate-to-line)
   :config
   (setq cemacs-beacon-size 40
         cemacs-beacon-size-padding 10
@@ -617,23 +616,78 @@ configuration see `cemacs-init-local-frame'"
         beacon-blink-when-point-moves-horizontally 20
         ;; Don't push the mark when the cursor moves a long distance
         beacon-push-mark nil
+        beacon-visual-size 40
+        beacon-size-padding 10
+        beacon-visual-mode t
+
         )
-  ;; FIX: A placeholder fix to prevent beacon from pushng the text around near
-  ;; the end of lines
-  (defun cemacs-beacon-truncate-to-line ()
-    (let* ((point-along-line (- (point) (line-beginning-position)))
+  (defun beacon--int-range (a b)
+    "Return a list of integers between A inclusive and B exclusive.
+Only returns `beacon-size' elements, optionally truncated to the visual line with `beacon-visual-mode'."
+    (setq beacon-visual-size beacon-size)
+    (let* ((d (/ (- b a) beacon-visual-size))
+           (out (list a))
+           (point-along-line (- (point) (save-excursion (beginning-of-visual-line) (point))))
            (buffer-width (window-width))
-           (point-window-end-distance (abs (- buffer-width point-along-line)))
-           (end-distance-padded (- point-window-end-distance
-                                   cemacs-beacon-size-padding)))
-      (setq beacon-size end-distance-padded)
-      (when (> end-distance-padded cemacs-beacon-size)
-        (setq beacon-size cemacs-beacon-size))
-      (when (< end-distance-padded 0)
-        ;; Oops, just set it to 0 and move on
-        (setq beacon-size 0)
+           (point-window-end-distance (- buffer-width point-along-line)))
+      (setq beacon-visual-size (- (abs point-window-end-distance)
+                                  beacon-size-padding))
+      (when (and (> beacon-visual-size beacon-size) (bound-and-true-p beacon-visual-mode))
+        (setq beacon-visual-size beacon-size))
+      (when (< beacon-visual-size 0)
+        (setq beacon-visual-size 0)
         (message "Failed to calculate a non-intrusive beacon-size, Refusing to blink"))
-      ))
+      (dotimes (_ (1- beacon-visual-size))
+        (push (+ (car out) d) out))
+      (nreverse out)))
+
+  (defun beacon--shine ()
+    "Shine a beacon at point.
+If `beacon-visual-mode' is `t' then the beacon will refuse to run over to the next line."
+    (let ((colors (beacon--color-range)))
+      (if (> beacon-visual-size 0)
+          (save-excursion
+            (while colors
+              (if (looking-at "$")
+                  (progn
+                    (beacon--after-string-overlay colors)
+                    (setq colors nil))
+                (beacon--colored-overlay (pop colors))
+                (forward-char 1)))))))
+
+  (defun beacon-blink ()
+    "Blink the beacon at the position of the cursor.
+Unlike `beacon-blink-automated', the beacon will blink
+unconditionally (even if `beacon-mode' is disabled), and this can
+be invoked as a user command or called from lisp code."
+    (interactive)
+    (beacon--vanish)
+    (run-hooks 'beacon-before-blink-hook)
+    (beacon--shine)
+    (when (timerp beacon--timer)
+      (cancel-timer beacon--timer))
+    (setq beacon--timer nil)
+    (if (> beacon-visual-size 0)
+        (setq beacon--timer
+              (run-at-time beacon-blink-delay
+                           (/ beacon-blink-duration 1.0 beacon-visual-size)
+                           #'beacon--dec))))
+
+
+  (defun beacon-blink-automated ()
+    "If appropriate, blink the beacon at the position of the cursor.
+Unlike `beacon-blink', the blinking is conditioned on a series of
+variables: `beacon-mode', `beacon-dont-blink-commands',
+`beacon-dont-blink-major-modes', and
+`beacon-dont-blink-predicates'."
+    ;; Record vars here in case something is blinking outside the
+    ;; command loop.
+    (beacon--record-vars)
+    (unless (or (not beacon-mode)
+                (run-hook-with-args-until-success 'beacon-dont-blink-predicates)
+                (seq-find #'derived-mode-p beacon-dont-blink-major-modes)
+                (memq (or this-command last-command) beacon-dont-blink-commands))
+      (beacon-blink)))
   )
 (req-package bind-key
   :config
