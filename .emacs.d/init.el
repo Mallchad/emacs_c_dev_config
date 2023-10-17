@@ -942,7 +942,8 @@ The table is not reset, so the values are appended to the table."
   :hook
   (cemacs-init-setup . cemacs-helm-mode)
   :commands
-  (helm-M-x
+  (cemacs-helm-mode
+   helm-M-x
    helm-find-files
    helm-buffers-list
    helm-execute-persistent-action
@@ -1007,7 +1008,6 @@ The table is not reset, so the values are appended to the table."
                 (setq-local mode-line-format nil))
               ))
   :config
-  (require 'helm-config)
   ;;Helm minibuffer config
   (setq helm-autoresize-mode t
         helm-display-header-line nil
