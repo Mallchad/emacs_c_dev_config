@@ -862,7 +862,8 @@ The table is not reset, so the values are appended to the table."
    ("C-x 2" . cemacs-fireplace-split-window-below))
   :config
   ;; Variable Config
-  (setq fireplace-smoke-on t)
+  (setq fireplace-smoke-on t
+        fireplace-sound-file-path (concat user-emacs-directory "assets/fireplace.mp3"))
   ;; Paramter hack to allow the fireplace to resize properly
   (defun fireplace--update-locals-vars (&optional nil-window)
     "Update `fireplace' local variables."
