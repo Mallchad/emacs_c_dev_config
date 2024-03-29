@@ -1192,8 +1192,10 @@ The table is not reset, so the values are appended to the table."
    lsp-headerline-breadcrumb-enable nil
    ;; Disable attention grabbing, screen moving, modeline signature documentation
    lsp-signature-render-documentation nil
+
    ;; Disable sideline, flycheck-inline is more readable and less intrusive
    lsp-ui-sideline-enable nil
+   lsp-ui-sideline-show-diagnostics nil
    )
   ;; Performance Tuning
   (setq
