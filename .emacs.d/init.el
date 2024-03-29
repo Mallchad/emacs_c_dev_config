@@ -1159,11 +1159,15 @@ The table is not reset, so the values are appended to the table."
   (csharp-mode . lsp)
   :bind
   (:map lsp-mode-map
-        ("M-#" . lsp-ui-doc-show)
-        ("M-o" . lsp-clangd-find-other-file)
+        ("M-#" . lsp-ui-doc-glance)
+        ;; ("M-o" . lsp-clangd-find-other-file)
 
         ;; Visual Studio Like Bindings
-        ("<f12>" . lsp-find-definition))
+        ("<f12>" . lsp-find-definition)
+        :map lsp-signature-mode-map
+        ;; Unbind lsp-signature-previous
+        ("M-p" . nil)
+        )
   :config
   ;; Fixes
   (defalias 'yas-expand-snippet 'ignore)        ; Prevent company-capf from erroring
