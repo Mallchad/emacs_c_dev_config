@@ -239,7 +239,20 @@ configuration see `cemacs-init-local-frame'"
   ;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
   (recentf-mode 1)                      ; Save recently visited files
 
-  (fset 'electric-indent-post-self-insert-function 'ignore)
+  (defvar cemacs-disabled-features '()
+    "List of features intended to be unloaded where possible,
+this of it like a blacklist. It must be written in order of
+dependency with 0 dependency things listed first or it will
+error. It is possible to force-unload each feature but it can
+break packages")
+
+  ;; Unload in reverse order
+  (cl-loop for x-feature in cemacs-disabled-features do
+           ;; Only if feature already loaded
+           (when (featurep x-feature)
+             (unload-feature x-feature))
+           )
+  ;; (fset 'electric-indent-post-self-insert-function 'ignore) ;; TODO need to steal this behaviour
 
   ;; Save recentf on every file open
   (add-hook 'find-file-hook 'recentf-save-list)
