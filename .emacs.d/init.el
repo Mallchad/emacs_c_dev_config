@@ -45,10 +45,8 @@
   "Hook function for cc derived modes."
   (interactive)
   (setq-default c-basic-offset 4
-                c-electric-flag nil
                 )
   (setq tab-width 4
-        c-electric-flag nil     ; Disable problematic electric
         )
   ;; Expand function body when using newline inside parentheses
   ;; Element 't' signifies the global hook shall be run as well
