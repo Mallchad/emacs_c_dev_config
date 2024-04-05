@@ -265,7 +265,7 @@ break packages")
 
   ;; Run Functions
   (cemacs-configure-session-decorations)
-  (ignore-errors (cemacs-bind-vanilla-keys)) ; Protected from req-package error
+
 
   ;; Defer init setup hooks
   (run-at-time "1sec" nil 'run-hooks 'cemacs-init-setup-hook)
@@ -811,6 +811,9 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      (","   .           nil)
      )
     ))
+  (ignore-errors (cemacs-bind-vanilla-keys)) ; Protected from req-package error
+  )
+
 ;;; Minor-mode which hides the compilaton buffer if successful
 (req-package bury-successful-compilation
   :config
