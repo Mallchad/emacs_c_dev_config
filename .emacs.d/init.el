@@ -36,10 +36,11 @@
 (add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 (package-initialize)
 
-;; Custom Functions
+;; Load Built-in
 (add-to-list 'load-path (concat user-emacs-directory "src"))
 (require 'cemacs-utility)
 (require 'natural)
+
 ;; Configuration
 (defun cemacs-cc-mode()
   "Hook function for cc derived modes."
@@ -160,11 +161,14 @@ configuration see `cemacs-init-local-frame'"
   ;; Visualize Whitespace
   (setq whitespace-style '(trailing tabs tab-mark))
   )
+
 (defun cemacs-init-setup()
   "Run after-initilization setup."
   (interactive)
   ;;Misc Setup
   (delete-other-windows)
+
+  ;; Per-Buffer Defaults
   (setq-default
    indent-tabs-mode nil
    tab-width 4
@@ -204,9 +208,17 @@ configuration see `cemacs-init-local-frame'"
 
    ;; Misc Config
    kill-whole-line nil                   ; don't make 'kill-line' remove empty lines
-   create-lockfiles t                    ; mak sure lockfiles are enabled in newer versions
-   )
+   create-lockfiles t                    ; make sure lockfiles are enabled in newer versions
+   y-or-n-p-use-read-key t               ; allows y-or-n-p to read even if not in the minibuffer
 
+   ;; GDB Tewaks
+   speedbar-use-images nil               ; This is buggy for some reason
+   gdb-many-windows nil                  ; prevent modifying the users layout where possible
+   gdb-delete-out-of-scope nil           ; Don't auto-delete watch expressions it wastes time
+   gdb-display-io-nopopup t              ; Don't auto-raise program output
+   gdb-use-colon-colon-notation t        ; Allows watching same-variable names with function::
+   gdb-max-children 200                  ; Don't warn about children until huge numbers
+   )
   ;; Move file locks elsewhere to prevent polluting directories with danglng locks
   (WHEN_LINUX (setq lock-file-name-transforms
                     '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t))))
@@ -243,7 +255,7 @@ configuration see `cemacs-init-local-frame'"
   )
 ;; Run early setup to prettify the session
 (defun cemacs-early-init ()
-  "An early setup function which must run be `cemacs-init-setup'."
+  "An early setup function which must run before `cemacs-init-setup'."
   (interactive)
   ;; Variables
   (setq warning-minimum-log-level :warning ; Log warnings in a volatile buffer
@@ -293,7 +305,34 @@ configuration see `cemacs-init-local-frame'"
 ;; Some nice clever behaviour and helpers for programming pair management
 (req-package elec-pair
   :demand t
-)
+  )
+
+(req-package gdb-mi
+  :config
+  ;; Fix for gdb-watch
+  ;;   (defun gud-watch (&optional arg event)
+  ;;     "Watch expression at point.
+  ;; With arg, enter name of variable to be watched in the minibuffer."
+  ;;     (interactive (list current-prefix-arg last-input-event))
+  ;;     (let ((minor-mode (buffer-local-value 'gud-minor-mode gud-comint-buffer)))
+  ;;       (if (eq minor-mode 'gdbmi)
+  ;;           (progn
+  ;;             (if event (posn-set-point (event-end event)))
+  ;;             (require 'tooltip)
+  ;;             (save-selected-window
+  ;;               (let ((expr
+  ;;                      (if arg
+  ;;                          (read-string "Watch Expression: ")
+  ;;                        (if (and transient-mark-mode mark-active)
+  ;;                            (buffer-substring (region-beginning) (region-end))
+  ;;                          (concat (if (derived-mode-p 'gdb-registers-mode) "$")
+  ;;                                  (tooltip-identifier-from-point (point)))))))
+  ;;                 (set 'gud-watch-expression expr)
+  ;;                 (set-text-properties 0 (length expr) nil expr)
+  ;;                 (gdb-input (concat "-var-create - * "  expr "")
+  ;;                            (lambda () (gdb-var-create-handler gud-watch-expression))))))
+  ;;         (message "gud-watch is a no-op in this mode."))))
+  )
 
 (req-package org
   :require
@@ -407,8 +446,7 @@ configuration see `cemacs-init-local-frame'"
     )
   (defun cemacs-org-stamp-time ()
     (interactive)
-    (call-interactively
-     (org-time-stamp cemacs-universal-argument-double 'inactive))
+    (org-time-stamp cemacs-universal-argument-double 'inactive)
     )
   (defun cemacs-org-archive-and-done ()
     "Cycle the 'TODO' state and toggle the archive tag in one function."
@@ -496,7 +534,6 @@ configuration see `cemacs-init-local-frame'"
   (cemacs-add-multiple-to-list
    'aggressive-indent-protected-commands
    'backward-delete-char
-   'c-electric-backspace
    'cemacs-delete-word
    'backward-kill-word
    'natural-delete-word
@@ -604,6 +641,7 @@ configuration see `cemacs-init-local-frame'"
                  :overwrite :perserve-time :preserve-id :preserve-permission))
     )
   )
+
 (req-package beacon
   :hook
   (cemacs-init-setup . beacon-mode)
@@ -806,9 +844,20 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
   ;; Apply company-tng patch
   (company-tng-configure-default)
   (setq company-require-match 'never
-        company-idle-delay 0.2      ;; Slow down popup so input blocking is reduced
+
+        ;; Slow down popup so input blocking is reduced
+        ;; This is tuned so it shows completion hints if and only if the user hesitates
+        company-idle-delay 0.2
+
+        ;; Backend is fast, slow redisplay to avoid double rendering everything
+        ;; and improve responsiveness
+        company-async-redisplay-delay 2
+
+        ;; vscode icons are meaningless don't bother with them
+        company-format-margin-function 'company-text-icons-margin
         )
   )
+
 (req-package crux
   :commands
   (crux-move-beginning-of-line
@@ -1282,8 +1331,10 @@ The table is not reset, so the values are appended to the table."
   )
 ;; Personal knowledge-base extensions for org-mode
 (req-package org-roam
+  ;; Unused
   )
 (req-package org-roam-ui
+  ;; Unused
   )
 (req-package org-super-agenda
   :config
@@ -1295,6 +1346,7 @@ The table is not reset, so the values are appended to the table."
   (origami-mode)
   :config
   ;; TODO(mallchad) need to setup keybinds for this package
+  ;; Mainly just origami toggle node, and open/close recursively
   )
 (req-package flycheck-projectile)
 (req-package projectile
@@ -1712,5 +1764,6 @@ For example
 ;; Order here doesn't matter
 (req-package-finish)
 (cemacs-init-setup)
+
 (provide 'init)
 ;;; init.el ends here

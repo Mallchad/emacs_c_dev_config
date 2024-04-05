@@ -65,22 +65,18 @@
   "A version of `beginning-of-line' that acknowledges significant stops.
 
 This function will move the point in the order
-- beginning of visual line
+- beginning of visual line, furthest left in the buffer following a previous long line
 - beginning of logical line, the real line, jumping to first significnat char
-- beginning of the true line
+- beginning of the true line, only if point is left of the first char on the line
 
-The behaviour for this function is borrowed concept of the package crux
-\(a Collcetion of Rediciously Useful eXtensions).
-This allowed for jumpping to the first significant character, rather than
+This allows for jumpping to the first significant character on a line, rather than
 whitespace, which was generally more useful.
-Optionally jumping to the very beginning of the line, if already on the first
+Optionally jumping to the very beginning of the line, if already on or left the first
 significant character.
 
-However, the problem with this function is it ignored visual linnes, which was
-really confusing.
-Since truncating long lines is really, really, annoying, and not a good
- alternative.
-This fixes that problem and visits the beginning of the visual line first."
+Additionally it visits the beginning of a visual line, which is a like a line broken up by either visual-line-mode or an untruncated long line
+
+"
   (interactive)
   (let ((original-point (point))
         (original-line (line-number-at-pos (point)))

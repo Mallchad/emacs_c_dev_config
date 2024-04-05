@@ -409,5 +409,15 @@ session-like modes like 'lsp-mode'"
   (interactive)
   (load cemacs-personal-config-file)
   )
+
+(defun cemacs-set (symbol value)
+  "Set value only variable is already bound
+
+This is a slightly more safe and informative abstraction on `set'"
+  (if (not (boundp symbol))
+      (error "Trying to set a value to an unbound symbol"))
+  (set symbol value)
+  )
+
 (provide 'cemacs-utility)
 ;;; cemacs-utility.el ends here

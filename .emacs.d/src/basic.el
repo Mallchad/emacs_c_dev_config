@@ -84,13 +84,14 @@
 
     "target external libraries
 - beacon
-- smooth-scroll
+- smooth-scroll (it's kind of really slow)
 - which-key
 - natural
 - bury successful compilation ;; Has kind of janky logic would need to be rewritten
 - projectile (very important)
 - visible mark
 - volatile highlight
+- good scroll mode
 
 
 Heavier packages
