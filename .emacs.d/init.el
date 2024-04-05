@@ -96,6 +96,10 @@
   (setq electric-indent-mode nil
         )
   (display-line-numbers-mode)
+  ;; Disable multi-byte characters in programming buffers, it is largely used
+  ;; for trolling and nothing productive. Programming is typically done in
+  ;; English ASCII anyway.
+  (toggle-enable-multibyte-characters -1)
   )
 (add-hook 'prog-mode-hook 'cemacs-prog-mode)
 
