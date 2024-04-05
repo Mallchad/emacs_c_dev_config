@@ -21,9 +21,6 @@
    delete-selection-mode t
    )
 
-  ;; Use noob friend editing keys, C-z, C-c, C-v
-  (cua-mode 1)
-
   ;; The mark is much more powerful when transient-mark-mode is nil
     ;; If you still need transient-mark-mode like many functions need just
     ;; press `C-SPC' twice to enable it.
@@ -54,7 +51,9 @@
 
 (defun basic-init ()
   (basic-common-init)
-
+  
+  ;; Use noob friend editing keys, C-z, C-c, C-v
+  (cua-mode 1)
 )
 
 (defun amalgamacs-init (&optional external-libraries)
