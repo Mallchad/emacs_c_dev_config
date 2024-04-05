@@ -176,8 +176,10 @@ configuration see `cemacs-init-local-frame'"
   (setq
    ;; Performance improvements
    inhibit-compacting-font-caches t
-   jit-lock-chunk-size 6000
+   jit-lock-chunk-size 6000             ; Do huge chunks at a time so you can scroll a bit
    jit-lock-defer-time 0                ; Defer fontification when pending input
+   jit-lock-stealth-time 3              ; Start fontifying the whole buffer after idle
+   redisplay-dont-pause t               ; Prioritize drawing responsible over input processing
 
    ;; Mode Setting
    indent-tabs-mode nil                 ; use spaces for indendation
