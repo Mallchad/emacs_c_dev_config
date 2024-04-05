@@ -160,7 +160,8 @@ configuration see `cemacs-init-local-frame'"
                 tool-bar-mode nil
                 menu-bar-mode nil
                 )
-  (fringe-mode (cons 0 0))
+  ;; Tiny fringes, needs to be abled for hl-todo
+  (set-fringe-style 5)
 
   ;; Visualize Whitespace
   (setq whitespace-style '(trailing tabs tab-mark))
