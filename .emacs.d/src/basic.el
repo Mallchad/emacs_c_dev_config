@@ -31,6 +31,8 @@
   (tab-bar-mode 1)
   (tool-bar-mode -1)
 
+  (pixel-scroll-mode)
+
   ;; Only really the left fringe does useful things, its just visually noisy to have both
   ;; ("left-only" . (nil . 0))
   (set-fringe-mode '(nil . 0))
