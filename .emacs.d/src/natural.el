@@ -93,10 +93,11 @@ Additionally it visits the beginning of a visual line, which is a like a line br
         (true-line-beginning (line-beginning-position))
         )
     (cond ((= original-point visual-line-beginning)
-           ;; try jumping to the true line beginning, first significant char
+           ;; try jumping to the logical line beginning, first significant char
            (goto-char logical-line-beginning)
            )
-          ((= original-point logical-line-beginning)
+          ((<= original-point logical-line-beginning)
+           ;; if point is left of logical-line-beginning jump to true line beginning
            (beginning-of-line)
            )
           ((= original-point true-line-beginning)
