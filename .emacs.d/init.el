@@ -1759,7 +1759,8 @@ For example
   :config
   (global-undo-tree-mode)
   (setq undo-tree-enable-undo-in-region nil  ; brings performance enhancement
-        undo-tree-history-directory-alist backup-directory-alist
+        undo-tree-history-dir (concat cemacs-var-dir "undo-tree-history")
+        undo-tree-history-directory-alist `(( ".*" . ,undo-tree-history-dir))
         )
   )
 (req-package visible-mark
