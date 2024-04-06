@@ -921,7 +921,7 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
    crux-swap-windows
    crux-smart-open-line-above)
   :bind
-  (("C-a" . crux-move-beginning-of-line)
+  (
    ;; ("C-j" . crux-top-join-line)
    ("C-c C-o" . crux-swap-windows)
    ;; ("C-o" . crux-smart-open-line-above)
