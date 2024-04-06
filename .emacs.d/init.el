@@ -996,37 +996,44 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
 ;; Keybind usage statistics
 ;; Helps identify cancidates keybindings for development
 (req-package keyfreq
+  :hook
+  (cemacs-init-setup . keyfreq-mode)
+  (cemacs-init-setup . keyfreq-autosave-mode)
   :config
   (cemacs-deffile 'cemacs-keyfreq-file (concat cemacs-var-dir "keyfreq")
                   'keyfreq-file :local-only)
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1)
 
   (defun keyfreq-table-load (table)
     "Load all values from the `keyfreq-file' and add them in the TABLE.
-The table is not reset, so the values are appended to the table."
+The table is not reset, so the values are appended to the table.
+
+MODIFIED (cemacs)
+This version has been patched to avoid clobbering the keyfreq file when the lisp
+ form is invalid or corrupted for some reason"
 
     ;; Does `keyfreq-file' exist?
     (if (file-exists-p keyfreq-file)
         ;; Load sexp
-        (let ((l (with-temp-buffer
-                   (insert-file-contents keyfreq-file)
-                   (goto-char (point-min))
-                   (condition-case error (read (current-buffer))
-                     ;; If reading fails just backup the file and bail
-                     (t (rename-file keyfreq-file
-                                     (concat keyfreq-file "_backup_"
-                                             (format-time-string  "%Y-%m-%d_%H%M_%S" (current-time)))))
-                     )))
+        (let
+            ((l (with-temp-buffer
+                  (insert-file-contents keyfreq-file)
+                  (goto-char (point-min))
+                  (condition-case error (read (current-buffer))
+                    ;; If reading fails just backup the file and bail
+                    (t (rename-file
+                        keyfreq-file
+                        (concat keyfreq-file "_backup_"
+                                (format-time-string  "%Y-%m-%d_%H%M_%S" (current-time))
+                                ))))))
+             )
 
-              ;; Add the values in the table
-              (while (and (listp l) l)
-                (if (listp (car l))
-                    (unless (keyfreq-match-p (cdr (caar l)))
-                      (puthash (caar l) (+ (gethash (caar l) table 0) (cdar l)) table)))
-                (setq l (cdr l)))
-              )))
-    )
+          ;; Add the values in the table
+          (while (and (listp l) l)
+            (if (listp (car l))
+                (unless (keyfreq-match-p (cdr (caar l)))
+                  (puthash (caar l) (+ (gethash (caar l) table 0) (cdar l)) table)))
+            (setq l (cdr l)))
+          )))
   )
 
 (req-package fireplace
