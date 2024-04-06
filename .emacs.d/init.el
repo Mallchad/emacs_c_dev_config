@@ -977,6 +977,13 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
                  'desktop+-base-dir :local-only)
   )
 
+(req-package diff-hl
+  :hook
+  (cemacs-init-setup . global-diff-hl-mode)
+  :commands
+  (global-diff-hl-mode)
+  )
+
 ;; (use-package explain-pause-mode
 ;;   :demand t
 ;;   :config
