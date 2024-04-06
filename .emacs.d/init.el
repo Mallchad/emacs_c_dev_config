@@ -306,6 +306,7 @@ break packages")
   )
 (require 'req-package)
 (setq use-package-always-ensure t       ; Automatically fetch packages
+      use-package-always-defer nil
       )
 ;; Built in Packages
 (req-package flyspell
