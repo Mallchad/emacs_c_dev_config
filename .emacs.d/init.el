@@ -832,9 +832,10 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
 
 ;;; Minor-mode which hides the compilaton buffer if successful
 (req-package bury-successful-compilation
+  :hook (cemacs-init-setup . bury-successful-compilation)
   :config
-  (bury-successful-compilation 1)
   )
+
 ;;; A robust, prettified calender framework
 (req-package calfw
   :require calfw-org
