@@ -369,8 +369,11 @@ break packages")
     '(("* *" "top")
       ("ARCHIVE" "bottom")
       ))
-  ;; Prevent newlines from seperating headings
-  (setq org-cycle-separator-lines 0)
+
+  (setq
+   org-cycle-separator-lines 0 ;; Prevent newlines from seperating headings
+   org-table-tab-jumps-over-hlines nil ;; Make it easier to add newlines above footer rows
+   )
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
 
   ;; Functions
@@ -517,26 +520,41 @@ break packages")
 
 ;; External Packages
 (req-package ansi-color
+  :demand t
+  ;; :disabled
   :config
-  (defun cemacs-colorize-compilation-buffer ()
-    (ansi-color-apply-on-region compilation-filter-start (point))
-    )
+  (WHEN_LINUX
+    (defun cemacs-colorize-compilation-buffer ()
+      (ansi-color-apply-on-region compilation-filter-start (point))
+      ))
   (add-hook 'compilation-filter-hook 'cemacs-colorize-compilation-buffer)
   )
 (req-package async
+  :demand t
   :config
   (async-bytecomp-package-mode t)
   )
 (req-package color-theme-sanityinc-tomorrow
+  :hook
+  (cemacs-init-setup . cemacs-sanityinc-tomorrow-init)
+  :init
+  (defadvice color-theme-sanityinc-tomorrow (after run-after-load-theme-hook activate)
+    "Run `after-load-theme-hook'."
+    (run-hooks 'cemacs-after-load-theme-hook))
+
   :config
-  (if (and (boundp 'cemacs-selected-sanityinc-theme)
-           (symbol-value 'cemacs-selected-sanityinc-theme))
-      (load-theme cemacs-selected-sanityinc-theme)
-    (load-theme 'sanityinc-tomorrow-bright t))
+  (defcustom cemacs-selected-sanityinc-theme 'sanityinc-tomorrow-bright
+    "A localized variable setting the preferred sanityinc theme")
+  (defun cemacs-sanityinc-tomorrow-init ()
+    (if (and (boundp 'cemacs-selected-sanityinc-theme)
+             (symbol-value 'cemacs-selected-sanityinc-theme))
+        (load-theme cemacs-selected-sanityinc-theme)
+      (load-theme 'sanityinc-tomorrow-bright t))
+    )
   )
 (req-package aggressive-indent
-  :hook
-  (prog-mode . aggressive-indent-mode)
+  ;; :hook
+  ;; (prog-mode . aggressive-indent-mode)
   :config
   (defvar c-aggressive-indent-line-end-prevention-distance 3
     "The distance in characters away from the end of the line
