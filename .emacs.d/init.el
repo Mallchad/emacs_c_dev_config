@@ -1093,19 +1093,47 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
     )
   (add-hook 'after-make-frame-functions 'cemacs-fireplace-visit)
   )
+
 (req-package flycheck
+  :commands
+  (flycheck-mode
+   global-flycheck-mode)
   :require flycheck-inline
   :hook
   (prog-mode . flycheck-mode)
   (flycheck-mode . flycheck-inline-mode)
   (global-flycheck-mode . global-flycheck-inline-mode)
+
   :config
-  (setq flycheck-highlighting-mode nil)
+  ;; Disable highlighting, its not consistently useful, use helm-flycheck
+  (setq flycheck-highlighting-mode nil
+        flycheck-inline-mode t
+        flycheck-indication-mode nil)
   ;; Disable annoying documentation warnings which are too strict
   ;; instead, use 'M-x checkdoc'
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   ;; Fix flycheck not being able to find files in the load path
   (setq flycheck-emacs-lisp-load-path 'inherit)
+
+  (defun flycheck-inline--contains-point (phantom &optional pt)
+  "Whether the given error overlay contains the position PT otherwise `(point)'
+
+Fixed to display the error reguardless of where you are on a line.
+It is faster and alleviates no syntax highlighting"
+  (let* ((pos (or pt (point)))
+         (err (overlay-get phantom 'error))
+         (region (flycheck-error-region-for-mode err 'line)))
+    (and phantom
+         ;; Must be one of our phantoms (probably unneeded).
+         (overlay-get phantom 'phantom)
+         ;; The underlying error must currently exist.
+         err
+         (memq err flycheck-current-errors)
+         ;; Most importantly, point must be within the error bounds.
+         region
+         (>= pos (car region))
+         (<= pos (cdr region)))))
+
   )
 (req-package free-keys
   :commands
