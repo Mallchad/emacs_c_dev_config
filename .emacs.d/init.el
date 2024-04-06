@@ -882,7 +882,12 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
         ("C-n" . nil)
         :map company-tng-map
         ("C-p" . nil)
-        ("C-n" . nil))
+        ("C-n" . nil)
+
+        ;; Allow scrolling completion with PgUp/PgDn keys (not C-v/M-v)
+        ("<next>" . company-next-page)
+        ("<prev>" . company-next-page))
+
   :init
   (defun cemacs-company-define-faces ()
     (set-face-attribute 'company-tooltip-scrollbar-thumb nil :background "Skyblue4")
