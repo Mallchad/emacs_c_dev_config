@@ -267,9 +267,15 @@ break packages")
   ;; Run Functions
   (cemacs-configure-session-decorations)
 
+  ;; Create Advice
+  (defvar cemacs-after-load-theme-hook nil
+    "Hook run after a color theme is loaded using `load-theme'.")
+  (defadvice load-theme (after run-after-load-theme-hook activate)
+    "Run `cemacs-after-load-theme-hook"
+    (run-hooks 'cemacs-after-load-theme-hook))
 
   ;; Defer init setup hooks
-  (run-at-time "1sec" nil 'run-hooks 'cemacs-init-setup-hook)
+  (run-at-time "0.1sec" nil 'run-hooks 'cemacs-init-setup-hook)
   (load cemacs-personal-config-file)
   )
 ;; Run early setup to prettify the session
@@ -606,6 +612,27 @@ break packages")
   :bind
   (("C-r" . avy-goto-char)
    ("M-z" . avy-zap-to-char-dwim))
+
+  :init
+  ;; The colours picked here are designed to maximize readabiltiy
+  ;;
+  ;; Glaring/agressive and eye-catching are avoided to prevent distraction.
+  ;; This makes dark and desaturated colours at the best fit for this, with
+  ;; the characters being bright and high contrast, since the character is the
+  ;; part meant to be read.
+  ;; The colours picked here are designed to maximize readabiltiy
+  ;;
+  ;; Glaring/agressive and eye-catching are avoided to prevent distraction.
+  ;; This makes dark and desaturated colours at the best fit for this, with
+  ;; the characters being bright and high contrast, since the character is the
+  ;; part meant to be read.
+  (defun cemacs-avy-define-faces ()
+    (set-face-attribute 'avy-lead-face nil :background '"dark red" :foreground "white")
+    (set-face-attribute 'avy-lead-face-0 nil :background "#1d1d62" :foreground "white")
+    (set-face-attribute 'avy-lead-face-2 nil :background "#2a3418" :foreground "white")
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-avy-define-faces)
+
   :config
   (setq avy-highlight-first t
         avy-background t
@@ -619,15 +646,6 @@ break packages")
                     (add-to-list 'avy-words
                                  (concat (string char-left) (string char-right))
                                  :append)))
-  ;; The colours picked here are designed to maximize readabiltiy
-  ;;
-  ;; Glaring/agressive and eye-catching are avoided to prevent distraction.
-  ;; This makes dark and desaturated colours at the best fit for this, with
-  ;; the characters being bright and high contrast, since the character is the
-  ;; part meant to be read.
-  (set-face-attribute 'avy-lead-face nil :background '"dark red" :foreground "white")
-  (set-face-attribute 'avy-lead-face-0 nil :background "#1d1d62" :foreground "white")
-  (set-face-attribute 'avy-lead-face-2 nil :background "#2a3418" :foreground "white")
   )
 (req-package backup-each-save
   :commands
@@ -868,7 +886,12 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
   (centaur-tabs-group-by-projectile-project)
   )
 (req-package company
+  :commands
+  (company-mode
+   global-company-mode
+   cemacs-company-define-faces)
   :hook
+  (cemacs-after-load-theme . cemacs-company-define-faces)
   (prog-mode . company-mode)
   :bind
   (:map company-active-map
@@ -880,6 +903,14 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
         :map company-tng-map
         ("C-p" . nil)
         ("C-n" . nil))
+  :init
+  (defun cemacs-company-define-faces ()
+    (set-face-attribute 'company-tooltip-scrollbar-thumb nil :background "Skyblue4")
+    (set-face-attribute 'company-tooltip-scrollbar-track nil :background "#2c2f33")
+    (set-face-attribute 'company-tooltip nil :foreground "#cccccc"  :background "#302a1b")
+    (set-face-attribute 'company-tooltip-common nil :foreground "#d93f3f")
+    )
+
   :config
   ;; Apply company-tng patch
   (company-tng-configure-default)
@@ -1163,13 +1194,20 @@ The table is not reset, so the values are appended to the table."
         helm-mode-line-string nil
         helm-use-frame-when-more-than-two-windows nil
         )
+
   ;; ;Helm minibuffer config
   ;;TODO(mallchad) Need to reduce the size of the space after each helm source
   ;; Don't use helm's own displaying mode line function
-  (set-face-attribute 'helm-source-header nil
-                      :height 1.1
-                      :foreground "dark cyan"
-                      )
+  (defun cemacs-helm-define-faces ()
+    (let ((comment-fg-color (face-attribute 'font-lock-comment-face :foreground))
+          (default-bg-color (face-attribute 'default :background)))
+      (set-face-attribute 'helm-source-header nil :height 1.1 :foreground "dark cyan")
+      (set-face-attribute 'helm-header nil
+                          :foreground comment-fg-color
+                          :background default-bg-color
+                          :box nil))
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-helm-define-faces)
   )
 (req-package highlight-parentheses
   :hook
@@ -1471,34 +1509,44 @@ For example
   )
 (req-package rainbow-blocks
   :commands
-  (rainbow-blocks-mode)
+  (rainbow-blocks-mode
+   cemacs-rainbow-blocks-define-faces)
+
   :config
-  (set-face-attribute 'rainbow-blocks-depth-1-face nil :foreground "white")
-  (set-face-attribute 'rainbow-blocks-depth-2-face nil :foreground "dark orange")
-  (set-face-attribute 'rainbow-blocks-depth-3-face nil :foreground "deep pink")
-  (set-face-attribute 'rainbow-blocks-depth-4-face nil :foreground "chartreuse")
-  (set-face-attribute 'rainbow-blocks-depth-5-face nil :foreground "deep sky blue")
-  (set-face-attribute 'rainbow-blocks-depth-6-face nil :foreground "yellow")
-  (set-face-attribute 'rainbow-blocks-depth-7-face nil :foreground "orchid")
-  (set-face-attribute 'rainbow-blocks-depth-8-face nil :foreground "spring green")
-  (set-face-attribute 'rainbow-blocks-depth-9-face nil :foreground "sienna1")
+  (defun cemacs-rainbow-blocks-define-faces ()
+    (set-face-attribute 'rainbow-blocks-depth-1-face nil :foreground "white")
+    (set-face-attribute 'rainbow-blocks-depth-2-face nil :foreground "dark orange")
+    (set-face-attribute 'rainbow-blocks-depth-3-face nil :foreground "deep pink")
+    (set-face-attribute 'rainbow-blocks-depth-4-face nil :foreground "chartreuse")
+    (set-face-attribute 'rainbow-blocks-depth-5-face nil :foreground "deep sky blue")
+    (set-face-attribute 'rainbow-blocks-depth-6-face nil :foreground "yellow")
+    (set-face-attribute 'rainbow-blocks-depth-7-face nil :foreground "orchid")
+    (set-face-attribute 'rainbow-blocks-depth-8-face nil :foreground "spring green")
+    (set-face-attribute 'rainbow-blocks-depth-9-face nil :foreground "sienna1")
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-rainbow-blocks-define-faces)
   )
 (req-package rainbow-delimiters
   :commands
   (rainbow-delimiters-mode)
   :hook
   (prog-mode . rainbow-delimiters-mode)
-  :config
-  (set-face-attribute 'rainbow-delimiters-depth-1-face nil :foreground "white")
-  (set-face-attribute 'rainbow-delimiters-depth-2-face nil :foreground "dark orange")
-  (set-face-attribute 'rainbow-delimiters-depth-3-face nil :foreground "deep pink")
-  (set-face-attribute 'rainbow-delimiters-depth-4-face nil :foreground "chartreuse")
-  (set-face-attribute 'rainbow-delimiters-depth-5-face nil :foreground "deep sky blue")
-  (set-face-attribute 'rainbow-delimiters-depth-6-face nil :foreground "yellow")
-  (set-face-attribute 'rainbow-delimiters-depth-7-face nil :foreground "orchid")
-  (set-face-attribute 'rainbow-delimiters-depth-8-face nil :foreground "spring green")
-  (set-face-attribute 'rainbow-delimiters-depth-9-face nil :foreground "sienna1")
+
+  :init
+  (defun cemacs-rainbow-delimiters-define-faces ()
+    (set-face-attribute 'rainbow-delimiters-depth-1-face nil :foreground "white")
+    (set-face-attribute 'rainbow-delimiters-depth-2-face nil :foreground "dark orange")
+    (set-face-attribute 'rainbow-delimiters-depth-3-face nil :foreground "deep pink")
+    (set-face-attribute 'rainbow-delimiters-depth-4-face nil :foreground "chartreuse")
+    (set-face-attribute 'rainbow-delimiters-depth-5-face nil :foreground "deep sky blue")
+    (set-face-attribute 'rainbow-delimiters-depth-6-face nil :foreground "yellow")
+    (set-face-attribute 'rainbow-delimiters-depth-7-face nil :foreground "orchid")
+    (set-face-attribute 'rainbow-delimiters-depth-8-face nil :foreground "spring green")
+    (set-face-attribute 'rainbow-delimiters-depth-9-face nil :foreground "sienna1")
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-rainbow-delimiters-define-faces)
   )
+
 (req-package rainbow-mode
   :commands
   (rainbow-mode)
@@ -1750,9 +1798,13 @@ For example
    global-visible-mark-mode)
   :hook
   (cemacs-init-setup . global-visible-mark-mode)
-  :config
-  (set-face-attribute 'visible-mark-active nil
+
+  :init
+  (defun cemacs-visible-mark-define-faces ()
+    (set-face-attribute 'visible-mark-active nil
                       :background "#006F00" :foreground "white")
+  )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-visible-mark-define-faces)
   )
 (req-package vlf
   :config
