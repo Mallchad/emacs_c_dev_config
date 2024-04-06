@@ -794,6 +794,7 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
     ;; to make unmodified distributions more accessible.
     (bind-keys
      ;; Navigation
+     ("C-a" .           natural-beginning-of-line)
      ("C-e" .           natural-end-of-line)
      ("<home>" .        natural-beginning-of-line)
      ("<end>" .         natural-end-of-line)
