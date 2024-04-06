@@ -587,7 +587,6 @@ break packages")
    'delete-char
    'backward-delete-char
    'backward-delete-char
-   'hungry-delete-forward
    'tab-to-tab-stop
    'just-one-space
    'delete-horizontal-space
@@ -1219,19 +1218,11 @@ The table is not reset, so the values are appended to the table."
         )
   )
 (req-package hl-todo
-  :config
-  (global-hl-todo-mode)
+  :demand t
+  :hook
+  (cemacs-init-setup-hook . global-hl-todo-mode)
   )
-(req-package hungry-delete
-  :config
-  ;; (global-hungry-delete-mode)
-  ;; The default hungry-delete behaviour deletes all whitespace backwards
-  ;; This is annoying since the point of using it was to rmeove extraneous
-  ;; whitespace, not to remove all of it
-  ;; The new behaviour leaves 1 space for words so its more comfortable and
-  ;; similar to other editors
-  (setq hungry-delete-join-reluctantly t)
-  )
+
 (req-package hydra
   :bind
   ;; (("C-s" . hydra-slayer/body)
@@ -1382,7 +1373,6 @@ The table is not reset, so the values are appended to the table."
                                #'natural-beginning-of-line
                                #'natural-end-of-line
                                #'crux-move-beginning-of-line
-                               #'hungry-delete-forward
                                #'indent-for-tab-command
                                #'kill-region
                                #'org-delete-char
