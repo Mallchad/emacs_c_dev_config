@@ -262,6 +262,7 @@ break packages")
   ;; Re-enable disabled functions
   (put 'downcase-region 'disabled nil)
   (put 'upcase-region 'disabled nil)
+  (put 'narrow-to-region 'disabled nil)
 
   ;; Run Functions
   (cemacs-configure-session-decorations)
