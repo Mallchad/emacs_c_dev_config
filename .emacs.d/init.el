@@ -605,7 +605,6 @@ break packages")
    avy-zap-to-char-dwim)
   :bind
   (("C-r" . avy-goto-char)
-   ("M-r" . avy-pop-mark)
    ("M-z" . avy-zap-to-char-dwim))
   :config
   (setq avy-highlight-first t
