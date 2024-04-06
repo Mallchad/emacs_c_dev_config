@@ -810,16 +810,13 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      ("<C-delete>" .    natural-delete-word)
      ("M-\\" .          natural-delete-whitespace)
      ("M-SPC" .         natural-one-space)
-     ("C-x r" .         revert-buffer)
      ("M-i" .           natural-tab-to-tab-stop)
      ("M-p" .           kill-whole-line)
      ("C-#" .           cemacs-activate-mark)
      ("M-[" .           insert-pair)
-     ("M-{" .           insert-pair)
 
      ;; Other
      ("C-q" .           cemacs-query-prefix-map)
-     ("C-x r" .         cemacs-revert-buffer)
      ("C-x k" .         cemacs-buffer-kill-volatile)
      ("M-o" .           ff-find-other-file)
      ("C-x e" .         cemacs-find-user-init-file)
