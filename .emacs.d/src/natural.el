@@ -353,4 +353,10 @@ in-line indentaiton as it goes."
       (setq indent-tabs-mode nil))
     (indent-to next-tab-stop))
   )
+
+(defun natural-fill-paragraph ()
+  "Fill the paragraph block respecting an active transient mark"
+  (interactive)
+  (error "natural-fill-paragraph is unimplimented")
+  )
 (provide 'natural)
