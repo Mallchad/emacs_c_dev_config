@@ -53,14 +53,16 @@
         (whitespace-end (natural-excursion (natural-forward-whitespace :cross-lines))))
     (delete-region whitespace-start whitespace-end))
   )
-(defun natural-one-space ()
-  "An alternative to `just-one-space' which traverses lines."
-  (interactive)
+
+(defun natural-one-space (&optional spaces)
+  "An alternative to `just-one-space' which traverses lines. Deletes all tabs and spaces around the point, leaving one space (or `spaces' number of spaces surround the point with PREFIX argument)."
+  (interactive "*p")
   (let ((whitespace-start (natural-excursion (natural-backward-whitespace :cross-lines)))
         (whitespace-end (natural-excursion (natural-forward-whitespace :cross-lines))))
     (delete-region whitespace-start whitespace-end)
-    (insert-char ?\s))
-  )
+    (insert (make-string (abs spaces) ?\s))
+  ))
+
 (defun natural-beginning-of-line ()
   "A version of `beginning-of-line' that acknowledges significant stops.
 
