@@ -1237,17 +1237,9 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
   )
 
 (req-package hydra
-  :bind
-  ;; (("C-s" . hydra-slayer/body)
-  ;; )
+  :demand nil
   :config
-  (defhydra hydra-slayer (:color blue)
-    "kill shortcuts"
-    ("x" slay-function "function(x)" :color red)
-    ("l" kill-whole-line "whole line" :color red)
-    ("b" slay-whole-buffer "whole buffer"))
-  ;; (defhydra hydra-emacs (:color blue :hint nil))
-  )
+    )
 
 ;; Framework for fast, minimalistic searching
 ;; It appers to be more simple and faster than helm
