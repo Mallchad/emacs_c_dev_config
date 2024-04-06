@@ -977,6 +977,15 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
                  'desktop+-base-dir :local-only)
   )
 
+;; (use-package explain-pause-mode
+;;   :demand t
+;;   :config
+;;   (explain-pause-mode)
+;;   )
+
+(req-package embark
+  )
+
 ;; Keybind usage statistics
 ;; Helps identify cancidates keybindings for development
 (req-package keyfreq
