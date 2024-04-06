@@ -1113,6 +1113,15 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
    free-keys-set-prefix
    free-keys-change-buffer)
   )
+
+(req-package glsl-mode
+  :commands (glsl-mode)
+  :require company-glsl
+  :config
+  (when (executable-find "glslangValidator")
+    (add-to-list 'company-backends 'company-glsl))
+  )
+
 (req-package god-mode
   :config
   )
