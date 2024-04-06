@@ -1132,6 +1132,7 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
   helm-rg
   helm-swoop
   :hook
+  (cemacs-init-setup . helm-mode)
   (cemacs-init-setup . cemacs-helm-mode)
   :commands
   (cemacs-helm-mode
@@ -1189,20 +1190,14 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
     :keymap cemacs-helm-map
     )
 
-  ;; Completley hide helm header
-  (fset 'helm-display-mode-line #'ignore)
-  (defadvice helm-display-mode-line (after undisplay-header activate)
-    (setq header-line-format nil))
-  (add-hook 'helm-after-initialize-hook
-            (defun hide-mode-line-in-helm-buffer ()
-              "Hide mode line in `helm-buffer'."
-              (with-helm-buffer
-                (setq-local mode-line-format nil))
-              ))
+  ;; Hide the helm-mode-line its pointless and noisy
+    (defadvice helm-display-mode-line (after undisplay-header activate)
+    (setq mode-line-format nil))
+
   :config
   ;;Helm minibuffer config
   (setq helm-autoresize-mode t
-        helm-display-header-line nil
+        helm-display-header-line t
         helm-header-line-space-before-prompt nil
         helm-autoresize-max-height 30   ;Always take up 30% the screen
         helm-autoresize-min-height 30
@@ -1258,8 +1253,6 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
 ;; It appers to be more simple and faster than helm
 ;; helm-projectile can be unusable with large-projects, unlike ivy
 (req-package ivy
-  :hook
-  (cemacs-init-setup . ivy-mode)
   :bind
   (:map
    cemacs-query-prefix-map
