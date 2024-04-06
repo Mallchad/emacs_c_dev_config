@@ -1566,7 +1566,7 @@ For example
         ;; ("M-]" .                     sp-backward-barf-sexp)
 
         ;; General Pair Manamagent and Navigation
-        ("C-M-k" .                      sp-kill-sexp)       ; Allow killing by pair
+        ;; ("C-M-k" .                      sp-kill-sexp)       ; Allow killing by pair
         ("C-M-f" .                      sp-forward-sexp)
         ("C-M-b" .                      sp-backward-sexp)
         ("M-n" .                        sp-kill-hybrid-sexp))
