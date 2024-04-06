@@ -1740,6 +1740,13 @@ For example
   :config
   )
 
+(req-package tree-sitter
+  :require tree-sitter-langs
+  :hook
+  (prog-mode . tree-sitter-hl-mode)
+  (cemacs-init-setup . global-tree-sitter-mode)
+  )
+
 ;; Machine learning powered completion framework, free tier
 (req-package company-tabnine
 :config
