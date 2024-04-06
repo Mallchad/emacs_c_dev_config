@@ -825,26 +825,8 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      ;; Unbind Keys
      ("<insert>" .      nil)         ; 'overwrite-mode
      ("<backspace>" .   nil)
-     ("C-j" .           join-line)         ; 'electric-newline-and-maybe-indent'
-     ;; Get rid of conflicting electric bindings
-     :map c++-mode-map
-     ("<insertchar>" .  nil)     ; 'overwrite-mode
-     ("DEL" .           nil)
-     ("C-d" .           nil)
-     ("#"   .           nil)
-     ("*"   .           nil)
-     ("/"   .           nil)
-     ("<"   .           nil)
-     (">"   .           nil)
-     ("("   .           nil)
-     (")"   .           nil)
-     ("{"   .           nil)
-     ("}"   .           nil)
-     (":"   .           nil)
-     (";"   .           nil)
-     (","   .           nil)
      )
-    ))
+    )
   (ignore-errors (cemacs-bind-vanilla-keys)) ; Protected from req-package error
   )
 
