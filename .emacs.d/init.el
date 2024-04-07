@@ -931,8 +931,12 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
   (setq crux-move-visually t)
   )
 (req-package cmake-mode
+  :defer 5
+  :commands (cmake-mode)
   )
 (req-package csharp-mode
+  :defer 5
+  :commands (csharp-mode)
   :require csproj-mode
   :hook
   (csharp-mode . cemacs-cc-mode)
@@ -1151,6 +1155,7 @@ It is faster and alleviates no syntax highlighting"
   )
 
 (req-package god-mode
+  :commands (god-mode)
   :config
   )
 (req-package good-scroll
@@ -1301,10 +1306,14 @@ It is faster and alleviates no syntax highlighting"
 
 ;; A minor mode to aid with json editing
 (req-package json-mode
+  :defer 5
+  :commands
+  (json-mode)
   :config
   )
 
 (req-package lsp-mode
+  :commands (lsp)
   :after
   company
   flycheck
@@ -1392,6 +1401,9 @@ It is faster and alleviates no syntax highlighting"
       (setq lsp-clients-lua-language-server-bin "/usr/bin/lua-language-server"))
   )
 (req-package multiple-cursors
+  :commands
+  (mc/edit-lines
+   mc/mark-all-in-region-regexp)
   :after hydra
   :bind
   (("M-m" . mc/edit-lines)
@@ -1423,9 +1435,6 @@ It is faster and alleviates no syntax highlighting"
                                #'helm-M-x
                                #'helm-confirm-and-exit-minibuffer
                                )
-  )
-(req-package json-mode
-  ;; A minor mode to aid with json editing
   )
 
 (req-package omnisharp
@@ -1607,6 +1616,8 @@ cemacs-projectile-project-hook is not needed")
   :config
   )
 (req-package rtags
+  :commands
+  (rtags-mode)
   :config
   )
 (req-package smartparens
