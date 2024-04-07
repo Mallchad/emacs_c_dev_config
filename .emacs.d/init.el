@@ -313,6 +313,7 @@ break packages")
 (require 'req-package)
 (setq use-package-always-ensure t       ; Automatically fetch packages
       use-package-always-defer nil
+      use-package-always-demand nil     ; Just there to test loading speed
       )
 ;; Built in Packages
 (req-package flyspell
@@ -842,6 +843,7 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
   :commands
   (cfw:open-calendar-buffer)
   )
+
 (req-package centaur-tabs
   :hook
   (cemacs-init-setup . centaur-tabs-mode)
@@ -976,6 +978,10 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
 ;; desktop-plus
 ;; Name based desktop saving
 (req-package desktop+
+  :commands
+  (desktop+-create
+   desktop+load)
+
   :config
   (cemacs-defdir 'c-desktop-plus-base-dir (concat cemacs-var-dir "desktop-plus")
                  'desktop+-base-dir :local-only)
@@ -1348,7 +1354,7 @@ It is faster and alleviates no syntax highlighting"
         ;; Disable warning of too many files being watched
         ;; TODO Make it look for projectile file
         lsp-file-watch-threshold nil
-)
+        )
   (setq
    ;; Mode the doc position to the top of the frame
    lsp-ui-doc-position 'top
@@ -1376,9 +1382,9 @@ It is faster and alleviates no syntax highlighting"
    read-process-output-max (* 1024 1024) ;; 1mb
    )
   )
-(req-package lsp-ui
-  :config
-  )
+;; (req-package lsp-ui
+;;   :config
+;;   )
 (req-package magit
   :commands
   (magit-status
