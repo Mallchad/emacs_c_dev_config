@@ -276,7 +276,6 @@ break packages")
 
   ;; Defer init setup hooks
   (run-at-time "0.1sec" nil 'run-hooks 'cemacs-init-setup-hook)
-  (load cemacs-personal-config-file)
   )
 ;; Run early setup to prettify the session
 (defun cemacs-early-init ()
@@ -302,6 +301,7 @@ break packages")
   (if (display-graphic-p)  ; Resolve inital frame configuration
       (cemacs-init-local-frame (selected-frame)))
   (load custom-file)
+  (load cemacs-personal-config-file)
   )
 (cemacs-early-init)
 ;; Req Package Setup
@@ -1447,10 +1447,11 @@ It is faster and alleviates no syntax highlighting"
   ;; TODO(mallchad) need to setup keybinds for this package
   ;; Mainly just origami toggle node, and open/close recursively
   )
-(req-package flycheck-projectile)
+
+(req-package flycheck-projectile
+  )
+
 (req-package projectile
-  :demand t                             ; Always loaded at startup
-  :force t
   :require
   flycheck-projectile
   :commands (projectile-mode)
@@ -1507,7 +1508,13 @@ For example
     )
   (defvar c-projectile-group-detect-functions '())
   ;; TODO Detect projcet type base on uproj / function
+
   (defun cemacs-projectile-project-hook ()
+    ;; Bail if unbound
+    (when (not (boundp 'cemacs-projectile-grouping))
+               (message "cemacs-projectile-grouping is unbound,
+cemacs-projectile-project-hook is not needed")
+               (cl-return))
     (let* ((current-project (projectile-project-name))
            (current-project-root (projectile-project-name))
            (current-project-function
@@ -1527,6 +1534,9 @@ For example
         (eval `(setq-local ,(car current-project-locals)
                            (cadr current-project-locals)))
         )))
+
+  (cemacs-add-to-list-splicing 'cemacs-projectile-grouping 'personal-projectile-project-locals)
+  (cemacs-add-to-list-splicing 'cemacs-projectile-grouping 'personal-projectile-grouping)
   )
 (req-package rainbow-blocks
   :commands

@@ -9,16 +9,16 @@
 ;; At least here you can evaluate the file,
 ;; or use the provided `cemacs-personal-reload-config'.
 
-(cemacs-add-multiple-splicing 'cemacs-projectile-grouping
-                              '(("test_project" "unreal")
-                                ("UnrealEngine" "unreal")
-                                ))
-(cemacs-add-multiple-splicing 'cemacs-projectile-project-locals
-                              '(("UnrealEngine" .
-                                 (indent-tabs-mode t))
-                                ("UnrealEngine4" .
-                                 (indent-tabs-mode t)
-                                 )))
+(defvar personal-projectile-grouping
+  '(("test_project" "unreal")
+    ("UnrealEngine" "unreal")
+    ))
+(defvar personal-projectile-project-locals
+  '(("UnrealEngine" .
+     (indent-tabs-mode t))
+    ("UnrealEngine4" .
+     (indent-tabs-mode t)
+     )))
 
 (provide 'personal.el)
 ;;; cemacs-utility.el ends here
