@@ -1153,6 +1153,14 @@ It is faster and alleviates no syntax highlighting"
 (req-package god-mode
   :config
   )
+(req-package good-scroll
+  :hook
+  (cemacs-init-setup . good-scroll-mode)
+  :bind
+  (("C-v" . good-scroll-up-full-screen)
+  ("M-v" . good-scroll-down-full-screen))
+  :config
+ )
 (req-package helm
   :require
   helm-flycheck
