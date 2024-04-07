@@ -1474,6 +1474,8 @@ It is faster and alleviates no syntax highlighting"
 
   ;; Variables
   (setq projectile-enable-caching t
+        ;; --strip-cwd-prefix only supported in newer versions of fd
+        projectile-git-fd-args "-H -0 -E .git -tf -c never"
         )
 
   (defvar cemacs-projectile-project-functions
