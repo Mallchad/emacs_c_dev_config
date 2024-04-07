@@ -1261,7 +1261,7 @@ It is faster and alleviates no syntax highlighting"
 (req-package hl-todo
   :demand t
   :hook
-  (cemacs-init-setup-hook . global-hl-todo-mode)
+  (cemacs-init-setup . global-hl-todo-mode)
   )
 
 (req-package hydra
