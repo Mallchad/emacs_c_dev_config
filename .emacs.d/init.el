@@ -1396,7 +1396,18 @@ It is faster and alleviates no syntax highlighting"
 (req-package lua-mode
   :hook
   (lua-mode . lsp)
+  :commands
+  (lua-mode
+   cemacs-nelua-mode)
+
+  :init
+  ;; For Nelua
+  (add-to-list 'auto-mode-alist '("\\.nelua\\'" . cemacs-nelua-mode))
+
   :config
+  (defun cemacs-nelua-mode (&optional arg)
+    "Makes sure only to enable lsp in valid lua files"
+    (lua-mode))
   (if (file-exists-p "/usr/bin/lua-language-server")
       (setq lsp-clients-lua-language-server-bin "/usr/bin/lua-language-server"))
   )
