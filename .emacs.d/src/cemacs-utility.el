@@ -357,21 +357,20 @@ relatively safe."
   (set-buffer-modified-p nil)
   (kill-buffer (current-buffer))
   )
-(defun cemacs-revert-buffer (&optional nopreserve-mode)
-  "Modified `revert-buffer' which clears the buffer-modified and preserves modes.
+(defun cemacs-revert-buffer (&optional preserve-mode)
+  "Modified `revert-buffer' which skips past confirmaiton screen
+and fixes buffer-modified flag not being cleared properly.
+WARNING: This will destroy all your unsaved data but will
+preserve any undo-data in the buffer.
 
-If NOPRESERVE-MODE is non-nil or a prefix arg is supplied, don't try to persist
+If NOPRESERVE-MODE is non-nil or a prefix arg is supplied, try to persist
 modes and some buffer-local data through the revert.
-
-With 2 universal arguments skip confirmation and don't preserve modes.
 
 Sometimes it may be more useful to keep mode data persistent, particularly with
 session-like modes like 'lsp-mode'"
   (interactive "P")
   (set-buffer-modified-p nil)
-  (if (equal nopreserve-mode cemacs-universal-argument-double)
-      (revert-buffer nil :skip-confirm nil)
-    (revert-buffer nil nil (or nopreserve-mode nil)))
+  (revert-buffer nil :skip-confirm (or preserve-mode nil))
   )
 (defun cemacs-scratch-buffer-create (&optional new-major-mode)
   "Create a new scratch buffer optionally with a default NEW-MAJOR-MODE."
