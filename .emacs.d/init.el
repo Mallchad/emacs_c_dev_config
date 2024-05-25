@@ -190,6 +190,10 @@ configuration see `cemacs-init-local-frame'"
    jit-lock-stealth-time 3              ; Start fontifying the whole buffer after idle
    redisplay-dont-pause t               ; Prioritize drawing responsible over input processing
 
+   ;; UI Improvements
+   display-line-numbers-current-absolute t ; Show absolute line number of current line
+   display-line-numbers-type 'relative     ; Show relative line numbers for prefix args
+
    ;; Mode Setting
    indent-tabs-mode nil                 ; use spaces for indendation
    transient-mark-mode nil
