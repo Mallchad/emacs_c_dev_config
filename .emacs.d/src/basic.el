@@ -17,18 +17,25 @@
      ;; GDB doesn't work as well when you have to keep recreating your watch expressions
    gdb-delete-out-of-scope nil
 
-
    delete-selection-mode t
+
+   ;; This is a great way to use prefix arguments for line operations
+   display-line-numbers-current-absolute t ; Show absolute line number of current line
+   display-line-numbers-type 'relative     ; Show relative line numbers for prefix args
    )
 
   ;; The mark is much more powerful when transient-mark-mode is nil
-    ;; If you still need transient-mark-mode like many functions need just
-    ;; press `C-SPC' twice to enable it.
-    ;; Really in future more functions should be normallized to respect transient mark off...
-    (transient-mark-mode -1)
+  ;; If you still need transient-mark-mode like many functions need just
+  ;; press `C-SPC' twice to enable it.
+  ;; Really in future more functions should be normallized to respect transient mark off...
+  (transient-mark-mode -1)
+
+  ;; Display line numbers on the side
+  (display-line-numbers-mode 1)
 
   ;; Great noob friendly way to manage multiple window configurations
   (tab-bar-mode 1)
+  ;; Tool bar mode is really terrible and not well laid out, textured, or familiar
   (tool-bar-mode -1)
 
   (pixel-scroll-mode)
@@ -58,6 +65,8 @@
   
   ;; Use noob friend editing keys, C-z, C-c, C-v
   (cua-mode 1)
+  ;; Add menubar to allow users to naturally explore emacs
+  (menu-bar-mode)
 )
 
 (defun amalgamacs-init (&optional external-libraries)
@@ -130,4 +139,4 @@ Heavier packages
 - fill paragraph
 "
 
-(basic-init)
+(provide 'basic)
