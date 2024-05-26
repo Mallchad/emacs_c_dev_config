@@ -47,6 +47,8 @@
   (add-hook 'prog-mode'hook 'display-line-numbers-mode)
   (add-hook 'prog-mode'hook 'flymake-mode)
 
+  (global-set-key (kbd "<mouse-3>") 'mouse-bar-open)
+
   ;; Load Last for performance
   (load-theme 'wombat)
 )
