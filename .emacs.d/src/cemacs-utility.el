@@ -360,11 +360,11 @@ relatively safe."
 (defun cemacs-revert-buffer (&optional preserve-mode)
   "Modified `revert-buffer' which skips past confirmaiton screen
 and fixes buffer-modified flag not being cleared properly.
+
+If PRESERVE-MODE is non-nil or a prefix arg is supplied, try to persist
+modes and some buffer-local data through the revert.
 WARNING: This will destroy all your unsaved data but will
 preserve any undo-data in the buffer.
-
-If NOPRESERVE-MODE is non-nil or a prefix arg is supplied, try to persist
-modes and some buffer-local data through the revert.
 
 Sometimes it may be more useful to keep mode data persistent, particularly with
 session-like modes like 'lsp-mode'"
