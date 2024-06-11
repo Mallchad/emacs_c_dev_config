@@ -40,6 +40,9 @@
 
   (pixel-scroll-mode)
 
+  ;; Make it easier to see where the cursor is
+  (global-hl-line-mode)
+
   ;; Only really the left fringe does useful things, its just visually noisy to have both
   ;; ("left-only" . (nil . 0))
   (set-fringe-mode '(nil . 0))
@@ -58,7 +61,10 @@
 
   ;; Load Last for performance
   (load-theme 'wombat)
-)
+  (when (member 'wombat custom-enabled-themes)
+    ;; Disable underline on highlight its weird and distracting
+    (set-face-attribute 'highlight nil :underline nil))
+  )
 
 (defun basic-init ()
   (basic-common-init)
