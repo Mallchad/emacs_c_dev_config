@@ -870,7 +870,12 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
   (centaur-tabs-headline-match)
   ;;Group tabs by projects
   (centaur-tabs-group-by-projectile-project)
-  )
+  (defun cemacs-centaur-tabs-define-faces ()
+    (set-face-attribute 'centaur-tabs-modified-marker-unselected nil :foreground "white")
+    (set-face-attribute 'centaur-tabs-modified-marker-selected nil :foreground "red")
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-centaur-tabs-define-faces)
+)
 (req-package company
   :commands
   (company-mode
