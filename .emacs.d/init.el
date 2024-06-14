@@ -956,7 +956,7 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
     (interactive)
     (setq tab-width 4)
     (setq-default c-basic-offset 4)
-    (c-set-style "c#"))
+    (c-set-style "csharp")
   (add-hook 'csharp-mode-hook 'cemacs-csharp-mode)
   )
 (req-package dashboard
