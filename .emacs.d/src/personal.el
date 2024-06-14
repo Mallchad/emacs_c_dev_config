@@ -14,9 +14,9 @@
     ("UnrealEngine" "unreal")
     ))
 (defvar personal-projectile-project-locals
-  '(("UnrealEngine" .
+  '(("UnrealEngine"
      (indent-tabs-mode t))
-    ("UnrealEngine4" .
+    ("UnrealEngine4"
      (indent-tabs-mode t)
      )))
 

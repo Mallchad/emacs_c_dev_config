@@ -1495,7 +1495,7 @@ It is faster and alleviates no syntax highlighting"
   :commands (projectile-mode)
   :hook
   (cemacs-init-setup . projectile-mode)
-  (projectile-find-file . cemacs-projectile-project-hook)
+  (find-file . cemacs-projectile-file-setup)
   (after-revert . cemacs-projectile-project-hook) ; redo with buffer revert
   :bind
   (:map projectile-mode-map
@@ -1546,15 +1546,20 @@ For example
 )
 "
     )
-  (defvar c-projectile-group-detect-functions '())
+  (defvar cemacs-projectile-detect-functions '()
+    "A list of functions that run heuristics to try to determine the ideal project-local settings to apply to the buffer/project. There can be multiple project settings applied to the local project and the last one in the list takes precedence. Projects can also be assigned under a group to share project settings with.")
   ;; TODO Detect projcet type base on uproj / function
 
-  (defun cemacs-projectile-project-hook ()
+  (defun cemacs-projectile-file-setup ()
+    (when (and projectile-mode (projectile-project-p))
+
     ;; Bail if unbound
     (when (not (boundp 'cemacs-projectile-grouping))
                (message "cemacs-projectile-grouping is unbound,
 cemacs-projectile-project-hook is not needed")
                (cl-return))
+
+    ;; Setup project-local options
     (let* ((current-project (projectile-project-name))
            (current-project-root (projectile-project-name))
            (current-project-function
@@ -1565,18 +1570,33 @@ cemacs-projectile-project-hook is not needed")
            (current-project-locals (cadr (assoc
                                           current-project
                                           cemacs-projectile-project-locals))))
+
+      ;; Grab the hook functions associated with the project
       (dolist (x-group current-project-groups)
         (cemacs-add-multiple-splicing 'current-group-functions
                                       (cdr (assoc x-group cemacs-projectile-project-functions))))
+
+      ;; Run the hook functions associated with the project
       (dolist (x-function current-group-functions)
         (funcall x-function))
+
+      ;; Apply the project-local variables to the newley opened buffer
       (dolist (x-local current-project-locals)
         (eval `(setq-local ,(car current-project-locals)
-                           (cadr current-project-locals)))
-        )))
+                           (cadr current-project-locals))))
 
-  (cemacs-add-to-list-splicing 'cemacs-projectile-grouping 'personal-projectile-project-locals)
-  (cemacs-add-to-list-splicing 'cemacs-projectile-grouping 'personal-projectile-grouping)
+      ;; Record what was attempted to be applied to the local buffer
+      (when cemacs-debug-enabled
+      (message "cemacs-project: Enabled following in buffer \n
+project: %S \n group: %S \n functions: %S \n locals: %S"
+               current-project current-project-groups
+               current-project-locals current-group-functions))
+      )))
+
+  (cemacs-add-multiple-splicing 'cemacs-projectile-project-locals
+                                personal-projectile-project-locals)
+  (cemacs-add-multiple-splicing 'cemacs-projectile-grouping
+                                personal-projectile-grouping)
   )
 (req-package rainbow-blocks
   :commands
