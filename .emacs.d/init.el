@@ -2125,7 +2125,7 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
 
   ;; Pair angled brackets in c-modes
-  ;; (sp-local-pair sp-c-modes "<" ">")
+  (sp-local-pair sp-c-modes "<" ">")
 
   (define-minor-mode cemacs-smartparens-enforcer-mode
     "Toggle smartparens mode but enforce balancing of sexps more.
