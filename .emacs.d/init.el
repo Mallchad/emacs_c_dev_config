@@ -1366,6 +1366,11 @@ It is faster and alleviates no syntax highlighting"
         ;; Disable warning of too many files being watched
         ;; TODO Make it look for projectile file
         lsp-file-watch-threshold nil
+        ;; Don't bug the user to restart just restart
+        lsp-restart 'auto-restart
+        ;; Don't enable lsp-ui default, its slow and really noisy
+        lsp-auto-configure nil
+        lsp-auto-guess-root t
         )
   (setq
    ;; Mode the doc position to the top of the frame
