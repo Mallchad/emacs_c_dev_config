@@ -1243,6 +1243,9 @@ Argument STRING provided by compilation hooks."
     (setq tab-width 4)
     (setq-default c-basic-offset 4)
     (c-set-style "csharp")
+    ;; (c-add-style  "stroustrup"
+    ;;             '((c-offsets-alist (substatement-open . 0))) :use-style)
+    )
   (add-hook 'csharp-mode-hook 'cemacs-csharp-mode)
   )
 (req-package dashboard
