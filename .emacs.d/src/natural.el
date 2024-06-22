@@ -355,9 +355,16 @@ in-line indentaiton as it goes."
     (indent-to next-tab-stop))
   )
 
+;; TODO
 (defun natural-fill-paragraph ()
   "Fill the paragraph block respecting an active transient mark"
   (interactive)
   (error "natural-fill-paragraph is unimplimented")
   )
+;; TODO
+(defun natural-forward-list ()
+  (error "not implimented"))
+(defun natural-kill-line ()
+  (error "not implimented"))
+
 (provide 'natural)
