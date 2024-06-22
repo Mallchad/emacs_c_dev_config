@@ -322,6 +322,11 @@ break packages")
       use-package-always-demand nil     ; Just there to test loading speed
       )
 ;; Built in Packages
+(req-package asm-mode
+  :config
+  ;; Stop asm mode from overriding normal insert commands...
+  (advice-add #'asm-comment :override #'self-insert-command)
+  )
 (req-package flyspell
   :after org
   :bind
