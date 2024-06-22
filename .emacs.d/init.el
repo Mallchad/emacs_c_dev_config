@@ -2,6 +2,8 @@
 ;; Copyright (c) 2021 Mallchad
 ;; This source is provided with no limitations or warrenty whatsoever.
 
+;; -*- lexical-binding: t; -*-
+
 ;; Hack to speed up package loading time
 (setq gc-cons-threshold 64000000
       ;; package-enable-at-startup nil
@@ -1502,7 +1504,7 @@ It is faster and alleviates no syntax highlighting"
   :hook
   (cemacs-init-setup . projectile-mode)
   (find-file . cemacs-projectile-file-setup)
-  (after-revert . cemacs-projectile-project-hook) ; redo with buffer revert
+  (after-revert . cemacs-projectile-file-setup) ; redo with buffer revert
   :bind
   (:map projectile-mode-map
         (("C-x p" . projectile-command-map)))
@@ -1514,10 +1516,10 @@ It is faster and alleviates no syntax highlighting"
         projectile-git-fd-args "-H -0 -E .git -tf -c never"
         )
 
-  (defvar cemacs-projectile-project-functions
+  (defvar cemacs-projectile-functions
     '(())
     )
-  (defvar cemacs-projectile-project-locals '(())
+  (defvar cemacs-projectile-locals '(())
     "Sets read-only config variables for a project.
 
 This is for setting variables for other functions, and is not
@@ -1559,51 +1561,62 @@ For example
   (defun cemacs-projectile-file-setup ()
     (when (and projectile-mode (projectile-project-p))
 
-    ;; Bail if unbound
-    (when (not (boundp 'cemacs-projectile-grouping))
-               (message "cemacs-projectile-grouping is unbound,
-cemacs-projectile-project-hook is not needed")
-               (cl-return))
+      ;; Setup project-local options
+      (condition-case nil
+          (let* ((current-project (projectile-project-name))
+                 (current-project-root (projectile-project-name))
+                 (current-project-function
+                  (cdr (assoc current-project
+                              cemacs-projectile-functions)))
+                 (current-group-functions nil)
+                 (current-project-groups (cdr (assoc current-project cemacs-projectile-grouping)))
+                 (current-project-locals (cdr (assoc
+                                               current-project
+                                               cemacs-projectile-locals)))
+                 (current-locals-copy nil)
+                 (lexical-binding t)
+                 )
 
-    ;; Setup project-local options
-    (let* ((current-project (projectile-project-name))
-           (current-project-root (projectile-project-name))
-           (current-project-function
-            (cdr (assoc current-project
-                        cemacs-projectile-project-functions)))
-           (current-group-functions '())
-           (current-project-groups (cdr (assoc current-project cemacs-projectile-grouping)))
-           (current-project-locals (cadr (assoc
-                                          current-project
-                                          cemacs-projectile-project-locals))))
+            ;; Grab the hook functions associated with the project
+            (dolist (x-group current-project-groups)
+              (cemacs-push-list current-project-locals
+                                (reverse (cdr (assoc x-group cemacs-projectile-locals))))
+              (cemacs-push-list current-group-functions
+                                (cdr (assoc x-group cemacs-projectile-functions)))
+              )
 
-      ;; Grab the hook functions associated with the project
-      (dolist (x-group current-project-groups)
-        (cemacs-add-multiple-splicing 'current-group-functions
-                                      (cdr (assoc x-group cemacs-projectile-project-functions))))
+            ;; Run the hook functions associated with the project
+            (dolist (x-function current-group-functions)
+              (when (functionp x-function)
+                (funcall x-function)))
 
-      ;; Run the hook functions associated with the project
-      (dolist (x-function current-group-functions)
-        (funcall x-function))
+            ;; Sanitize and copy for element popping
+            (set 'current-locals-copy (remove nil cemacs-projectile-locals))
+            (set 'current-locals-copy current-project-locals)
+            ;; Apply the project-local variables to the newley opened buffer
+            (let* ((x-symbol nil)
+                   (x-value nil))
+              (while (> (cl-list-length current-locals-copy) 0)
+                (set 'x-symbol (pop current-locals-copy))
+                (set 'x-value (pop current-locals-copy))
+                (when (and (symbolp x-symbol)
+                           (bound-and-true-p x-value))
+                  (eval `(setq-local ,x-symbol ,x-value)))))
 
-      ;; Apply the project-local variables to the newley opened buffer
-      (dolist (x-local current-project-locals)
-        (eval `(setq-local ,(car current-project-locals)
-                           (cadr current-project-locals))))
-
-      ;; Record what was attempted to be applied to the local buffer
-      (when cemacs-debug-enabled
-      (message "cemacs-project: Enabled following in buffer \n
+            ;; Record what was attempted to be applied to the local buffer
+            (when (bound-and-true-p cemacs-debug-enabled)
+              (message "cemacs-project: Enabled following in buffer \n
 project: %S \n group: %S \n functions: %S \n locals: %S"
-               current-project current-project-groups
-               current-project-locals current-group-functions))
-      )))
+                       current-project current-project-groups
+                       current-group-functions current-project-locals))
+            ))))
 
-  (cemacs-add-multiple-splicing 'cemacs-projectile-project-locals
-                                personal-projectile-project-locals)
+  (cemacs-add-multiple-splicing 'cemacs-projectile-locals
+                                personal-projectile-locals)
   (cemacs-add-multiple-splicing 'cemacs-projectile-grouping
                                 personal-projectile-grouping)
   )
+
 (req-package rainbow-blocks
   :commands
   (rainbow-blocks-mode

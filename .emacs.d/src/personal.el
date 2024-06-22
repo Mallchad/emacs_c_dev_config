@@ -12,13 +12,23 @@
 (defvar personal-projectile-grouping
   '(("test_project" "unreal")
     ("UnrealEngine" "unreal")
+    ("experiments_rendering" "xmake")
+    ("battleships" "cmake")
     ))
-(defvar personal-projectile-project-locals
+(defvar personal-projectile-locals
   '(("UnrealEngine"
-     (indent-tabs-mode t))
+     indent-tabs-mode t)
     ("UnrealEngine4"
-     (indent-tabs-mode t)
-     )))
+     indent-tabs-mode t
+     )
+    ("xmake"
+     projectile-project-compilation-cmd "xmake build")
+    ("cmake"
+     projectile-project-compilation-cmd "xmake build")
+    ("raddebugger"
+     tab-width 2
+     c-basic-offset 2)
+    ))
 
 (provide 'personal.el)
 ;;; cemacs-utility.el ends here

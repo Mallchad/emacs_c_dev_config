@@ -2,6 +2,8 @@
 ;; Copyright (c) 2021 Mallchad
 ;; This source is provided with no limitations or warrenty whatsoever.
 
+;; -*- lexical-binding: t; -*-
+
 ;;; cemacs-utility.el --- A collection of useful helper and interactive functions in one tidy package
 
 ;;; Code:
@@ -58,6 +60,32 @@ This is just a shorthand function"
     (add-to-list list-symbol x-entry))
   (symbol-value list-symbol)
   )
+
+(defun cemacs-push-multiple (list-symbol &rest entries)
+  "push each item from ENTRIES to LIST-SYMBOL.
+
+The returned value is the modified list.
+
+This is just a shorthand function"
+  (when (symbolp list-symbol)
+    (dolist (x-entry entries)
+      (push x-entry 'list-symbol)))
+
+  (symbol-value list-symbol)
+  )
+
+(defmacro cemacs-push-list (list-symbol entries)
+  "push each item from the list ENTRIES to LIST-SYMBOL.
+
+The returned value is the modified list.
+
+This is just a shorthand function"
+  `(progn
+     ;; else
+     (dolist (x-entry ,entries)
+       (push x-entry ,list-symbol)))
+  )
+
 (defalias 'cemacs-add-multiple-to-list 'cemacs-add-multiple
   "Obsolete functin, use the shorthand instead.")
 (defun cemacs-append-multiple (list-symbol &rest entries)
