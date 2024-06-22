@@ -1238,6 +1238,9 @@ It is faster and alleviates no syntax highlighting"
    :map helm-find-files-map ("<C-backspace>" . nil)
    :map helm-projectile-find-file-map ("<C-backspace>" . nil)
    :map cemacs-helm-map ([remap find-file] . helm-find-files)
+
+   :map projectile-mode-map
+   ;; ("C-x p f" . helm-projectile-find-file)     ; Hangs on larger projects
    )
   :init
   ;; Custom keybinds
@@ -1264,6 +1267,19 @@ It is faster and alleviates no syntax highlighting"
         helm-swoop-split-with-multiple-windows helm-split-window-inside-p
         helm-mode-line-string nil
         helm-use-frame-when-more-than-two-windows nil
+        helm-find-files-ignore-thing-at-point t ; Nice idea but grabs input at the worst times
+        helm-candidate-number-limit 1000
+
+        ;; Disable fuzzy matching for stuffs, it doesn't play nice with exact
+        ;; match being ordered to the bottom
+        helm-recentf-fuzzy-match nil
+        helm-buffers-fuzzy-matching nil
+        helm-locate-fuzzy-match nil
+        helm-M-x-fuzzy-match nil
+        helm-semantic-fuzzy-match nil
+        helm-lisp-fuzzy-completion nil
+        helm-session-fuzzy-match nil
+        helm-etags-fuzzy-match nil
         )
 
   ;; ;Helm minibuffer config
