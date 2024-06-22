@@ -1666,7 +1666,7 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   :commands
   (rainbow-mode)
   :hook
-  (prog-mode . rainbow-mode)
+  (emacs-lisp-mode . rainbow-mode)
   )
 (req-package restart-emacs
   :commands
