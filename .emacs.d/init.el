@@ -1180,7 +1180,8 @@ Argument STRING provided by compilation hooks."
   :bind
   (("<C-tab>" . centaur-tabs-forward)
    ("<C-S-tab>" . centaur-tabs-backward)
-   ("<C-iso-lefttab>" . centaur-tabs-backward))
+   ("<C-iso-lefttab>" . centaur-tabs-backward)
+   ("<C-S-iso-lefttab>" . centaur-tabs-backward))
   :config
   ;;Misc Settings
   (setq centaur-tabs-set-icons t
