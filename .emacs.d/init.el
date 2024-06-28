@@ -338,6 +338,33 @@ break packages")
   ;; Stop asm mode from overriding normal insert commands...
   (advice-add #'asm-comment :override #'self-insert-command)
   )
+(use-package cc-mode
+  :demand t
+  :bind
+  (("M-;" . cemacs-comment-dwim)
+   ("C-x C-;" . cemacs-comment-line)
+   )
+  :config
+  (defun cemacs-comment-dwim (ARG)
+    "Allows for C style commenting without the doc-style if using C style comments at the time"
+    (interactive "P")
+    (if (bound-and-true-p c-block-comment-flag)
+        (let ((comment-style 'multi-line)
+              (comment-continue "   "))
+          (comment-dwim ARG))
+      ;; else
+      (comment-dwim ARG))
+    )
+  (defun cemacs-comment-line (ARG)
+    "Allows for C style commenting without the doc-style if using C style comments at the time"
+    (interactive "P")
+    (if (bound-and-true-p c-block-comment-flag)
+        (let ((comment-style 'multi-line)
+              (comment-continue "   "))
+          (comment-line ARG))
+      ;; else
+      (comment-line ARG))
+    ))
 (req-package flyspell
   :after org
   :bind
