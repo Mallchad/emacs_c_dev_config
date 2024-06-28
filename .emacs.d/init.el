@@ -184,14 +184,22 @@ configuration see `cemacs-init-local-frame'"
    c-electric-flag nil                  ; Disable useless and problematic electric
    parens-require-spaces nil            ; Don't insert space before parenthesis
    fill-column 80                       ; Change where auto-line wrap fill modes trigger
+   display-line-numbers-widen t         ; BUGFIX: Assinine fix for lockups on truncated lines
    )
+
   (setq
    ;; Performance improvements
    inhibit-compacting-font-caches t
    jit-lock-chunk-size 6000             ; Do huge chunks at a time so you can scroll a bit
    jit-lock-defer-time 0                ; Defer fontification when pending input
    jit-lock-stealth-time 3              ; Start fontifying the whole buffer after idle
+   ;; I think this is causing hard locks actually causes lockups but I don't
+   ;; want to give up fast-refresh. Emacs will just freeze the screen otherwise...
    redisplay-dont-pause t               ; Prioritize drawing responsible over input processing
+
+   ;; Makes fontification and movement more performant at the cost of font-lock accuracy
+   fast-but-imprecise-scrolling t
+   redisplay-skip-fontification-on-input t
 
    ;; UI Improvements
    display-line-numbers-current-absolute t ; Show absolute line number of current line
