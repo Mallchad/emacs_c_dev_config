@@ -230,6 +230,7 @@ configuration see `cemacs-init-local-frame'"
    kill-whole-line nil                   ; don't make 'kill-line' remove empty lines
    create-lockfiles t                    ; make sure lockfiles are enabled in newer versions
    y-or-n-p-use-read-key t               ; allows y-or-n-p to read even if not in the minibuffer
+   tags-add-tables t                     ; Stop bugging the user about adding tag tables
 
    ;; GDB Tewaks
    speedbar-use-images nil               ; This is buggy for some reason
