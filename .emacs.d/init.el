@@ -102,6 +102,7 @@
   ;; for trolling and nothing productive. Programming is typically done in
   ;; English ASCII anyway.
   (toggle-enable-multibyte-characters -1)
+  (xref-etags-mode)
   )
 (add-hook 'prog-mode-hook 'cemacs-prog-mode)
 
