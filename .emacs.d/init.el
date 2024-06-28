@@ -1098,6 +1098,8 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      ("<C-left>" .      natural-backward-word)
      ("<C-right>" .     natural-forward-word)
      ("C-," .           pop-to-mark-command)
+     ("M-[" .           tab-bar-switch-to-prev-tab)
+     ("M-]" .           tab-bar-switch-to-next-tab)
 
      ;; Editing Commands
      ("<C-backspace>" . natural-delete-word-backwards)
