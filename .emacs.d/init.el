@@ -1460,7 +1460,8 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
         flycheck-indication-mode nil)
   ;; Disable annoying documentation warnings which are too strict
   ;; instead, use 'M-x checkdoc'
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+  ;; (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
+  (add-to-list 'flycheck-disabled-checkers 'c/c++-clang)
   ;; Fix flycheck not being able to find files in the load path
   (setq flycheck-emacs-lisp-load-path 'inherit)
 
