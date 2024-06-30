@@ -366,5 +366,10 @@ in-line indentaiton as it goes."
   (error "not implimented"))
 (defun natural-kill-line ()
   (error "not implimented"))
+;; TODO should allow for causing the next command to be kill-ring-save
+(defun natural-kill-region ()
+    ""
+  (error "not implimented"))
+
 
 (provide 'natural)

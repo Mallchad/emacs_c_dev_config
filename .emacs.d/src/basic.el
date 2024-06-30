@@ -22,6 +22,7 @@
    ;; This is a great way to use prefix arguments for line operations
    display-line-numbers-current-absolute t ; Show absolute line number of current line
    display-line-numbers-type 'relative     ; Show relative line numbers for prefix args
+   parens-require-spaces nil               ; Cool idea but falls out of mainstream style guides
    )
 
   ;; The mark is much more powerful when transient-mark-mode is nil
