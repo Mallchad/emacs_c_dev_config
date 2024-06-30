@@ -447,6 +447,10 @@ This is a slightly more safe and informative abstraction on `set'"
       (error "Trying to set a value to an unbound symbol"))
   (set symbol value)
   )
+(defun cemacs-buffer-visiblep (buffer-or-name)
+  "Return the window a buffer is on or nil if not visible"
+  (get-buffer-window buffer-or-name 'visible)
+  )
 
 (provide 'cemacs-utility)
 ;;; cemacs-utility.el ends here

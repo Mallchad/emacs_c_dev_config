@@ -5,7 +5,7 @@
 ;; -*- lexical-binding: t; -*-
 
 ;; Hack to speed up package loading time
-(setq gc-cons-threshold 64000000
+(setq gc-cons-threshold 100000000       ; 100MB
       ;; package-enable-at-startup nil
       )
 ;; Extra Load Paths
@@ -1031,10 +1031,12 @@ Only returns `beacon-size' elements, optionally truncated to the visual line wit
   (defun beacon--shine ()
     "Shine a beacon at point.
 If `beacon-visual-mode' is `t' then the beacon will refuse to run over to the next line."
-    (let ((colors (beacon--color-range)))
+    (let ((colors (beacon--color-range))
+          (loop-limit 1000))
       (if (> beacon-visual-size 0)
           (save-excursion
-            (while colors
+            (while (and colors (> loop-limit 0))
+              (set 'loop-limit (1- loop-limit))
               (if (looking-at "$")
                   (progn
                     (beacon--after-string-overlay colors)
@@ -1123,6 +1125,8 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      ;; Unbind Keys
      ("<insert>" .      nil)         ; 'overwrite-mode
      ("<backspace>" .   nil)
+     ;; Disable highlighting region with mouse dragging, if it becomes unstable
+     ;; ("<down-mouse-1>" . nil)
      )
     )
   (ignore-errors (cemacs-bind-vanilla-keys)) ; Protected from req-package error
@@ -1202,6 +1206,16 @@ Argument STRING provided by compilation hooks."
     (set-face-attribute 'centaur-tabs-modified-marker-selected nil :foreground "red")
     )
   (add-hook 'cemacs-after-load-theme-hook 'cemacs-centaur-tabs-define-faces)
+
+  ;; Fix for the insanely slow nonsense centaur-tabs does.
+  ;; No seriously, wtf is this, a very slow hook for *every command in emacs*???
+  (remove-hook 'post-command-hook centaur-tabs-adjust-buffer-order-function)
+  (add-hook 'window-selection-change-functions centaur-tabs-adjust-buffer-order-function)
+  (defun cemacs-ad-centaur-reorder (oldfun &rest args)
+    (while-no-input (apply oldfun args))
+    )
+  (advice-add 'centaur-tabs-adjust-buffer-order-alphabetically :around 'cemacs-ad-centaur-reorder)
+  (advice-add 'centaur-tabs-adjust-buffer-order :around 'cemacs-ad-centaur-reorder)
 )
 (req-package company
   :commands
@@ -1333,10 +1347,16 @@ Argument STRING provided by compilation hooks."
   (global-diff-hl-mode)
   )
 
-;; (use-package explain-pause-mode
+;; Needs to be downloaded seperaetly
+;; (req-package explain-pause-mode
 ;;   :demand t
 ;;   :config
 ;;   (explain-pause-mode)
+;;   )
+
+;; Out of date package signature :(
+;; (req-package emacs-gc-stats
+;;   :demand t
 ;;   )
 
 (req-package embark
@@ -1423,6 +1443,24 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
     ;; isn't the fireplace, for some reason.
     (buffer-disable-undo fireplace-buffer-name)
     )
+
+  (defun cemacs-fireplace-draw (buffer-name)
+    "Draw the whole fireplace in BUFFER-NAME from FLAME-POS with FLAME-WIDTH."
+    ;; Save on performance when fireplace is hidden
+    (when (cemacs-buffer-visiblep fireplace-buffer-name)
+      (with-current-buffer (get-buffer fireplace-buffer-name)
+        (if (not (eq major-mode 'fireplace-mode))
+            (fireplace-off)
+          (setq buffer-read-only nil)
+          (fireplace--make-grid)
+          (dolist (pos fireplace--flame-pos)
+            (fireplace--flame (round (* pos fireplace--bkgd-width))
+                              (+ (round (* (+ 0.2 (min pos (- 1 pos))) fireplace--flame-width))
+                                 (random 3))))
+          (setq buffer-read-only t))))
+    )
+  (advice-add 'fireplace-draw :override 'cemacs-fireplace-draw)
+
   (defun cemacs-fireplace-visit (&optional window)
     (interactive)
     (if (windowp window)
@@ -1738,7 +1776,8 @@ It is faster and alleviates no syntax highlighting"
    ;; Adjust gc-cons-threshold. The default setting is too low for lsp-mode's
    ;; needs due to the fact that client/server communication generates
    ;; a lot of memory/garbage.
-   gc-cons-threshold 100000000
+   ;; gc-cons-threshold 100000000
+
    ;; Increase the amount of data which Emacs reads from the process.
    ;; Again the emacs default is too low 4k considering that the some of the
    ;; language server responses are in 800k - 3M range.
