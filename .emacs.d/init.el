@@ -818,6 +818,20 @@ Returns the compilation buffer created."
               (when (eq state 'children)
                 (setq org-cycle-subtree-status 'subtree))))
   )
+(use-package tab-bar
+  :demand t
+  :config
+  (setq
+   tab-bar-close-button-show nil
+   tab-bar-button-margin 0
+   )
+
+  (defun cemacs-tab-bar-define-faces ()
+    (set-face-attribute 'tab-bar-tab nil :box 1)
+    (set-face-attribute 'tab-bar-tab-inactive nil :box nil)
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-tab-bar-define-faces)
+  )
 
 ;; External Packages
 (req-package ansi-color
