@@ -1135,6 +1135,7 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      ("C-x e" .         cemacs-find-user-init-file)
      ("C-x C-#" .        server-edit-abort)
      ("<mouse-3>" .      menu-bar-open) ; Make right click context menu
+     ("C-x x g" .       cemacs-revert-buffer)
 
      ;; Unbind Keys
      ("<insert>" .      nil)         ; 'overwrite-mode
