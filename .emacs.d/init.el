@@ -1224,9 +1224,9 @@ Argument STRING provided by compilation hooks."
   ;; Fix for the insanely slow nonsense centaur-tabs does.
   ;; No seriously, wtf is this, a very slow hook for *every command in emacs*???
   (remove-hook 'post-command-hook centaur-tabs-adjust-buffer-order-function)
-  (add-hook 'window-selection-change-functions centaur-tabs-adjust-buffer-order-function)
+  (add-hook 'window-buffer-change-functions centaur-tabs-adjust-buffer-order-function)
   (defun cemacs-ad-centaur-reorder (oldfun &rest args)
-    (while-no-input (apply oldfun args))
+    (while-no-input (funcall oldfun))
     )
   (advice-add 'centaur-tabs-adjust-buffer-order-alphabetically :around 'cemacs-ad-centaur-reorder)
   (advice-add 'centaur-tabs-adjust-buffer-order :around 'cemacs-ad-centaur-reorder)
@@ -1650,7 +1650,7 @@ It is faster and alleviates no syntax highlighting"
         helm-mode-line-string nil
         helm-use-frame-when-more-than-two-windows nil
         helm-find-files-ignore-thing-at-point t ; Nice idea but grabs input at the worst times
-        helm-candidate-number-limit 1000
+        helm-candidate-number-limit 150
 
         ;; Disable fuzzy matching for stuffs, it doesn't play nice with exact
         ;; match being ordered to the bottom
@@ -1677,6 +1677,15 @@ It is faster and alleviates no syntax highlighting"
                           :box nil))
     )
   (add-hook 'cemacs-after-load-theme-hook 'cemacs-helm-define-faces)
+
+  (defvar cemacs-helm-rg-limit 1000
+    "Specific helm-candidate limit for just helm-rg")
+  (defun cemacs-ad-helm-rg (advised-func &rest args)
+    "Set the limit of candidates to scroll through much higher"
+    (let ((helm-candidate-number-limit cemacs-helm-rg-limit))
+      (apply advised-func args))
+    )
+  (advice-add 'helm-rg :around 'cemacs-ad-helm-rg)
   )
 (req-package highlight-parentheses
   :hook
