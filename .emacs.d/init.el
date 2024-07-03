@@ -2086,7 +2086,7 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   )
 (req-package rtags-xref
   :hook
-  (cemacs-init . (rtags-xref-enable))
+  (c-mode-common . (rtags-xref-enable))
   :config
   )
 (req-package rtags
