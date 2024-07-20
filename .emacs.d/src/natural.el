@@ -36,6 +36,14 @@
 ;; however, this might change in the future.
 
 ;;; Code:
+
+;; Variables
+(defvar natural-read-only-color "#1f0101"
+  "The background color to set te buffer to when in read-only mode")
+(defvar natural--read-only-cookies ()
+  "A list of cookies generated internally to remove when read-only mode is disabled")
+
+
 (defmacro natural-excursion (&rest form)
   "Do a `save-excursion' and return the point."
   `(let* ((original-point (make-symbol "original-point"))
@@ -371,5 +379,16 @@ in-line indentaiton as it goes."
     ""
   (error "not implimented"))
 
+(defun natural-ad-read-only-mode (&rest args)
+  ;; List to cleanup all colors a user creates in a session without breakage
+  (unless (color-supported-p natural-read-only-color)
+    (error (concat natural-read-only-color " is not a valid color")))
+  (if (not buffer-read-only)
+      (push (face-remap-add-relative 'default :background natural-read-only-color)
+            natural--read-only-cookies)
+    ;; else
+    (dolist (x-cookie natural--read-only-cookies)
+      (face-remap-remove-relative x-cookie))
+    ))
 
 (provide 'natural)

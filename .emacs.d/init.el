@@ -291,6 +291,8 @@ break packages")
     "Run `cemacs-after-load-theme-hook"
     (run-hooks 'cemacs-after-load-theme-hook))
 
+  (advice-add 'read-only-mode :before 'natural-ad-read-only-mode)
+
   ;; Defer init setup hooks
   (run-at-time "0.1sec" nil 'run-hooks 'cemacs-init-setup-hook)
   )
