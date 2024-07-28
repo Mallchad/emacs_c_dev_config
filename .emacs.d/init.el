@@ -2086,15 +2086,170 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   (("C-x M-a" . restart-emacs))
   :config
   )
+
 (req-package rtags-xref
-  :hook
-  (c-mode-common . (rtags-xref-enable))
   :config
+  (rtags-xref-enable)
   )
+
 (req-package rtags
+  :require
+  company-rtags
+  company
   :commands
-  (rtags-mode)
+  (rtags-xref-enable
+   rtags-xref)
   :config
+  (add-to-list 'company-backends 'company-rtags)
+
+  (cl-defun cemacs-ad-rtags-call-rc (&rest arguments
+                                           &key (path (rtags-buffer-file-name))
+                                           unsaved
+                                           async ;; nil or a cons (process-filter . sentinel)
+                                           path-filter
+                                           path-filter-regex
+                                           range-filter
+                                           (output (list t nil)) ; not supported for async
+                                           range-min
+                                           range-max
+                                           noerror
+                                           timeout
+                                           silent
+                                           silent-query
+                                           &allow-other-keys)
+  (save-excursion
+    (let ((rc (rtags-executable-find rtags-rc-binary-name))
+          (tempfile))
+      (if (not rc)
+          (unless noerror (rtags--error 'rtags-cannot-find-rc))
+        (setq output (rtags--convert-output-buffer output))
+        (setq rtags-last-request-not-connected nil)
+        (setq rtags-last-request-not-indexed nil)
+        (setq arguments (rtags-remove-keyword-params arguments))
+        (setq arguments (rtags-remove '(lambda (arg) (not arg)) arguments))
+        (setq arguments (mapcar 'rtags-untrampify arguments))
+        ;; other way to ignore colors would IMHO be to configure tramp,
+        ;; but: do we need colors from rc?
+        (when rtags-verify-protocol-version
+          (push (format "-t%d" rtags-protocol-version) arguments))
+        (push "-z" arguments)
+        (setq path (rtags-untrampify path))
+        (when path-filter
+          (push (concat "--path-filter=" (rtags-untrampify path-filter)) arguments)
+          (when path-filter-regex
+            (push "-Z" arguments)))
+        (when (and unsaved (rtags-buffer-file-name unsaved))
+          (setq tempfile (make-temp-file "/tmp/"))
+          (push (format "--unsaved-file=%s:%s" (rtags-untrampify (rtags-buffer-file-name unsaved)) tempfile) arguments)
+          (with-current-buffer unsaved
+            (save-restriction
+              (widen)
+              (rtags--write-region (point-min) (point-max) tempfile))))
+        (when rtags-rc-config-path
+          (push (concat "--config=" (expand-file-name rtags-rc-config-path)) arguments))
+        (when rtags-completions-enabled
+          (push "-b" arguments))
+        (when silent
+          (push "--silent" arguments)
+          (setq output nil))
+        (when silent-query
+          (push "--silent-query" arguments))
+        (when range-filter
+          (push (format "--range-filter=%d-%d"
+                        (or range-min (rtags-offset (point-min)))
+                        (or range-max (rtags-offset (point-max))))
+                arguments))
+        (when (or timeout rtags-timeout)
+          (push (format "--timeout=%d" (or timeout rtags-timeout)) arguments))
+        (when (and rtags-show-containing-function (not (member "-N" arguments)))
+          (push "-o" arguments))
+
+        (cond ((stringp path) (push (concat "--current-file=" path) arguments))
+              (path nil)
+              (default-directory (push (concat "--current-file=" (rtags-untrampify default-directory)) arguments))
+              (t nil))
+
+        (when (> (length rtags-socket-file) 0)
+          (push (rtags--get-socket-file-switch) arguments))
+
+        (when (> (length rtags-socket-address) 0)
+          (push (rtags--get-socket-address-switch) arguments))
+
+        (when rtags-rc-log-enabled
+          (rtags-log (concat rc " " (rtags-combine-strings arguments))))
+        (if async
+            (when rtags-rc-log-enabled
+              (rtags-log "running previous command asynchronously"))
+            (let ((proc (apply #'async-start-process rtags-rc-binary-name rc nil arguments)))
+              (set-process-query-on-exit-flag proc nil)
+              (when (listp async)
+                  (when (car async)
+                (set-process-filter proc (car async)))
+                (when (cdr async)
+                  (set-process-sentinel proc (cdr async))))
+              t)
+          (let ((result (apply #'process-file rc nil output nil arguments)))
+            (goto-char (point-min))
+            (save-excursion
+              (cond ((equal result rtags-exit-code-success)
+                     (when rtags-autostart-diagnostics
+                       (rtags-diagnostics)))
+                    ((equal result rtags-exit-code-connection-failure)
+                     (when output
+                       (erase-buffer))
+                     (setq rtags-last-request-not-connected t)
+                     (unless noerror
+                       (rtags--error 'rtags-rdm-not-running)))
+                    ((equal result rtags-exit-code-protocol-failure)
+                     (when output
+                       (erase-buffer))
+                     (unless noerror
+                       (rtags--error 'rtags-protocol-mismatch)))
+                    ((equal result rtags-exit-code-not-indexed)
+                     (unless noerror
+                       (rtags--message 'rtags-file-not-indexed (or path "buffer")))
+                     (erase-buffer)
+                     (setq rtags-last-request-not-indexed t))
+                    ((equal result "Aborted")
+                     (rtags--error 'rtags-program-exited-abnormal rtags-rc-binary-name result))
+                    (t))) ;; other error
+            (and (> (point-max) (point-min)) (equal result rtags-exit-code-success)))))))
+  )
+
+(defun cemacs-ad-rtags-update-buffer-list ()
+    "Send the list of indexable buffers to the rtags server, rdm,
+so it knows what files may be queried which helps with responsiveness.
+"
+    (interactive)
+    ;; (message "rtags-update-buffer-list")
+    (when rtags-enabled
+      (let* ((visible (rtags-visible-buffers))
+             (list)
+             (arg))
+        (mapc (lambda (buf)
+                (cond ((memq buf visible)
+                       (push (cons buf t) list))
+                      ((funcall rtags-is-indexable buf)
+                       (push (cons buf nil) list))
+                      (t))) (buffer-list))
+        (setq arg (concat "--set-buffers=" (mapconcat (lambda (arg)
+                                                        (concat (if (cdr arg) "+" "-") (rtags-buffer-file-name (car arg)))) list ";")))
+        (when rtags-rc-log-enabled
+          (rtags-log (concat "--set-buffers files: " arg)))
+        (when (not (string= rtags-previous-buffer-list arg))
+          (setq rtags-previous-buffer-list arg)
+          (rtags-call-rc :noerror t
+                         :silent-query t
+                         :async t
+                         :output nil
+                         :silent t
+                         :path t
+                         arg))))
+    )
+  (advice-add 'rtags-update-buffer-list :override 'cemacs-ad-rtags-update-buffer-list)
+  (advice-add 'rtags-call-rc :override 'cemacs-ad-rtags-call-rc)
+  )
+
   )
 (req-package smartparens
   :after aggressive-indent
