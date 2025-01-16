@@ -364,8 +364,9 @@ in-line indentaiton as it goes."
   )
 
 ;; TODO
-(defun natural-fill-paragraph ()
-  "Fill the paragraph block respecting an active transient mark"
+(defun natural-transient-fill-paragraph (arg)
+  "Fill the paragraph block within the region, with prefix ARG justify the region,
+with double universal argument or prefix of 1, ignore the region"
   (interactive)
   (error "natural-fill-paragraph is unimplimented")
   )

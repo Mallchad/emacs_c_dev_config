@@ -21,6 +21,8 @@ The value essentially a list with the single value of 16"
 ;; Variables
 (defvar cemacs-debug-enabled nil
   "If t will enable some useful but obstrusive debugging functionality")
+(defvar cemacs-init-complete nil
+  "A state to show when the last stage of startup has been passed")
 (defvar cemacs-custom-directory-list nil
   "A list of custom directories being used by this config."
   )

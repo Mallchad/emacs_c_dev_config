@@ -13,6 +13,7 @@
   '(("test_project" "unreal")
     ("UnrealEngine" "unreal")
     ("experiments_rendering" "xmake")
+    ("tachyon_engine" "xmake")
     ("battleships" "cmake")
     ))
 (defvar personal-projectile-locals
@@ -29,6 +30,16 @@
      tab-width 2
      c-basic-offset 2)
     ))
+
+(defun personal-init-hook ()
+  (cemacs-add-multiple-splicing 'cemacs-projectile-locals
+                                personal-projectile-locals)
+  (cemacs-add-multiple-splicing 'cemacs-projectile-grouping
+                                personal-projectile-grouping)
+)
+(add-hook 'personal-init-hook 'cemacs-init-setup-hook)
+(when (bound-and-true-p cemacs-init-complete)
+  (personal-init-hook))
 
 (provide 'personal.el)
 ;;; cemacs-utility.el ends here

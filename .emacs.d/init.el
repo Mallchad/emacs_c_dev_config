@@ -76,8 +76,9 @@
                    (brace-list-open . 0)
                    (brace-list-intro
                     first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
-                   (statement-cont . +)
-                   (inline-open . 0)))
+                   (statement-cont . 0)
+                   (inline-open . 0)
+                   (case-label . +)))
                 :use-style)
   )
 (add-hook 'c++-mode-hook 'cemacs-cpp-mode)
@@ -85,6 +86,26 @@
 (defun cemacs-c-mode()
   "Hook function for `c-mode'."
   (interactive)
+  (c-add-style  "stroustrup"
+                '((c-basic-offset . 4)
+                  (c-comment-only-line-offset . 0)
+                  (c-offsets-alist
+
+                   ;; Correct Unreal prefix-macros
+                   (func-decl-cont)
+
+                   (statement-block-intro . +)
+                   (substatement . 0)
+                   (substatement-open . 0)
+                   (substatement-label . 0)
+                   (label . 0)
+                   (brace-list-open . 0)
+                   (brace-list-intro
+                    first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
+                   (statement-cont . 0)
+                   (inline-open . 0)
+                   (case-label . +)))
+                :use-style)
   )
 (add-hook 'c-mode-hook 'cemacs-c-mode)
 (defun cemacs-elisp-mode()
@@ -97,7 +118,9 @@
   ;; Disable auto-indent, it is inconsistent with incomplete code
   (setq electric-indent-mode nil
         )
-  (display-line-numbers-mode)
+  ;; This has severe performance issues, disabling for now
+  (display-line-numbers-mode -1)
+
   ;; Disable multi-byte characters in programming buffers, it is largely used
   ;; for trolling and nothing productive. Programming is typically done in
   ;; English ASCII anyway.
@@ -195,6 +218,7 @@ configuration see `cemacs-init-local-frame'"
    jit-lock-stealth-time 3              ; Start fontifying the whole buffer after idle
    ;; I think this is causing hard locks actually causes lockups but I don't
    ;; want to give up fast-refresh. Emacs will just freeze the screen otherwise...
+   ;; Okay this aparently only froze because of post-command-hooks like centaur-tabs
    redisplay-dont-pause t               ; Prioritize drawing responsible over input processing
 
    ;; Makes fontification and movement more performant at the cost of font-lock accuracy
@@ -221,6 +245,7 @@ configuration see `cemacs-init-local-frame'"
    compile-command nil                  ; Don't use 'make -k' by default
    desktop-dirname cemacs-var-dir       ; Set a session save direction
    desktop-path `(,cemacs-var-dir ,user-emacs-directory "~")
+   diary-file "~/userdata/org/emacs-diary.gpg"
    text-scale-mode-step 1.1             ; Allow more graduated  text scaling
 
    ;; Move file locks elsewhere to prevent polluting directories with danglng locks
@@ -249,9 +274,12 @@ configuration see `cemacs-init-local-frame'"
 
   ;; Misc Config
   (blink-cursor-mode -1)                ; don't
-  (delete-selection-mode 1)             ; delete activated region on typing
+
+  ;; Bugs smarparens mode...
+  ;; (delete-selection-mode 1)             ; delete activated region on typing
   (global-subword-mode 1)               ; treat delimited words seperately
   (global-whitespace-mode 1)            ; visualize tab characters
+
   ;; Disabled visual-line because of a large performance penalty on long lines
   ;; (global-visual-line-mode 1)           ; make some commands to operate on visual lines
   (recentf-mode 1)                      ; Save recently visited files
@@ -295,6 +323,9 @@ break packages")
 
   ;; Defer init setup hooks
   (run-at-time "0.1sec" nil 'run-hooks 'cemacs-init-setup-hook)
+
+  (message "[cemacs Initialized]")
+  (setq cemacs-init-complete t)
   )
 ;; Run early setup to prettify the session
 (defun cemacs-early-init ()
@@ -676,6 +707,7 @@ Returns the compilation buffer created."
   (setq
    org-cycle-separator-lines 0 ;; Prevent newlines from seperating headings
    org-table-tab-jumps-over-hlines nil ;; Make it easier to add newlines above footer rows
+   org-image-actual-width nil          ; Allow using attributes to change inline image width
    )
   (org-defkey org-mode-map (kbd "C-,") 'pop-to-mark-command)
 
@@ -822,6 +854,8 @@ Returns the compilation buffer created."
   )
 (use-package tab-bar
   :demand t
+  :hook
+  (cemacs-init-setup . tab-bar-mode)
   :config
   (setq
    tab-bar-close-button-show nil
@@ -868,6 +902,11 @@ Returns the compilation buffer created."
         (load-theme cemacs-selected-sanityinc-theme)
       (load-theme 'sanityinc-tomorrow-bright t))
     )
+
+  (defun cemacs-tomorrow-define-faces ()
+    (set-face-attribute 'default nil :background "gray5")
+    )
+  (add-hook 'cemacs-after-load-theme-hook 'cemacs-tomorrow-define-faces)
   )
 (req-package aggressive-indent
   ;; :hook
@@ -1128,15 +1167,14 @@ variables: `beacon-mode', `beacon-dont-blink-commands',
      ("M-i" .           natural-tab-to-tab-stop)
      ("M-p" .           kill-whole-line)
      ("C-#" .           cemacs-activate-mark)
-     ("M-[" .           insert-pair)
 
      ;; Other
      ("C-q" .           cemacs-query-prefix-map)
      ("C-x k" .         cemacs-buffer-kill-volatile)
      ("M-o" .           ff-find-other-file)
      ("C-x e" .         cemacs-find-user-init-file)
-     ("C-x C-#" .        server-edit-abort)
-     ("<mouse-3>" .      menu-bar-open) ; Make right click context menu
+     ("C-x C-#" .       server-edit-abort)
+     ("<mouse-3>" .     menu-bar-open) ; Make right click context menu
      ("C-x x g" .       cemacs-revert-buffer)
 
      ;; Unbind Keys
@@ -1281,6 +1319,7 @@ Argument STRING provided by compilation hooks."
         ;; vscode icons are meaningless don't bother with them
         company-format-margin-function 'company-text-icons-margin
         )
+  (delete 'company-clang company-backends)
   )
 
 (req-package crux
@@ -1315,8 +1354,8 @@ Argument STRING provided by compilation hooks."
     (setq tab-width 4)
     (setq-default c-basic-offset 4)
     (c-set-style "csharp")
-    ;; (c-add-style  "stroustrup"
-    ;;             '((c-offsets-alist (substatement-open . 0))) :use-style)
+    (c-add-style  "stroustrup"
+                '((c-offsets-alist (substatement-open . 0))) :use-style)
     )
   (add-hook 'csharp-mode-hook 'cemacs-csharp-mode)
   )
@@ -1499,6 +1538,7 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
   )
 
 (req-package flycheck
+  :demand t
   :commands
   (flycheck-mode
    global-flycheck-mode)
@@ -1509,6 +1549,7 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
   (global-flycheck-mode . global-flycheck-inline-mode)
 
   :config
+  (setq-default flycheck-disabled-checkers '('c/c++-clang))
   ;; Disable highlighting, its not consistently useful, use helm-flycheck
   (setq flycheck-highlighting-mode nil
         flycheck-inline-mode t
@@ -1516,7 +1557,6 @@ This version has been patched to avoid clobbering the keyfreq file when the lisp
   ;; Disable annoying documentation warnings which are too strict
   ;; instead, use 'M-x checkdoc'
   ;; (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
-  (add-to-list 'flycheck-disabled-checkers 'c/c++-clang)
   ;; Fix flycheck not being able to find files in the load path
   (setq flycheck-emacs-lisp-load-path 'inherit)
 
@@ -1561,14 +1601,14 @@ It is faster and alleviates no syntax highlighting"
   )
 
 ;; TODO Try again with lucid toolkit
-;; (req-package good-scroll
-;;   :hook
-;;   (cemacs-init-setup . good-scroll-mode)
-;;   :bind
-;;   (("C-v" . good-scroll-up-full-screen)
-;;   ("M-v" . good-scroll-down-full-screen))
-;;   :config
-;;  )
+(req-package good-scroll
+  :hook
+  (cemacs-init-setup . good-scroll-mode)
+  :bind
+  (("C-v" . good-scroll-up-full-screen)
+  ("M-v" . good-scroll-down-full-screen))
+  :config
+ )
 (req-package helm
   :require
   helm-flycheck
@@ -1694,10 +1734,12 @@ It is faster and alleviates no syntax highlighting"
   :hook
   (cemacs-init-setup . global-highlight-parentheses-mode)
   :config
-  (setq hl-paren-background-colors '("gray")
-        hl-paren-colors '("black")
-        hl-paren-highlight-adjacent nil
+  (setq highlight-parentheses-colors nil
+        highlight-parentheses-background-colors '(nil)
         )
+  (set-face-attribute 'highlight-parentheses-highlight nil
+                      :box '(:line-width (-2 . -2)
+                                         :color "Deeppink1"))
   )
 (req-package hl-todo
   :demand t
@@ -1747,10 +1789,10 @@ It is faster and alleviates no syntax highlighting"
   flycheck
   :require
   lsp-ui
-  :hook
-  (c++-mode . lsp)
-  (c-mode . lsp)
-  (csharp-mode . lsp)
+  ;; :hook
+  ;; (c++-mode . lsp)
+  ;; (c-mode . lsp)
+  ;; (csharp-mode . lsp)
   :bind
   (:map lsp-mode-map
         ("M-#" . lsp-ui-doc-glance)
@@ -1809,6 +1851,13 @@ It is faster and alleviates no syntax highlighting"
    ;; language server responses are in 800k - 3M range.
    read-process-output-max (* 1024 1024) ;; 1mb
    )
+
+  (defvar cemacs-lsp-enable nil
+    "Enable or disable enablig of lsp mode on a new buffer")
+  (defun cemacs-ad-lsp (oldfun &rest args)
+    (when (bound-and-true-p cemacs-lsp-enable)
+      (apply 'oldfun args)))
+  (advice-add 'lsp :around 'cemacs-ad-lsp)
   )
 ;; (req-package lsp-ui
 ;;   :config
@@ -1851,7 +1900,8 @@ It is faster and alleviates no syntax highlighting"
    mc/mark-all-in-region-regexp)
   :after hydra
   :bind
-  (("M-m" . mc/edit-lines)
+  ((;; Need to find a new home for this
+    "M-m" . mc/edit-lines)
    :map mc/keymap
    ;; Don't exit on newline
    ("<return>" . nil)
@@ -2025,12 +2075,12 @@ For example
 project: %S \n group: %S \n functions: %S \n locals: %S"
                        current-project current-project-groups
                        current-group-functions current-project-locals))
+            (setq-local
+             cemacs-project-name current-project
+             cemacs-project-groups current-project-groups
+             cemacs-project-locals current-project-locals
+             cemacs-project-functions current-group-functions)
             ))))
-
-  (cemacs-add-multiple-splicing 'cemacs-projectile-locals
-                                personal-projectile-locals)
-  (cemacs-add-multiple-splicing 'cemacs-projectile-grouping
-                                personal-projectile-grouping)
   )
 
 (req-package rainbow-blocks
@@ -2052,6 +2102,7 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
     )
   (add-hook 'cemacs-after-load-theme-hook 'cemacs-rainbow-blocks-define-faces)
   )
+
 (req-package rainbow-delimiters
   :commands
   (rainbow-delimiters-mode)
@@ -2079,6 +2130,7 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   :hook
   (emacs-lisp-mode . rainbow-mode)
   )
+
 (req-package restart-emacs
   :commands
   (restart-emacs)
@@ -2087,20 +2139,21 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   :config
   )
 
-(req-package rtags-xref
-  :config
-  (rtags-xref-enable)
-  )
-
 (req-package rtags
   :require
   company-rtags
   company
+  rtags-xref
+  :hook
+  (c-mode . rtags-xref-enable)
+  (c++-mode . rtags-xref-enable)
   :commands
   (rtags-xref-enable
    rtags-xref)
   :config
-  (add-to-list 'company-backends 'company-rtags)
+  ;; (add-to-list 'company-backends 'company-rtags)
+  (defvar cemacs-rtags-procs '()
+    "List of procs to clean up")
 
   (cl-defun cemacs-ad-rtags-call-rc (&rest arguments
                                            &key (path (rtags-buffer-file-name))
@@ -2120,6 +2173,13 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
   (save-excursion
     (let ((rc (rtags-executable-find rtags-rc-binary-name))
           (tempfile))
+      (dolist (x-proc cemacs-rtags-procs)
+        (when (processp x-proc)
+          (async-get (pop cemacs-rtags-procs))
+          (when (bound-and-true-p cemacs-debug-enabled)
+            (message "deleting async rc"))
+          ;; (async-wait x-proc)
+          ))
       (if (not rc)
           (unless noerror (rtags--error 'rtags-cannot-find-rc))
         (setq output (rtags--convert-output-buffer output))
@@ -2180,7 +2240,12 @@ project: %S \n group: %S \n functions: %S \n locals: %S"
         (if async
             (when rtags-rc-log-enabled
               (rtags-log "running previous command asynchronously"))
-            (let ((proc (apply #'async-start-process rtags-rc-binary-name rc nil arguments)))
+            (let ((proc (apply #'async-start-process
+                               rtags-rc-binary-name
+                               rc
+                               'ignore
+                               arguments)))
+              (push proc cemacs-rtags-procs)
               (set-process-query-on-exit-flag proc nil)
               (when (listp async)
                   (when (car async)
@@ -2250,7 +2315,9 @@ so it knows what files may be queried which helps with responsiveness.
   (advice-add 'rtags-call-rc :override 'cemacs-ad-rtags-call-rc)
   )
 
+(req-package rust-mode
   )
+
 (req-package smartparens
   :after aggressive-indent
   :commands
@@ -2390,7 +2457,7 @@ so it knows what files may be queried which helps with responsiveness.
   (sp-local-pair sp-lisp-modes  "`" 'nil :actions 'nil)
 
   ;; Pair angled brackets in c-modes
-  (sp-local-pair sp-c-modes "<" ">")
+  ;; (sp-local-pair sp-c-modes "<" ">")    ; Breaks bitwise operators :/
 
   (define-minor-mode cemacs-smartparens-enforcer-mode
     "Toggle smartparens mode but enforce balancing of sexps more.
@@ -2428,23 +2495,23 @@ so it knows what files may be queried which helps with responsiveness.
    )
   :config
   )
-(req-package sublimity
-  :commands
-  (sublimity-mode)
-  ;; :hook
-  ;; (cemacs-init-setup . sublimity-mode)
-  ;; :config
-  ;; (require 'sublimity-scroll)
-  ;; (require 'sublimity-attractive)
-  ;;(require 'sublimity-map) ;; experimental
-  ;; (setq sublimity-scroll-weight 4
-  ;; sublimity-scroll-drift-length 4
-  ;;      sublimity-map-size 10
-  ;;      sublimity-map-fraction 0.3
-  ;;      sublimity-map-text-scale -7
-  ;;      sublimity-map-set-delay 1
-  ;; )
-  )
+;; (req-package sublimity
+;;   :commands
+;;   (sublimity-mode)
+;;   ;; :hook
+;;   ;; (cemacs-init-setup . sublimity-mode)
+;;   ;; :config
+;;   ;; (require 'sublimity-scroll)
+;;   ;; (require 'sublimity-attractive)
+;;   ;;(require 'sublimity-map) ;; experimental
+;;   ;; (setq sublimity-scroll-weight 4
+;;   ;; sublimity-scroll-drift-length 4
+;;   ;;      sublimity-map-size 10
+;;   ;;      sublimity-map-fraction 0.3
+;;   ;;      sublimity-map-text-scale -7
+;;   ;;      sublimity-map-set-delay 1
+;;   ;; )
+;;   )
 
 ;; A utility for searching through results relative to point in buffer
 ;; Happens to have more untuitive defaults and coloring than helm-swoop
@@ -2460,10 +2527,10 @@ so it knows what files may be queried which helps with responsiveness.
   )
 
 ;; Machine learning powered completion framework, free tier
-(req-package company-tabnine
-:config
+;; (req-package company-tabnine
+;; :config
 ;; (add-to-list 'company-backends 'company-tabnine)
-)
+;; )
 
 (req-package undo-tree
   :bind
@@ -2480,6 +2547,7 @@ so it knows what files may be queried which helps with responsiveness.
   (setq undo-tree-enable-undo-in-region nil  ; brings performance enhancement
         undo-tree-history-dir (concat cemacs-var-dir "undo-tree-history")
         undo-tree-history-directory-alist `(( ".*" . ,undo-tree-history-dir))
+        undo-tree-auto-save-history nil ; Improved performance when off
         )
   )
 (req-package visible-mark
@@ -2490,12 +2558,23 @@ so it knows what files may be queried which helps with responsiveness.
   :hook
   (cemacs-init-setup . global-visible-mark-mode)
 
-  :init
+  :config
+  (setq visible-mark-max 2)
+  (defface cemacs-visible-mark-common () "")
+  (defface cemacs-visible-mark-1 () "")
+  (defface cemacs-visible-mark-2 () "")
+  (defface cemacs-visible-mark-3 () "")
+  (defface cemacs-visible-mark-4 () "")
+
   (defun cemacs-visible-mark-define-faces ()
-    (set-face-attribute 'visible-mark-active nil
-                      :background "#006F00" :foreground "white")
-  )
+    (set-face-attribute 'visible-mark-active nil :background "red")
+    (set-face-attribute 'cemacs-visible-mark-common nil :box '(:line-width (-2 . -2)))
+    (set-face-attribute 'cemacs-visible-mark-1 nil :background "deep pink")
+    (set-face-attribute 'cemacs-visible-mark-2 nil :inherit 'cemacs-visible-mark-common)
+    (set-face-attribute 'cemacs-visible-mark-3 nil :inherit 'cemacs-visible-mark-common)
+    )
   (add-hook 'cemacs-after-load-theme-hook 'cemacs-visible-mark-define-faces)
+  (setq visible-mark-faces '(cemacs-visible-mark-1 cemacs-visible-mark-2))
   )
 (req-package vlf
   :config
@@ -2527,13 +2606,13 @@ so it knows what files may be queried which helps with responsiveness.
         which-key-sort-order 'which-key-description-order
         )
   )
-;; (req-package yasnippet
-;;   :require
-;;   auto-yasnippet
-;;   )
-;; (req-package auto-yasnippet
-;;   :config
-;;   )
+(req-package yasnippet
+  :require
+  auto-yasnippet
+  )
+(req-package auto-yasnippet
+  :config
+  )
 (req-package zoom
   ;; A window rebalancing minor mode
   :config
